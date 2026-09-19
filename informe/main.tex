@@ -211,11 +211,54 @@
 %% siempre encendida, y las tres dimensiones de comparación (costo, latencia,
 %% complejidad operacional). Fuentes: CNCF, papers, docs oficiales.
 %% No explicar qué es un contenedor, una VM o la nube.
+%% Referencias cruzadas a 2.x van con número fijo porque esas subsecciones
+%% aún no tienen \label. Si se les agrega label, cambiar por \ref.
+%%
+%% IA: borrador revisado con apoyo de IA a partir de fuentes abiertas y
+%% verificadas en el original (ver TRAZABILIDAD al final).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Marco teórico y conceptual}
+\label{sec:marco}
 
-% TODO (Matías)
+\textbf{Computación sin servidor.} Es la ejecución de aplicaciones sin gestionar servidores: una plataforma ejecuta, escala y factura el código según la demanda de cada momento. No implica que desaparezcan los servidores ni la operación, sino que su gestión pasa al proveedor \parencite{cncf2018}. \textcite{schleiersmith2021} la caracterizan por tres cualidades: abstracción de los servidores y de su operación, cobro por uso en vez de por reserva (sin cargo por recursos ociosos) y escalamiento automático desde cero. Tampoco es sinónimo de funciones: incluye los servicios de \textit{backend} gestionados, o BaaS \parencite{golec2024}.
+
+\textbf{Modelos de ejecución.} En las \textit{funciones como servicio} (FaaS) la unidad es una función breve, activada por un evento o una solicitud HTTP, que el proveedor escala horizontalmente \parencite{cncf2018,leitner2019} y libera tras un periodo sin uso, lo que se llama escalamiento a cero \parencite{golec2024}. En los \textit{contenedores sin servidor} la unidad es una imagen de contenedor y el equipo ya no aprovisiona ni escala máquinas virtuales \parencite{awsfargate}, aunque no siempre hay escalamiento a cero: Cloud Run retira la última instancia cuando no hay solicitudes \parencite{gcprun}, mientras que Fargate cobra hasta que la tarea termina \parencite{awsfargatepricing}. El \textit{cómputo en el borde} procesa en recursos ubicados entre la fuente de los datos y el centro de datos de la nube \parencite{shi2016}; este informe estudia su variante sin servidor \parencite{aslanpour2021}.
+
+\textbf{Modelo de referencia.} Las \textit{instancias siempre encendidas} son capacidad aprovisionada en forma continua (máquinas virtuales, o contenedores sobre nodos fijos) que se factura por tiempo encendido, se use o no \parencite{ustiugov2021}. Con cargas en ráfagas, esa capacidad queda subutilizada \parencite{eismann2021}.
+
+\textbf{Dimensiones de comparación.} El \textit{costo} en \textit{serverless} se calcula por consumo (invocaciones, tiempo de ejecución, memoria, CPU y transferencia de datos) \parencite{ghorbian2026}, de modo que el tiempo ocioso no se paga \parencite{adzic2017}; en el modelo siempre encendido es casi fijo para una capacidad dada. Esa diferencia define un volumen de equilibrio (secciones~2.3 y~\ref{sec:costos}). La \textit{latencia} es el tiempo entre el envío de una solicitud y su respuesta, suma de la espera en cola, la asignación de recursos y la ejecución \parencite{golec2024}. Al escalar a cero se agrega el \textit{arranque en frío}, el retardo de preparar un entorno nuevo \parencite{ustiugov2021}, tratado en las secciones~2.2 y~\ref{sec:poc}; el borde, en cambio, reduce la latencia de red al acercar el cómputo a la fuente de los datos \parencite{golec2024}. La \textit{complejidad operacional} es el trabajo del equipo para desplegar, escalar, monitorear y mantener el sistema. El modelo sin servidor traslada parte de ese trabajo al proveedor, un motivo frecuente de adopción \parencite{eismann2021}, pero \textcite{leitner2019} documentan herramientas de prueba y despliegue poco maduras y la necesidad de componer servicios del proveedor, a lo que se suman sus límites y la dependencia (secciones~2.4 y~2.6). Cómo se mide cada dimensión se justifica en la sección~\ref{sec:cuadro}.
+
+%% ---------------------------------------------------------------------------
+%% TRAZABILIDAD (qué respalda cada cita):
+%%  cncf2018 ........ definición textual de serverless; "does not mean that we
+%%                    no longer use servers"; FaaS "triggered by events or
+%%                    HTTP requests"; BaaS.
+%%  schleiersmith2021 tres "essential qualities" (abstracción, pay-as-you-go vs.
+%%                    reservation-based, escalamiento desde cero).
+%%  golec2024 ....... (PDF del proyecto) serverless integra BaaS y FaaS (§1);
+%%                    scale to zero y cold start (§1, §3.3); definición de
+%%                    latencia como cola + asignación + ejecución (§3.2);
+%%                    edge acerca el cómputo a la fuente (§1).
+%%  leitner2019 ..... funciones "atomic and short-running" escaladas
+%%                    horizontalmente; herramientas de prueba/despliegue poco
+%%                    maduras; FaaS como "glue" de servicios (abstract).
+%%  awsfargate ...... "no longer have to provision, configure, or scale
+%%                    clusters of virtual machines".
+%%  gcprun .......... "even the last remaining instance will be removed".
+%%  awsfargatepricing cobro desde "download your container image" hasta que
+%%                    "the task terminates" (no se cita ningún precio).
+%%  shi2016 ......... definición de "edge" (§II).
+%%  aslanpour2021 ... serverless edge computing (abstract).
+%%  ustiugov2021 .... (PDF del proyecto) VMs "billed for their up-time
+%%                    regardless of usage"; cold start tras inactividad (§1, §2.1).
+%%  eismann2021 ..... ahorro en cargas en ráfagas con baja utilización en
+%%                    hosting tradicional; menos carga operacional (deployment,
+%%                    scaling, monitoring) como motivo de adopción.
+%%  ghorbian2026 .... (PDF del proyecto) métricas de precio: execution time,
+%%                    memory, request count, CPU, bandwidth (§2.3).
+%%  adzic2017 ....... "application idle time is free".
+%% ---------------------------------------------------------------------------
 
 \clearpage
 

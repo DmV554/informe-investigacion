@@ -5,3 +5,146 @@
 % region (punto 5 de las indicaciones del curso). Ver el bloque
 % ">>> BIBLIOGRAFIA" de main.tex para el detalle completo.
 
+% ============================================================================
+% Referencias del Marco teórico (sección 1)
+% Todas abiertas y verificadas en su fuente el 19-09-2026.
+% Académicas (revisadas por pares): schleiersmith2021, golec2024, leitner2019,
+%   shi2016, aslanpour2021, ustiugov2021, eismann2021, ghorbian2026,
+%   adzic2017  -> 9
+% Técnicas / estándares: cncf2018, awsfargate, awsfargatepricing, gcprun
+% ============================================================================
+
+% ---------- Especificaciones y estándares ----------
+
+@report{cncf2018,
+  author      = {{CNCF Serverless Working Group}},
+  title       = {{CNCF} Serverless Whitepaper v1.0},
+  institution = {Cloud Native Computing Foundation},
+  type        = {Whitepaper},
+  year        = {2018},
+  url         = {https://github.com/cncf/wg-serverless/tree/master/whitepapers/serverless-overview},
+  urldate     = {2026-09-19}
+}
+
+% ---------- Artículos revisados por pares ----------
+
+@article{schleiersmith2021,
+  author  = {Schleier-Smith, Johann and Sreekanti, Vikram and Khandelwal, Anurag and Carreira, Joao and Yadwadkar, Neeraja J. and Popa, Raluca Ada and Gonzalez, Joseph E. and Stoica, Ion and Patterson, David A.},
+  title   = {What Serverless Computing Is and Should Become: The Next Phase of Cloud Computing},
+  journal = {Communications of the ACM},
+  volume  = {64},
+  number  = {5},
+  pages   = {76--84},
+  year    = {2021},
+  doi     = {10.1145/3406011}
+}
+
+@article{golec2024,
+  author  = {Golec, Muhammed and Walia, Guneet Kaur and Kumar, Mohit and Cuadrado, Felix and Gill, Sukhpal Singh and Uhlig, Steve},
+  title   = {Cold Start Latency in Serverless Computing: A Systematic Review, Taxonomy, and Future Directions},
+  journal = {ACM Computing Surveys},
+  volume  = {57},
+  number  = {3},
+  eid     = {65},
+  pages   = {1--36},
+  year    = {2024},
+  doi     = {10.1145/3700875}
+}
+
+@article{leitner2019,
+  author  = {Leitner, Philipp and Wittern, Erik and Spillner, Josef and Hummer, Waldemar},
+  title   = {A Mixed-Method Empirical Study of Function-as-a-Service Software Development in Industrial Practice},
+  journal = {Journal of Systems and Software},
+  volume  = {149},
+  pages   = {340--359},
+  year    = {2019},
+  doi     = {10.1016/j.jss.2018.12.013}
+}
+
+@article{shi2016,
+  author  = {Shi, Weisong and Cao, Jie and Zhang, Quan and Li, Youhuizi and Xu, Lanyu},
+  title   = {Edge Computing: Vision and Challenges},
+  journal = {IEEE Internet of Things Journal},
+  volume  = {3},
+  number  = {5},
+  pages   = {637--646},
+  year    = {2016},
+  doi     = {10.1109/JIOT.2016.2579198}
+}
+
+@inproceedings{aslanpour2021,
+  author    = {Aslanpour, Mohammad S. and Toosi, Adel N. and Cicconetti, Claudio and Javadi, Bahman and Sbarski, Peter and Taibi, Davide and Assuncao, Marcos and Gill, Sukhpal Singh and Gaire, Raj and Dustdar, Schahram},
+  title     = {Serverless Edge Computing: Vision and Challenges},
+  booktitle = {Proceedings of the 2021 Australasian Computer Science Week Multiconference (ACSW '21)},
+  publisher = {ACM},
+  year      = {2021},
+  doi       = {10.1145/3437378.3444367}
+}
+
+@inproceedings{ustiugov2021,
+  author    = {Ustiugov, Dmitrii and Petrov, Plamen and Kogias, Marios and Bugnion, Edouard and Grot, Boris},
+  title     = {Benchmarking, Analysis, and Optimization of Serverless Function Snapshots},
+  booktitle = {Proceedings of the 26th ACM International Conference on Architectural Support for Programming Languages and Operating Systems (ASPLOS '21)},
+  pages     = {559--572},
+  publisher = {ACM},
+  year      = {2021},
+  doi       = {10.1145/3445814.3446714}
+}
+
+@article{eismann2021,
+  author  = {Eismann, Simon and Scheuner, Joel and van Eyk, Erwin and Schwinger, Maximilian and Grohmann, Johannes and Herbst, Nikolas and Abad, Cristina L. and Iosup, Alexandru},
+  title   = {Serverless Applications: Why, When, and How?},
+  journal = {IEEE Software},
+  volume  = {38},
+  number  = {1},
+  pages   = {32--39},
+  year    = {2021},
+  doi     = {10.1109/MS.2020.3023302}
+}
+
+@article{ghorbian2026,
+  author  = {Ghorbian, Mohsen and Ghobaei-Arani, Mostafa and Shakarami, Ali},
+  title   = {A Survey on the Pricing Mechanisms in Serverless Computing},
+  journal = {Computing},
+  volume  = {108},
+  eid     = {31},
+  pages   = {1--40},
+  year    = {2026},
+  doi     = {10.1007/s00607-026-01624-1}
+}
+
+@inproceedings{adzic2017,
+  author    = {Adzic, Gojko and Chatley, Robert},
+  title     = {Serverless Computing: Economic and Architectural Impact},
+  booktitle = {Proceedings of the 2017 11th Joint Meeting on Foundations of Software Engineering (ESEC/FSE 2017)},
+  pages     = {884--889},
+  publisher = {ACM},
+  year      = {2017},
+  doi       = {10.1145/3106237.3117767}
+}
+
+% ---------- Documentación oficial de proveedores ----------
+
+@online{awsfargate,
+  author  = {{Amazon Web Services}},
+  title   = {Architect for {AWS} {Fargate} for {Amazon} {ECS}},
+  url     = {https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS_Fargate.html},
+  urldate = {2026-09-19}
+}
+
+% Se cita solo el mecanismo de cobro (por segundo, desde la descarga de la
+% imagen hasta el término de la tarea); ningún precio sale de esta fuente.
+@online{awsfargatepricing,
+  author  = {{Amazon Web Services}},
+  title   = {{AWS} {Fargate} Pricing},
+  url     = {https://aws.amazon.com/fargate/pricing/},
+  urldate = {2026-09-19}
+}
+
+@online{gcprun,
+  author  = {{Google Cloud}},
+  title   = {What is {Cloud Run}},
+  date    = {2026-09-16},
+  url     = {https://docs.cloud.google.com/run/docs/overview/what-is-cloud-run},
+  urldate = {2026-09-19}
+}
