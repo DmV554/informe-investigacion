@@ -11,7 +11,7 @@
 %  Empresa 6 · TERABYTE · Tema TI-05 · Serverless y computación en el borde
 %
 %  ARCHIVO ÚNICO. Todo el informe vive en este main.tex, en el orden
-%  definitivo acordado por el equipo (ver TERABYTE-TI05-Guia-del-equipo.md).
+%  definitivo acordado por el equipo (ver Terabyte-Guia-Equipo.md).
 %  Cada bloque lleva en un comentario: responsable, presupuesto de
 %  extensión y recordatorios de las Indicaciones (FEP00.3.26).
 %
@@ -28,6 +28,22 @@
 \usepackage{import}
 \usepackage{styles}
 \usepackage{subcaption}
+\usepackage{pdflscape}   % \begin{landscape} para el cuadro comparativo (3.2)
+
+%% \anexo{X}{Título}: abre un anexo (o documento adjunto) con prefijo X.
+%% Reinicia la numeración de páginas (X1, X2, ...) y la de tablas y figuras
+%% (Tabla X.1, Figura X.1) para que no hereden la del capítulo 5.
+\newcommand{\anexo}[2]{%
+    \clearpage
+    \setcounter{page}{1}%
+    \renewcommand{\thepage}{\hspace*{1em}#1\arabic{page}}%
+    \setcounter{table}{0}\setcounter{figure}{0}%
+    \renewcommand{\thetable}{#1.\arabic{table}}%
+    \renewcommand{\thefigure}{#1.\arabic{figure}}%
+    \phantomsection
+    \addcontentsline{toc}{section}{#2}%
+    \section*{#2}%
+}
 
 \renewcommand{\cftdotsep}{4}
 \renewcommand{\cftfigpresnum}{\bfseries Figura }
@@ -538,16 +554,11 @@
 %% OBLIGATORIO aunque todos declaren nivel 0 (punto 6.3). Sin este anexo el
 %% informe no se recibe conforme. Prevalece sobre la lámina de Pautas que
 %% decía "Anexos (opcional)".
-%% Numeración A1, A2, ...
+%% Numeración A1, A2, ... (macro \anexo, definida en el preámbulo; cada anexo
+%% reinicia páginas, tablas y figuras con su propia letra).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\pagenumbering{arabic}
-\setcounter{page}{1}
-\renewcommand{\thepage}{\hspace*{1em}A\arabic{page}}
-
-\phantomsection
-\addcontentsline{toc}{section}{Anexo A: Declaración de uso de inteligencia artificial}
-\section*{Anexo A: Declaración de uso de inteligencia artificial}
+\anexo{A}{Anexo A: Declaración de uso de inteligencia artificial}
 
 \textoPortadaFont{\textbf{Empresa:} N.\textordmasculine\ 6 --- TERABYTE\\}
 \textoPortadaFont{\textbf{Tema:} TI-05 --- Serverless y computación en el borde (edge computing)\\}
@@ -643,9 +654,7 @@ Declaro que la información consignada en este formulario es completa y veraz, q
 %% despliegue, tabla de datos crudos o enlace al repositorio.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\phantomsection
-\addcontentsline{toc}{section}{Anexo B: Código y mediciones de la prueba de concepto}
-\section*{Anexo B: Código y mediciones de la prueba de concepto}
+\anexo{B}{Anexo B: Código y mediciones de la prueba de concepto}
 
 % TODO (Vicente)
 % \begin{minted}{python}
@@ -663,9 +672,7 @@ Declaro que la información consignada en este formulario es completa y veraz, q
 %% LaTeX o como PDF externo (\pdfExterno{assets/pdf/...}{...}{...}).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\phantomsection
-\addcontentsline{toc}{section}{Anexo C: Planilla del modelo de costos}
-\section*{Anexo C: Planilla del modelo de costos}
+\anexo{C}{Anexo C: Planilla del modelo de costos}
 
 % TODO (Francisca)
 
@@ -679,9 +686,7 @@ Declaro que la información consignada en este formulario es completa y veraz, q
 %% candidatos descartados con su motivo (por ejemplo, producto descontinuado).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\phantomsection
-\addcontentsline{toc}{section}{Anexo D: Búsqueda documentada de alternativas}
-\section*{Anexo D: Búsqueda documentada de alternativas}
+\anexo{D}{Anexo D: Búsqueda documentada de alternativas}
 
 % TODO (Claudio y Daniel)
 
@@ -708,16 +713,11 @@ Declaro que la información consignada en este formulario es completa y veraz, q
 %%   - teoría y práctica; comprensión, aplicación y análisis crítico;
 %%   - dificultad: 12 básicas, 12 intermedias, 6 avanzadas (40/40/20);
 %%   - índice temático por sección del informe.
-%% Redacción 100 % humana (punto 6.1). Numeración B1, B2, ...
+%% Redacción 100 % humana (punto 6.1). Numeración Q1, Q2, ... (la letra B
+%% ya la usa el Anexo B).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\pagenumbering{arabic}
-\setcounter{page}{1}
-\renewcommand{\thepage}{\hspace*{1em}B\arabic{page}}
-
-\phantomsection
-\addcontentsline{toc}{section}{Documento adjunto: Cuestionario de evaluación de conocimientos}
-\section*{Documento adjunto: Cuestionario de evaluación de conocimientos}
+\anexo{Q}{Documento adjunto: Cuestionario de evaluación de conocimientos}
 
 \subsection*{Índice temático}
 
