@@ -1,0 +1,93 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%% ------------------------------ %%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%% | Formato escuela - INF PUCV | %%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%% | by Sebastian Garcia        | %%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%% | @sebaignacioo              | %%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%% |                            | %%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%% |            2023            | %%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%% ------------------------------ %%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  REORGANIZACIÓN (septiembre 2026): el contenido se separó en un
+%  archivo .tex por sección, siguiendo el orden obligatorio del
+%  documento "Indicaciones y fichas — Trabajo de Investigación 2026"
+%  (FEP00.3.26) para el tema TI-05 (Serverless y computación en el
+%  borde), empresa asignada Terabyte, cruzado además con las pautas
+%  generales del curso (FEP00.1.26), que agregan "Marco teórico y
+%  conceptual" y "Tendencias y evolución futura" y confirman el Anexo
+%  de declaración de IA como obligatorio.
+%
+%  El preámbulo, la clase, los estilos y el formato de salida NO se
+%  tocaron respecto de la plantilla original.
+%
+%  Desarrollo (bloque 5) y Entregables específicos (bloque 6) van cada
+%  uno en un ÚNICO archivo .tex (con \subsection por subtema/
+%  entregable), por preferencia del equipo — no se dividen en
+%  subcarpetas ni archivos separados.
+%
+%  El contenido unificado original (previo a la primera reorganización)
+%  queda respaldado, sin usarse, en _legacy/contenido.tex.bak.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Se define la clase y parametros principales
+\documentclass[12pt, letterpaper, table, xcdraw]{inf-pucv}
+
+% Usando paquete para importar archivos
+\usepackage{import}
+% Importando estiloss
+\usepackage{styles}
+\usepackage{subcaption}
+
+% Modificar estilos de índice y listados
+\renewcommand{\cftdotsep}{4}
+\renewcommand{\cftfigpresnum}{\bfseries Figura }
+\cftsetindents{figure}{0em}{5.5em}
+\renewcommand{\cfttabpresnum}{\bfseries Tabla }
+\cftsetindents{table}{0em}{5.5em}
+% Se define la sangría de 1cm
+\setlength{\parindent}{1cm}
+
+\begin{document}
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  % ÍNDICE DE BLOQUES — estructura obligatoria del informe TI-05, en
+  % este orden. Cada bloque vive en su propio archivo dentro de
+  % secciones/. Todas las secciones están vacías (solo encabezados y
+  % comentarios guía), listas para redactar, EXCEPTO la Portada (bloque
+  % 1), que ya tiene datos reales cargados.
+  %
+  %   Bloque  1  Portada y formalidades       secciones/00-portada.tex
+  %   Bloque  2  Resumen ejecutivo            secciones/01-resumen-ejecutivo.tex
+  %   Bloque  3  Introducción y contexto      secciones/02-introduccion.tex
+  %   Bloque  4  Marco teórico y conceptual   secciones/03-marco-teorico.tex
+  %   Bloque  5  Desarrollo y análisis        secciones/04-desarrollo.tex
+  %              técnico (6 subtemas, 1 solo archivo)
+  %   Bloque  6  Entregables específicos      secciones/05-entregables.tex
+  %              (3 entregables, 1 solo archivo)
+  %   Bloque  7  Vínculo técnico-económico    secciones/06-vinculo-tecnico-economico.tex
+  %   Bloque  8  Tendencias y evolución       secciones/07-tendencias-futuras.tex
+  %              futura
+  %   Bloque  9  Conclusiones y               secciones/08-conclusiones.tex
+  %              recomendaciones
+  %   Bloque 10  Bibliografía                 secciones/09-bibliografia.tex
+  %   Bloque 11  Anexo obligatorio:           secciones/10-anexo-declaracion-ia.tex
+  %              declaración de uso de IA
+  %   Bloque 12  Documento adjunto:           secciones/11-cuestionario.tex
+  %              cuestionario de 30 preguntas
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  \input{secciones/00-portada.tex}
+  \input{secciones/01-resumen-ejecutivo.tex}
+  \input{secciones/02-introduccion.tex}
+  \input{secciones/03-marco-teorico.tex}
+  \input{secciones/04-desarrollo.tex}
+  \input{secciones/05-entregables.tex}
+  \input{secciones/06-vinculo-tecnico-economico.tex}
+  \input{secciones/07-tendencias-futuras.tex}
+  \input{secciones/08-conclusiones.tex}
+  \input{secciones/09-bibliografia.tex}
+  \input{secciones/10-anexo-declaracion-ia.tex}
+  \input{secciones/11-cuestionario.tex}
+
+\end{document}

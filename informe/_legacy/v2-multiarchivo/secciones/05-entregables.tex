@@ -1,0 +1,70 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% BLOQUE 6 — ENTREGABLES ESPECÍFICOS
+% Los 3 entregables específicos de la ficha TI-05, integrados en el
+% cuerpo del informe (no como anexo). Todos en ESTE ÚNICO ARCHIVO (por
+% preferencia del equipo, sin subcarpetas ni \input separados por
+% entregable).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Entregables específicos}
+
+% --- Entregable 1/3 (ficha TI-05) ---
+\subsection{Modelo de costos: serverless vs. instancias siempre encendidas}
+
+% TODO (equipo): modelo de costos que compare una arquitectura
+% serverless con una de contenedores/instancias siempre encendidas,
+% identificando el volumen de equilibrio en solicitudes por mes
+% (fórmula, tabla o gráfico, según convenga).
+%
+% Recordatorio (punto 5 de las indicaciones sobre precios y fuentes):
+% toda cifra debe indicar producto, moneda, región, fecha de consulta y
+% si es precio de lista o cotización; verificar en la calculadora/
+% página oficial del proveedor (no reutilizar cifras de terceros sin
+% verificar). Si un proveedor no publica precios, declararlo
+% expresamente ("solo por cotización").
+
+% --- Entregable 2/3 (ficha TI-05) ---
+\subsection{Prueba de concepto y mediciones de arranque en frío / latencia}
+
+% TODO (equipo): elegir UNA de las dos opciones que exige la ficha:
+%   (a) Prueba de concepto propia (código + mediciones), documentando
+%       el entorno, el método de medición y los resultados; o
+%   (b) Análisis de mediciones publicadas de arranque en frío/latencia,
+%       citando la fuente y explicando su metodología.
+% Si se incluye código propio, usar el entorno `minted` ya cargado por
+% la clase (\begin{minted}{lenguaje} ... \end{minted}) y compilar con
+% -shell-escape en Overleaf (Menu > Settings, o ya configurado según el
+% motor del proyecto).
+
+% --- Entregable 3/3 (ficha TI-05) ---
+\subsection{Cuadro comparativo de plataformas}
+
+% TODO (equipo): cuadro comparativo de AL MENOS 6 plataformas con sus
+% límites técnicos (tiempo máximo de ejecución, tamaño máximo de
+% payload, manejo de estado, portabilidad, etc.). Debe incluir
+% plataformas de más de una categoría de la ficha (FaaS, contenedores
+% sin servidor, cómputo en el borde, código abierto, datos sin
+% servidor).
+%
+% OBLIGATORIO (punto 4 de las indicaciones): incorporar al menos DOS
+% plataformas adicionales no mencionadas en la ficha (de ahí las 8
+% filas de la tabla), con su justificación; o declarar expresamente que
+% no se encontraron más alternativas relevantes y documentar la
+% búsqueda (fuentes, criterios de descarte, fecha).
+%
+% Filas de la tabla: completar (mínimo 6 + 2 alternativas). Borrar las
+% filas sobrantes o agregar más según corresponda.
+
+\tabla{Cuadro comparativo de plataformas serverless y de borde}{cuadro-comparativo-plataformas}{|p{2.6cm}|p{2.3cm}|p{2cm}|p{2cm}|p{2.2cm}|p{3.4cm}|}{%
+    \filaTabla{\textbf{Plataforma} & \textbf{Categoría} & \textbf{Tiempo máx. ejecución} & \textbf{Tamaño máx. payload} & \textbf{Manejo de estado} & \textbf{Otros límites / notas}}
+    \filaTabla{ & & & & & }
+    \filaTabla{ & & & & & }
+    \filaTabla{ & & & & & }
+    \filaTabla{ & & & & & }
+    \filaTabla{ & & & & & }
+    \filaTabla{ & & & & & }
+    \filaTabla{ & & & & & }
+    \filaTabla{ & & & & & }
+}
+
+\clearpage

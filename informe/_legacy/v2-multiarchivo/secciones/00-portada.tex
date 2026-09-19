@@ -1,0 +1,81 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% BLOQUE 1 — PORTADA Y FORMALIDADES
+% Estructura obligatoria del informe TI-05 (punto 1).
+% Contiene: portada, indice general, lista de figuras y lista de tablas.
+% Estos tres ultimos son formalidades de front-matter; por eso van sin
+% numero de pagina visible (pagenumbering gobble). La numeracion arabiga
+% del cuerpo del informe comienza en el Resumen ejecutivo (bloque 2).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\thispagestyle{empty}
+\pagenumbering{gobble}
+
+\begin{center}
+    \membrete{%
+        PONTIFICIA UNIVERSIDAD CATÓLICA DE VALPARAÍSO\\
+        FACULTAD DE INGENIERÍA\\
+        ESCUELA DE INGENIERÍA INFORMÁTICA\\
+    }
+
+    \vspace*{5cm}
+
+    \tituloPortada{%
+        Serverless y computación \\
+        en el borde
+    }
+
+    \vspace*{3.5cm}
+
+    % TODO (equipo): confirmar ortografía/tildes exactas de los 2 nombres
+    % marcados con "??" antes de la entrega final.
+    \alumnos{%
+        Francisca Antonia Abarca Pezo\\
+        Vicente André Arratia Caroca\\
+        Isidora Valentina Cisternas Cisternas\\
+        Rodolfo Antonio Fernández Vera\\
+        Valentina Ignacia Guzmán Elgueta\\
+        Daniel Ignacio Miranda Vázquez\\
+        Matias Ignacio Reyes Pizarro\\
+        Fabián Andres Solís Piñones\\
+        Claudio Patricio Toledo Mac-lean\\
+    }
+
+    \vspace*{1.8cm}
+
+    \datosPortada{%
+        \datoPortada{Grupo}{Terabyte}
+        \datoPortada{Asignatura}{Taller de Formulación de Proyectos Informáticos}
+        \datoPortada{Fecha de entrega}{21 de septiembre de 2026}
+    }
+
+    \vspace*{2.0cm}
+
+    \fechaPortada{Septiembre de 2026}
+\end{center}
+
+\clearpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ÍNDICE GENERAL
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\tableofcontents
+
+\clearpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% LISTA DE FIGURAS Y LISTA DE TABLAS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\phantomsection
+\addcontentsline{toc}{section}{Lista de figuras}
+\listoffigures
+
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{Lista de tablas}
+\listoftables
+
+\clearpage

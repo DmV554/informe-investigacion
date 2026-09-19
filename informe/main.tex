@@ -1,0 +1,764 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%% ------------------------------ %%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%% | Formato escuela - INF PUCV | %%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%% | by Sebastian Garcia        | %%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%% | @sebaignacioo              | %%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%% |            2023            | %%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%% ------------------------------ %%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  TRABAJO DE INVESTIGACIÓN 2026 · ICI-5444
+%  Empresa 6 · TERABYTE · Tema TI-05 · Serverless y computación en el borde
+%
+%  ARCHIVO ÚNICO. Todo el informe vive en este main.tex, en el orden
+%  definitivo acordado por el equipo (ver TERABYTE-TI05-Guia-del-equipo.md).
+%  Cada bloque lleva en un comentario: responsable, presupuesto de
+%  extensión y recordatorios de las Indicaciones (FEP00.3.26).
+%
+%  Buscar "%% >>>" para saltar de bloque en bloque.
+%  Buscar "TODO" para ver lo que falta.
+%
+%  Preámbulo, clase y estilos sin cambios respecto de la plantilla.
+%  La versión anterior (un .tex por sección) quedó en _legacy/.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[12pt, letterpaper, table, xcdraw]{inf-pucv}
+
+\usepackage{import}
+\usepackage{styles}
+\usepackage{subcaption}
+
+\renewcommand{\cftdotsep}{4}
+\renewcommand{\cftfigpresnum}{\bfseries Figura }
+\cftsetindents{figure}{0em}{5.5em}
+\renewcommand{\cfttabpresnum}{\bfseries Tabla }
+\cftsetindents{table}{0em}{5.5em}
+\setlength{\parindent}{1cm}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% >>> ÍNDICE DE BLOQUES (orden definitivo)
+%%
+%%   Portada e índice general
+%%   Resumen ejecutivo ........................... Daniel
+%%   Introducción y contexto ..................... Daniel   (cierra con párrafo de aporte)
+%%   1  Marco teórico y conceptual ............... Matías
+%%   2  Desarrollo y análisis técnico
+%%      2.1 Modelos de ejecución y aislamiento ... Matías
+%%      2.2 Arranque en frío ..................... Isidora
+%%      2.3 Facturación y punto de equilibrio .... Francisca
+%%      2.4 Diseño orientado a eventos ........... Valentina
+%%      2.5 WebAssembly y WASI ................... Isidora
+%%      2.6 Límites y dependencia del proveedor .. Fabián
+%%   3  Análisis comparativo de tecnologías y productos
+%%      3.1 Alternativas adicionales ............. Claudio y Daniel
+%%      3.2 Criterios y cuadro comparativo ....... Valentina (criterios), Rodolfo (AWS/Azure,
+%%                                                  consolida), Claudio y Daniel (resto)
+%%   4  Caso de estudio e implementación práctica
+%%      4.1 Prueba de concepto ................... Vicente
+%%      4.2 Modelo de costos ..................... Francisca
+%%      4.3 Caso de licitación TERABYTE .......... Fabián
+%%   5  Tendencias y riesgos ..................... Fabián
+%%   Conclusiones y recomendación ................ todo el grupo
+%%   Bibliografía ................................ todos (>= 10 académicas + técnicas)
+%%   Anexo A  Declaración de uso de IA ........... Daniel recopila; cada uno declara lo suyo
+%%   Anexo B  Código y mediciones de la PoC ...... Vicente
+%%   Anexo C  Planilla del modelo de costos ...... Francisca
+%%   Anexo D  Búsqueda documentada de alternativas Claudio y Daniel
+%%   Documento adjunto: cuestionario ............. todos (3-4 preguntas c/u); Daniel arma índice
+%%
+%% Presupuesto total del cuerpo (resumen -> conclusiones): 10 a 15 páginas.
+%% Referencia: 1 página de texto corrido ~ 450 palabras.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% >>> PORTADA
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\thispagestyle{empty}
+\pagenumbering{gobble}
+
+\begin{center}
+    \membrete{%
+        PONTIFICIA UNIVERSIDAD CATÓLICA DE VALPARAÍSO\\
+        FACULTAD DE INGENIERÍA\\
+        ESCUELA DE INGENIERÍA INFORMÁTICA\\
+    }
+
+    \vspace*{3.5cm}
+
+    \tituloPortada{%
+        Serverless y computación \\
+        en el borde
+    }
+
+    \vspace*{2.5cm}
+
+    \alumnos{%
+        Francisca Antonia Abarca Pezo\\
+        Vicente André Arratia Caroca\\
+        Isidora Valentina Cisternas Cisternas\\
+        Rodolfo Antonio Fernández Vera\\
+        Valentina Ignacia Guzmán Elgueta\\
+        Daniel Ignacio Miranda Vázquez\\
+        Matias Ignacio Reyes Pizarro\\
+        Fabián Andres Solís Piñones\\
+        Claudio Patricio Toledo Mac-lean\\
+    }
+
+    \vspace*{1.4cm}
+
+    \datosPortada{%
+        \datoPortada{Empresa}{N.\textordmasculine\ 6 --- TERABYTE}
+        \datoPortada{Tema}{TI-05}
+        \datoPortada{Asignatura}{Taller de Formulación de Proyectos Informáticos}
+        \datoPortada{Fecha de entrega}{21 de septiembre de 2026}
+    }
+
+    \vspace*{1.2cm}
+
+    \fechaPortada{Septiembre de 2026}
+\end{center}
+
+\clearpage
+
+%% >>> ÍNDICE GENERAL
+\tableofcontents
+\clearpage
+
+%% Listas de figuras y tablas: PENDIENTE de decisión del equipo.
+%% Descomentar si se decide incluirlas.
+% \phantomsection
+% \addcontentsline{toc}{section}{Lista de figuras}
+% \listoffigures
+% \clearpage
+% \phantomsection
+% \addcontentsline{toc}{section}{Lista de tablas}
+% \listoftables
+% \clearpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% >>> RESUMEN EJECUTIVO                                  Responsable: Daniel
+%% Presupuesto: 0,5 página / ~200 palabras. Se escribe AL FINAL.
+%% Contenido: qué se comparó, resultado principal (volumen de equilibrio,
+%% latencia medida), recomendación en una frase. Sin contexto ni definiciones.
+%% IA: solo corrección de estilo (nivel 1), declarada en Anexo A.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\phantomsection
+\addcontentsline{toc}{section}{Resumen ejecutivo}
+\section*{Resumen ejecutivo}
+
+% TODO (Daniel)
+
+\clearpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% >>> INTRODUCCIÓN Y CONTEXTO                            Responsable: Daniel
+%% Presupuesto: 0,75 página / ~350 palabras. Se escribe AL FINAL.
+%% Contenido: el problema (serverless/edge vs. always-on en costo, latencia y
+%% complejidad operacional), el proyecto de licitación de TERABYTE como caso,
+%% cómo se organiza el informe. Sin historia del cloud.
+%%
+%% PÁRRAFO FINAL OBLIGATORIO (punto 4 Indicaciones): distinguir qué viene de
+%% la ficha TI-05 y qué es aporte del grupo. Enumerar: alternativas
+%% adicionales (3.1), PoC con mediciones propias (4.1), aplicación al caso
+%% TERABYTE (4.3), riesgos y evidencia contradictoria (5), recomendación
+%% comprometida. El profesor usa este párrafo para evaluar el análisis crítico.
+%% IA: prohibida en el párrafo de aporte (punto 6.1).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\phantomsection
+\addcontentsline{toc}{section}{Introducción y contexto}
+\section*{Introducción y contexto}
+
+% TODO (Daniel): cuerpo de la introducción.
+
+% TODO (Daniel): párrafo de identificación del aporte (va aquí, al cierre).
+
+\clearpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% >>> 1. MARCO TEÓRICO Y CONCEPTUAL                      Responsable: Matías
+%% Presupuesto: máximo 1 página / ~450 palabras.
+%% Contenido: definiciones mínimas para leer el capítulo 2: serverless (qué es
+%% y qué no es), FaaS, contenedores sin servidor, edge computing, instancia
+%% siempre encendida, y las tres dimensiones de comparación (costo, latencia,
+%% complejidad operacional). Fuentes: CNCF, papers, docs oficiales.
+%% No explicar qué es un contenedor, una VM o la nube.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Marco teórico y conceptual}
+
+% TODO (Matías)
+
+\clearpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% >>> 2. DESARROLLO Y ANÁLISIS TÉCNICO
+%% Seis subtemas obligatorios de la ficha TI-05.
+%% Presupuesto: 0,75 página / 300-350 palabras POR SUBSECCIÓN.
+%% Estructura sugerida de cada subsección (tres párrafos):
+%%   1) el concepto, con fuente;
+%%   2) cómo se comporta en cada modelo (FaaS / contenedor serverless / edge /
+%%      always-on), con fuente;
+%%   3) "cuándo conviene": la conclusión comparativa del subtema.
+%% Nada de descripciones de productos, capturas ni listas de características.
+%% Los precios NO se buscan aquí: se citan desde la Tabla 3.2.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Desarrollo y análisis técnico}
+
+%% ---------------------------------------------------------------------------
+%% 2.1                                                    Responsable: Matías
+%% FaaS, contenedores sin servidor y entornos de borde; aislamientos V8
+%% isolates (Cloudflare), microVM Firecracker (AWS), contenedores / gVisor
+%% (Google). Docs oficiales y papers. Candidatos "otros" de FaaS y
+%% contenedores serverless -> pasar a Claudio y Daniel (3.1).
+%% ---------------------------------------------------------------------------
+\subsection{Modelos de ejecución y aislamiento}
+
+% TODO (Matías)
+
+%% ---------------------------------------------------------------------------
+%% 2.2                                                    Responsable: Isidora
+%% Causas (carga del entorno, init del runtime, aislamiento), medición,
+%% mitigaciones (concurrencia aprovisionada, instantáneas/SnapStart, entornos
+%% livianos, min instances). Cierra citando los resultados propios:
+%% "las mediciones del grupo (sección 4.1) ..." -> \ref{sec:poc}.
+%% ---------------------------------------------------------------------------
+\subsection{Arranque en frío: causas, medición y mitigaciones}
+
+% TODO (Isidora)
+
+%% ---------------------------------------------------------------------------
+%% 2.3                                                    Responsable: Francisca
+%% GB-segundo, vCPU-segundo, tiempo de CPU vs. tiempo de reloj, número de
+%% invocaciones, salida de datos (egress); concepto de punto de equilibrio
+%% frente a instancias reservadas / contenedores siempre encendidos.
+%% El cálculo numérico va en 4.2 (\ref{sec:costos}); aquí los conceptos y
+%% variables. Toda cifra que aparezca se toma de la Tabla 3.2 con su fecha.
+%% ---------------------------------------------------------------------------
+\subsection{Facturación por consumo y punto de equilibrio}
+
+% TODO (Francisca)
+
+%% ---------------------------------------------------------------------------
+%% 2.4                                                    Responsable: Valentina
+%% Colas, publicación/suscripción, idempotencia, entrega al menos una vez,
+%% orquestación frente a coreografía. Aquí también se discute la complejidad
+%% operacional (observabilidad, depuración distribuida). Candidatos "otros"
+%% de datos serverless -> pasar a Claudio y Daniel (3.1).
+%% ---------------------------------------------------------------------------
+\subsection{Diseño orientado a eventos}
+
+% TODO (Valentina)
+
+%% ---------------------------------------------------------------------------
+%% 2.5                                                    Responsable: Isidora
+%% Portabilidad, aislamiento y arranque submilisegundo. WASI desde W3C /
+%% Bytecode Alliance; Fermyon Spin / SpinKube, wasmCloud, Wasmtime.
+%% Candidatos "otros" de edge y open source -> pasar a Claudio y Daniel (3.1).
+%% ---------------------------------------------------------------------------
+\subsection{WebAssembly y WASI como entorno de borde}
+
+% TODO (Isidora)
+
+%% ---------------------------------------------------------------------------
+%% 2.6                                                    Responsable: Fabián
+%% Tiempos máximos de ejecución, tamaño de carga útil, manejo de estado,
+%% estrategias de portabilidad, lock-in. Se apoya en la Tabla 3.2 (límites)
+%% y en las alternativas open source de 3.1 (referencias cruzadas).
+%% ---------------------------------------------------------------------------
+\subsection{Límites técnicos y dependencia del proveedor}
+
+% TODO (Fabián)
+
+\clearpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% >>> 3. ANÁLISIS COMPARATIVO DE TECNOLOGÍAS Y PRODUCTOS
+%% Entregable de la ficha: cuadro comparativo de al menos 6 plataformas con
+%% sus límites técnicos. Aquí se levantan TODOS los precios del informe.
+%% IA: prohibida en el análisis comparativo y la justificación de criterios
+%% (punto 6.1).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Análisis comparativo de tecnologías y productos}
+
+%% ---------------------------------------------------------------------------
+%% 3.1                                          Responsables: Claudio y Daniel
+%% Presupuesto: 0,75 página / ~300 palabras + tabla.
+%% OBLIGATORIO (punto 4): la fila "Tecnologías, productos y proveedores a
+%% comparar" de la ficha tiene CINCO listas que terminan en "y otros que el
+%% grupo debe identificar". Por cada lista: al menos DOS alternativas que no
+%% figuren, con qué aportan y por qué merecen entrar en la comparación. Si
+%% para alguna lista no hay más, declararlo expresamente y documentar la
+%% búsqueda (fuentes, criterios de descarte, fecha) -> detalle en Anexo D.
+%% Las que califiquen entran como filas de la Tabla 3.2.
+%% Listas: FaaS · contenedores sin servidor · cómputo en el borde · código
+%% abierto · datos sin servidor.
+%% ---------------------------------------------------------------------------
+\subsection{Alternativas adicionales}
+\label{sec:alternativas}
+
+% TODO (Claudio y Daniel): dos párrafos + tabla.
+
+\tabla{Alternativas adicionales incorporadas a la comparación}{alternativas-adicionales}{|p{3.2cm}|p{3.4cm}|p{7.2cm}|}{%
+    \filaTabla{\textbf{Lista de la ficha} & \textbf{Alternativa} & \textbf{Qué aporta a la comparación}}
+    \filaTabla{Funciones como servicio & & }
+    \filaTabla{Funciones como servicio & & }
+    \filaTabla{Contenedores sin servidor & & }
+    \filaTabla{Contenedores sin servidor & & }
+    \filaTabla{Cómputo en el borde & & }
+    \filaTabla{Cómputo en el borde & & }
+    \filaTabla{Código abierto & & }
+    \filaTabla{Código abierto & & }
+    \filaTabla{Datos sin servidor & & }
+    \filaTabla{Datos sin servidor & & }
+}
+
+%% ---------------------------------------------------------------------------
+%% 3.2                     Responsables: Valentina (criterios), Rodolfo (AWS y
+%%                         Azure; consolida y escribe el análisis), Claudio y
+%%                         Daniel (Google, Cloudflare, Fastly, Deno/Vercel/
+%%                         Netlify, open source).
+%% Presupuesto: 1,25 página / ~250 palabras + tabla (idealmente en una página
+%% horizontal: ver \begin{landscape} si hace falta, paquete pdflscape).
+%% Criterios: costo, latencia, complejidad operacional (las tres dimensiones
+%% del alcance de la ficha), justificados en un párrafo + tabla chica.
+%% Cuadro: mínimo 6 plataformas de más de una categoría + las alternativas
+%% de 3.1 que califiquen. Columnas de límites y de precio.
+%% PRECIOS (punto 5): producto, moneda, región, fecha de consulta, lista o
+%% cotización. Verificados en la calculadora oficial. Sin fecha no vale.
+%% "Solo por cotización" si el proveedor no publica precio.
+%% ---------------------------------------------------------------------------
+\subsection{Criterios y cuadro comparativo de plataformas}
+\label{sec:cuadro}
+
+% TODO (Valentina): párrafo de criterios + tabla de criterios.
+
+\tabla{Criterios de comparación}{criterios}{|p{3.2cm}|p{5.2cm}|p{5.4cm}|}{%
+    \filaTabla{\textbf{Criterio} & \textbf{Por qué importa} & \textbf{Cómo se mide en el cuadro}}
+    \filaTabla{Costo & & }
+    \filaTabla{Latencia & & }
+    \filaTabla{Complejidad operacional & & }
+}
+
+% TODO (Rodolfo, Claudio y Daniel): completar filas. Agregar o borrar según
+% las plataformas finales. Consolidación: Rodolfo.
+
+\tabla{Cuadro comparativo de plataformas serverless y de borde}{cuadro-comparativo}{|p{2.4cm}|p{1.8cm}|p{1.6cm}|p{1.6cm}|p{1.8cm}|p{2.6cm}|p{2.2cm}|}{%
+    \filaTabla{\textbf{Plataforma} & \textbf{Categoría} & \textbf{Tiempo máx.} & \textbf{Payload máx.} & \textbf{Estado / persistencia} & \textbf{Precio de lista (unidad, moneda, región, fecha)} & \textbf{Otros límites}}
+    \filaTabla{AWS Lambda & FaaS & & & & & }
+    \filaTabla{Google Cloud Run functions & FaaS & & & & & }
+    \filaTabla{Azure Functions & FaaS & & & & & }
+    \filaTabla{Google Cloud Run & Contenedor serverless & & & & & }
+    \filaTabla{AWS Fargate & Contenedor serverless & & & & & }
+    \filaTabla{Azure Container Apps & Contenedor serverless & & & & & }
+    \filaTabla{Cloudflare Workers & Edge & & & & & }
+    \filaTabla{Fastly Compute & Edge & & & & & }
+    \filaTabla{AWS Lambda@Edge / CloudFront Functions & Edge & & & & & }
+    \filaTabla{Deno Deploy & Edge & & & & & }
+    \filaTabla{Knative / OpenFaaS & Código abierto & & & & & }
+    \filaTabla{Fermyon Spin / SpinKube & Código abierto (Wasm) & & & & & }
+    \filaTabla{\textit{(alternativa adicional)} & & & & & & }
+    \filaTabla{\textit{(alternativa adicional)} & & & & & & }
+}
+
+% TODO (Rodolfo): dos párrafos de análisis del cuadro. Comparaciones no
+% evidentes valen más que la lectura literal de la tabla.
+
+\clearpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% >>> 4. CASO DE ESTUDIO E IMPLEMENTACIÓN PRÁCTICA
+%% Dos entregables de la ficha (PoC y modelo de costos) más la aplicación al
+%% caso de licitación. Los tres comparten escenario: la PoC corre en
+%% plataformas que están en la Tabla 3.2; el modelo cotiza una de esas
+%% plataformas con los precios de la Tabla 3.2; el caso TERABYTE usa el
+%% punto de equilibrio de 4.2 y la latencia de 4.1.
+%% Esto es el "caso práctico" del 70 % de la nota.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Caso de estudio e implementación práctica}
+
+%% ---------------------------------------------------------------------------
+%% 4.1                                                    Responsable: Vicente
+%% Presupuesto: 1,25 página / ~350 palabras + 1 gráfico + 1 tabla resumen.
+%% Ficha: "prueba de concepto documentada (código y mediciones) de arranque
+%% en frío y latencia, O BIEN análisis de mediciones publicadas con su
+%% metodología". Se hace la propia: función trivial en 2 o 3 plataformas de
+%% la Tabla 3.2 (Lambda, Cloud Run, Cloudflare Workers; free tier), script
+%% que mide cold start vs. warm, N invocaciones, misma región si es posible.
+%% En el cuerpo: metodología (1 párrafo), gráfico, tabla resumen (p50/p95
+%% cold y warm por plataforma), interpretación y limitaciones.
+%% Código, paso a paso y datos crudos -> Anexo B. Código auxiliar generado
+%% con IA se identifica como tal y se declara.
+%% ---------------------------------------------------------------------------
+\subsection{Prueba de concepto: arranque en frío y latencia}
+\label{sec:poc}
+
+% TODO (Vicente): metodología.
+
+% \imagen{assets/images/poc-coldstart.png}{Latencia de arranque en frío y en caliente por plataforma}{fig:poc}
+
+\tabla{Resumen de mediciones de la prueba de concepto}{poc-resumen}{|p{3cm}|p{2.2cm}|p{2.2cm}|p{2.2cm}|p{2.2cm}|p{2.4cm}|}{%
+    \filaTabla{\textbf{Plataforma} & \textbf{Cold p50 (ms)} & \textbf{Cold p95 (ms)} & \textbf{Warm p50 (ms)} & \textbf{Warm p95 (ms)} & \textbf{N / región / fecha}}
+    \filaTabla{ & & & & & }
+    \filaTabla{ & & & & & }
+    \filaTabla{ & & & & & }
+}
+
+% TODO (Vicente): interpretación y limitaciones.
+
+%% ---------------------------------------------------------------------------
+%% 4.2                                                    Responsable: Francisca
+%% Presupuesto: 1 página / ~300 palabras + tabla de supuestos + 1 gráfico.
+%% Ficha: "modelo de costos que compare una arquitectura sin servidor con una
+%% de contenedores siempre encendidos, identificando el volumen de
+%% equilibrio en solicitudes por mes".
+%% En el cuerpo: supuestos (duración media, memoria, egress, tamaño de
+%% respuesta, escenarios de carga), gráfico costo mensual vs. solicitudes/mes
+%% con las dos curvas y el cruce, el número de equilibrio.
+%% Planilla completa -> Anexo C. Precios: solo los de la Tabla 3.2.
+%% ---------------------------------------------------------------------------
+\subsection{Modelo de costos y volumen de equilibrio}
+\label{sec:costos}
+
+% TODO (Francisca)
+
+\tabla{Supuestos del modelo de costos}{supuestos-costos}{|p{5cm}|p{3.5cm}|p{5.5cm}|}{%
+    \filaTabla{\textbf{Variable} & \textbf{Valor} & \textbf{Fuente / justificación}}
+    \filaTabla{Duración media por solicitud (ms) & & }
+    \filaTabla{Memoria asignada (MB) & & }
+    \filaTabla{Tamaño medio de respuesta (KB) & & }
+    \filaTabla{Plataforma serverless cotizada & & Tabla \ref{tab:cuadro-comparativo}}
+    \filaTabla{Configuración always-on cotizada & & }
+    \filaTabla{Región y fecha de precios & & }
+}
+
+% \imagen{assets/images/punto-equilibrio.png}{Costo mensual en función del volumen de solicitudes: serverless frente a contenedores siempre encendidos}{fig:equilibrio}
+
+%% ---------------------------------------------------------------------------
+%% 4.3                                                    Responsable: Fabián
+%% Presupuesto: 0,75 página / ~350 palabras.
+%% "Aplicación concreta al caso de licitación del propio grupo" (punto 4, lo
+%% que se valora) + "Vínculo con la propuesta técnico-económica" de la ficha:
+%% paso de CAPEX a OPEX puro y el riesgo de una factura que crece con el
+%% éxito del sistema. Usar el volumen estimado del proyecto TERABYTE, el
+%% punto de equilibrio de 4.2 y la latencia de 4.1 para decir qué modelo
+%% conviene y cómo se refleja en la propuesta. No redescribir el proyecto.
+%% ---------------------------------------------------------------------------
+\subsection{Aplicación al caso de licitación de TERABYTE}
+\label{sec:caso}
+
+% TODO (Fabián)
+
+\clearpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% >>> 5. TENDENCIAS Y RIESGOS                            Responsable: Fabián
+%% Presupuesto: 1 página / ~450 palabras.
+%% Sección exigida por las Pautas del curso ("Tendencias y evolución
+%% futura"), escrita con el criterio de las Indicaciones ("evidencia
+%% contradictoria bien tratada"). Cada tendencia va con su contraevidencia.
+%% Máximo dos casos públicos de equipos que abandonaron serverless por costo
+%% o complejidad, verificados en la fuente original (blogs de ingeniería:
+%% admisibles declarándolo). Ninguna frase sin fuente.
+%% IA: prohibida en la discusión crítica de la evidencia (punto 6.1).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Tendencias y riesgos}
+
+% TODO (Fabián)
+
+\clearpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% >>> CONCLUSIONES Y RECOMENDACIÓN                       Responsable: todo el grupo
+%% Presupuesto: 1 página / ~450 palabras.
+%% Responder literalmente la pregunta de la ficha: en qué condiciones de
+%% carga conviene cada modelo (FaaS, contenedor serverless, edge, always-on)
+%% en costo, latencia y complejidad operacional. Terminar con UNA
+%% recomendación con la que el grupo se compromete (punto 4).
+%% No resumir el informe.
+%% IA: prohibida (punto 6.1). Todos deben poder defenderla oralmente.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\phantomsection
+\addcontentsline{toc}{section}{Conclusiones y recomendación}
+\section*{Conclusiones y recomendación}
+
+% TODO (grupo)
+
+\clearpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% >>> BIBLIOGRAFÍA                                       Responsable: todos
+%% Entradas en referencias.bib; citar con \parencite{clave}.
+%% Mínimo 10 fuentes académicas (papers revisados por pares, libros,
+%% estándares) + fuentes técnicas (docs oficiales). Cada uno aporta 1 o 2
+%% académicas de su sección.
+%% Preferentes: docs oficiales, NIST/ISO/IETF/CNCF/OWASP/ASF, papers,
+%% bibliotecas PUCV. Admisibles declarándolo: informes de industria (muestra
+%% y metodología), blogs de ingeniería. NO admisibles como primarias:
+%% comparativas de un proveedor sobre su categoría, sin autor, agregadores.
+%% Toda referencia se abre y verifica en el original. Referencia inexistente
+%% = error grave. Entradas con precios: incluir región y fecha de consulta
+%% (campo note o urldate).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\phantomsection
+\addcontentsline{toc}{section}{Bibliografía}
+\printbibliography[title={Bibliografía}]
+
+\clearpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% >>> ANEXO A. DECLARACIÓN DE USO DE INTELIGENCIA ARTIFICIAL
+%%                                          Responsable: Daniel recopila;
+%%                                          cada integrante declara lo suyo.
+%% OBLIGATORIO aunque todos declaren nivel 0 (punto 6.3). Sin este anexo el
+%% informe no se recibe conforme. Prevalece sobre la lámina de Pautas que
+%% decía "Anexos (opcional)".
+%% Numeración A1, A2, ...
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\renewcommand{\thepage}{\hspace*{1em}A\arabic{page}}
+
+\phantomsection
+\addcontentsline{toc}{section}{Anexo A: Declaración de uso de inteligencia artificial}
+\section*{Anexo A: Declaración de uso de inteligencia artificial}
+
+\textoPortadaFont{\textbf{Empresa:} N.\textordmasculine\ 6 --- TERABYTE\\}
+\textoPortadaFont{\textbf{Tema:} TI-05 --- Serverless y computación en el borde (edge computing)\\}
+\textoPortadaFont{\textbf{Fecha:} 21 de septiembre de 2026\\}
+
+\bigskip
+
+\subsection*{A. Declaración por sección}
+
+%% Niveles (punto 6.2): 0 sin IA · 1 corrección y estilo · 2 colaboración e
+%% ideación (esquemas, resumen de bibliografía, código de apoyo) · 3
+%% generación sustancial. Niveles 2 y 3 exigen prompts (B) y evidencia (C).
+%% Secciones donde NO se admite IA (punto 6.1): análisis comparativo y
+%% criterios (3.2), conclusiones, párrafo de aporte, discusión crítica (5),
+%% cuestionario, y cualquier cifra, cita o referencia.
+%% La tabla incluye el cuestionario y la presentación porque el formulario
+%% oficial los lista como filas.
+
+{\scriptsize
+\begin{longtable}{|p{5.6cm}|p{1.6cm}|p{3.4cm}|p{4.3cm}|}
+    \hline
+    \textbf{Sección del informe} & \textbf{Nivel (0-3)} & \textbf{Herramienta y versión} & \textbf{Evidencia adjunta (niveles 2 y 3)} \\
+    \hline
+    \endhead
+    Resumen ejecutivo & & & \\ \hline
+    Introducción y contexto (incl. párrafo de aporte) & & & \\ \hline
+    1. Marco teórico y conceptual & & & \\ \hline
+    2.1 Modelos de ejecución y aislamiento & & & \\ \hline
+    2.2 Arranque en frío & & & \\ \hline
+    2.3 Facturación por consumo y punto de equilibrio & & & \\ \hline
+    2.4 Diseño orientado a eventos & & & \\ \hline
+    2.5 WebAssembly y WASI & & & \\ \hline
+    2.6 Límites técnicos y dependencia del proveedor & & & \\ \hline
+    3.1 Alternativas adicionales & & & \\ \hline
+    3.2 Criterios y cuadro comparativo & & & \\ \hline
+    4.1 Prueba de concepto (incl. código auxiliar) & & & \\ \hline
+    4.2 Modelo de costos & & & \\ \hline
+    4.3 Aplicación al caso TERABYTE & & & \\ \hline
+    5. Tendencias y riesgos & & & \\ \hline
+    Conclusiones y recomendación & & & \\ \hline
+    Bibliografía & & & \\ \hline
+    Cuestionario de 30 preguntas & & & \\ \hline
+    Presentación (diapositivas) & & & \\ \hline
+\end{longtable}
+}
+
+\subsection*{B. Prompts utilizados (niveles 2 y 3)}
+
+% TODO: transcribir los prompts efectivamente empleados, indicando sección.
+% Si son muchos, hoja adjunta identificada o enlace.
+
+\subsection*{C. Evidencia trazable adjunta (niveles 2 y 3)}
+
+% TODO: enlaces a conversaciones exportadas + historial de versiones
+% (Overleaf History / Google Docs / repositorio con commits). Verificar que
+% el profesor pueda acceder.
+
+\subsection*{D. Firma de los integrantes}
+
+%% Texto del formulario oficial: "Declaro que la información consignada en
+%% este formulario es completa y veraz, que las secciones señaladas en el
+%% punto 6.1 de las indicaciones son de autoría humana y que puedo explicar
+%% oralmente cualquier parte del trabajo entregado."
+%% Cada integrante completa su fila. Nadie firma por otro.
+
+Declaro que la información consignada en este formulario es completa y veraz, que las secciones señaladas en el punto 6.1 de las indicaciones son de autoría humana y que puedo explicar oralmente cualquier parte del trabajo entregado.
+
+{\scriptsize
+\begin{longtable}{|p{0.8cm}|p{6.2cm}|p{3.8cm}|p{4.1cm}|}
+    \hline
+    \textbf{N.\textordmasculine} & \textbf{Nombre completo} & \textbf{Nivel máximo declarado} & \textbf{Firma} \\
+    \hline
+    \endhead
+    1 & Francisca Antonia Abarca Pezo & & \\ \hline
+    2 & Vicente André Arratia Caroca & & \\ \hline
+    3 & Isidora Valentina Cisternas Cisternas & & \\ \hline
+    4 & Rodolfo Antonio Fernández Vera & & \\ \hline
+    5 & Valentina Ignacia Guzmán Elgueta & & \\ \hline
+    6 & Daniel Ignacio Miranda Vázquez & & \\ \hline
+    7 & Matias Ignacio Reyes Pizarro & & \\ \hline
+    8 & Fabián Andres Solís Piñones & & \\ \hline
+    9 & Claudio Patricio Toledo Mac-lean & & \\ \hline
+\end{longtable}
+}
+
+\clearpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% >>> ANEXO B. CÓDIGO Y MEDICIONES DE LA PRUEBA DE CONCEPTO   Responsable: Vicente
+%% Código de la función y del script de medición (entorno minted, ya cargado
+%% por la clase; Overleaf debe compilar con -shell-escape), paso a paso de
+%% despliegue, tabla de datos crudos o enlace al repositorio.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\phantomsection
+\addcontentsline{toc}{section}{Anexo B: Código y mediciones de la prueba de concepto}
+\section*{Anexo B: Código y mediciones de la prueba de concepto}
+
+% TODO (Vicente)
+% \begin{minted}{python}
+% ...
+% \end{minted}
+
+\clearpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% >>> ANEXO C. PLANILLA DEL MODELO DE COSTOS               Responsable: Francisca
+%% Tabla completa por escenario de carga (por ejemplo 10 mil, 100 mil, 1
+%% millón y 10 millones de solicitudes/mes), fórmulas, y la cita de cada
+%% precio con producto, moneda, región, fecha y tipo. Puede ir como tabla
+%% LaTeX o como PDF externo (\pdfExterno{assets/pdf/...}{...}{...}).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\phantomsection
+\addcontentsline{toc}{section}{Anexo C: Planilla del modelo de costos}
+\section*{Anexo C: Planilla del modelo de costos}
+
+% TODO (Francisca)
+
+\clearpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% >>> ANEXO D. BÚSQUEDA DOCUMENTADA DE ALTERNATIVAS   Responsables: Claudio y Daniel
+%% Punto 4, "Declaración cuando no hay más": por cada una de las cinco
+%% listas, fuentes consultadas, criterios de inclusión y descarte, fecha, y
+%% candidatos descartados con su motivo (por ejemplo, producto descontinuado).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\phantomsection
+\addcontentsline{toc}{section}{Anexo D: Búsqueda documentada de alternativas}
+\section*{Anexo D: Búsqueda documentada de alternativas}
+
+% TODO (Claudio y Daniel)
+
+\tabla{Búsqueda de alternativas por lista de la ficha}{busqueda-alternativas}{|p{2.8cm}|p{3.6cm}|p{3.2cm}|p{2.6cm}|p{1.8cm}|}{%
+    \filaTabla{\textbf{Lista} & \textbf{Fuentes consultadas} & \textbf{Criterios de inclusión / descarte} & \textbf{Descartadas (motivo)} & \textbf{Fecha}}
+    \filaTabla{Funciones como servicio & & & & }
+    \filaTabla{Contenedores sin servidor & & & & }
+    \filaTabla{Cómputo en el borde & & & & }
+    \filaTabla{Código abierto & & & & }
+    \filaTabla{Datos sin servidor & & & & }
+}
+
+\clearpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% >>> DOCUMENTO ADJUNTO: CUESTIONARIO DE 30 PREGUNTAS
+%%                              Responsable: todos (3-4 c/u); Daniel arma el
+%%                              índice temático y ajusta la proporción.
+%% Punto 3 de las Indicaciones:
+%%   - 30 preguntas; formatos mezclados: selección múltiple, V/F, completar,
+%%     respuesta corta;
+%%   - cada una con respuesta correcta y breve justificación;
+%%   - teoría y práctica; comprensión, aplicación y análisis crítico;
+%%   - dificultad: 12 básicas, 12 intermedias, 6 avanzadas (40/40/20);
+%%   - índice temático por sección del informe.
+%% Redacción 100 % humana (punto 6.1). Numeración B1, B2, ...
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\renewcommand{\thepage}{\hspace*{1em}B\arabic{page}}
+
+\phantomsection
+\addcontentsline{toc}{section}{Documento adjunto: Cuestionario de evaluación de conocimientos}
+\section*{Documento adjunto: Cuestionario de evaluación de conocimientos}
+
+\subsection*{Índice temático}
+
+% TODO (Daniel): completar cantidades y rangos; deben sumar 30 y cumplir
+% 12 / 12 / 6 por dificultad.
+
+{\scriptsize
+\begin{longtable}{|p{6.5cm}|p{1.6cm}|p{1.6cm}|p{1.6cm}|p{1.6cm}|p{1.6cm}|}
+    \hline
+    \textbf{Sección del informe} & \textbf{Básicas} & \textbf{Interm.} & \textbf{Avanz.} & \textbf{Total} & \textbf{Rango} \\
+    \hline
+    \endhead
+    1. Marco teórico y conceptual & & & & & \\ \hline
+    2.1 Modelos de ejecución y aislamiento & & & & & \\ \hline
+    2.2 Arranque en frío & & & & & \\ \hline
+    2.3 Facturación por consumo y punto de equilibrio & & & & & \\ \hline
+    2.4 Diseño orientado a eventos & & & & & \\ \hline
+    2.5 WebAssembly y WASI & & & & & \\ \hline
+    2.6 Límites técnicos y dependencia del proveedor & & & & & \\ \hline
+    3. Análisis comparativo & & & & & \\ \hline
+    4.1 Prueba de concepto & & & & & \\ \hline
+    4.2 Modelo de costos & & & & & \\ \hline
+    4.3 Caso TERABYTE & & & & & \\ \hline
+    5. Tendencias y riesgos & & & & & \\ \hline
+    \textbf{Total} & \textbf{12} & \textbf{12} & \textbf{6} & \textbf{30} & 1--30 \\ \hline
+\end{longtable}
+}
+
+\subsection*{Preguntas}
+
+%% Formato sugerido para cada pregunta (no hay macro en la clase):
+%%
+%% \textbf{P1 --- Básica --- Selección múltiple --- Sección 2.1.}
+%% Enunciado. \\
+%% a) ... \quad b) ... \quad c) ... \quad d) ... \\
+%% \textit{Respuesta:} b. \textit{Justificación:} una o dos frases.
+%%
+%% Agrupar por sección de origen, en el mismo orden del índice temático.
+
+% TODO (todos)
+
+\clearpage
+
+\end{document}

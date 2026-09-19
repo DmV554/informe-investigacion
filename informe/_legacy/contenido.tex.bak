@@ -1,0 +1,300 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%% ------------------------------ %%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%% | CONTENIDO UNIFICADO        | %%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%% | Formato escuela - INF PUCV | %%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%% ------------------------------ %%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Este archivo reemplaza a los 11 archivos originales:
+%    common/portada.tex
+%    content/(1)-indice.tex        content/(5)-conclusion.tex
+%    content/(2)-resumen.tex       content/(6)-bibliografia.tex
+%    content/(3)-listas.tex        content/(7)-anexos.tex
+%    content/(4)-introduccion.tex  content/secciones/1-descripcion.tex
+%    content/secciones/2-desarrollo.tex
+%    content/secciones/3-resultados.tex
+%
+%  El orden, los \clearpage, la numeración de páginas (gobble → Roman →
+%  arabic) y los \addcontentsline se conservan idénticos al original,
+%  de modo que el PDF resultante se ve exactamente igual.
+%
+%  ÍNDICE DE ESTE ARCHIVO — buscar el marcador para saltar:
+%    [P]  Portada
+%    [I]  Índice
+%    [R]  Resumen y palabras clave
+%    [L]  Lista de figuras y tablas
+%    [IN] Introducción
+%    [S1] Sección 1 — Descripción
+%    [S2] Sección 2 — Desarrollo
+%    [S3] Sección 3 — Resultados
+%    [C]  Conclusión
+%    [B]  Bibliografía
+%    [AN] Anexos
+%
+%  NOTA SOBRE LA BIBLIOGRAFÍA: la clase inf-pucv.cls declara
+%  \addbibresource{referencias.bib}. El archivo .bib debe llamarse
+%  exactamente así y estar en la raíz, junto a main.tex.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% [P] PORTADA
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\thispagestyle{empty}
+\pagenumbering{gobble}
+
+\begin{center}
+    \membrete{%
+        PONTIFICIA UNIVERSIDAD CATÓLICA DE VALPARAÍSO\\
+        FACULTAD DE INGENIERÍA\\
+        ESCUELA DE INGENIERÍA INFORMÁTICA\\
+    }
+
+    \vspace*{5cm}
+
+    % TODO: Completar título del trabajo
+    \tituloPortada{%
+        Serverless y computación \\
+        en el borde
+    }
+
+    \vspace*{3.5cm}
+
+    % TODO: Completar integrantes del grupo
+    \alumnos{%
+        Francisca Antonia Abarca Pezo\\
+        Vicente André Arratia Caroca\\
+        Isidora Valentina Cisternas Cisternas\\
+        Rodolfo Antonio Fernández Vera\\
+        Valentina Ignacia Guzmán Elgueta\\
+        Daniel Ignacio Miranda Vasquez?? tilde??\\
+        Matias Ignacio Reyes Pizarro\\
+        Fabián Andres Solís Piñones\\
+        Claudio Patricio Toledo Mc-lean??\\
+    }
+
+    \vspace*{1.8cm}
+
+    % TODO: Completar asignatura y fecha de entrega
+    \datosPortada{%
+        \datoPortada{Grupo}{Terabyte}
+        \datoPortada{Asignatura}{Taller de Formulación de Proyectos Informáticos}
+        \datoPortada{Fecha de entrega}{21 de septiembre de 2026}
+    }
+
+    \vspace*{2.0cm}
+
+    \fechaPortada{Septiembre de 2026}
+\end{center}
+
+\clearpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% [I] ÍNDICE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\tableofcontents
+
+\clearpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% [R] RESUMEN
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pagenumbering{Roman}
+\setcounter{page}{1}
+\phantomsection
+\addcontentsline{toc}{section}{Resumen}
+\section*{Resumen}
+
+% TODO: Completar sección
+\lipsum[1-3]
+
+% TODO: Completar palabras clave
+\phantomsection
+\addcontentsline{toc}{subsection}{Palabras clave}
+\palabrasClave{ejemplo, proyecto, investigación, desarrollo, análisis, implementación, diseño, programación, tecnología, innovación, ciencia, ingeniería, software, hardware, sistemas, automatización, control, robótica.}
+
+\clearpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% [L] LISTA DE FIGURAS Y LISTA DE TABLAS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\phantomsection
+\addcontentsline{toc}{section}{Lista de figuras}
+\listoffigures
+
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{Lista de tablas}
+\listoftables
+
+\clearpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% [IN] INTRODUCCIÓN
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\phantomsection
+\addcontentsline{toc}{section}{Introducción}
+\section*{Introducción}
+
+% TODO: Completar sección
+\lipsum[1-3]
+
+\clearpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% [S1] SECCIÓN 1 — DESCRIPCIÓN
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Descripción}
+\subsection{Descripción general}
+
+% TODO: Completar sección
+\lipsum[1-2]
+
+\subsection{Objetivos}
+\subsubsection{Objetivo general}
+
+% TODO: Completar sección
+\lipsum[1-2] \parencite{knuth1984texbook}
+
+\subsubsection{Objetivos específicos}
+
+% TODO: Completar sección
+\lipsum[1]
+\begin{enumerate}
+    \item \lipsum[1][1-2] \parencite{shannon1948mathematical}
+    \item \lipsum[1][1-2]
+    \item \lipsum[1][1-2] \parencite{lamport1994latex}
+    \item \lipsum[1][1-2]
+    \item \lipsum[1][1-2]
+\end{enumerate}
+
+\clearpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% [S2] SECCIÓN 2 — DESARROLLO
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Desarrollo}
+\subsection{Subdesarrollo 1}
+
+% TODO: Completar sección
+\lipsum[1-3] \parencite{knuth1978tex}
+
+\subsection{Diagrama de proceso de negocios}
+
+% TODO: Completar sección
+\imagen{assets/images/1.bpmn.png}{Diagrama de proceso de negocios}{figura1}
+
+\subsection{Subdesarrollo 2}
+
+% TODO: Completar sección
+\lipsum[1][1-3]
+\begin{enumerate}
+    \item \lipsum[1][1-2]
+    \item \lipsum[1][1-2] \parencite{goossens1997latex}
+    \item \lipsum[1][1-2]
+    \item \lipsum[1][1-2]
+\end{enumerate}
+
+\clearpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% [S3] SECCIÓN 3 — RESULTADOS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Resultados}
+\subsection{Descripción general}
+
+% TODO: Completar sección
+\lipsum[1-2] \parencite{turing1937computable}
+
+\tabla{Tabla de ejemplo}{tabla1}{|c|c|c|}{%
+    \filaTabla{\textbf{Columna 1} & \textbf{Columna 2} & \textbf{Columna 3}}
+    \filaTabla{10 & 5.6 & A}
+    \filaTabla{25 & 3.2 & B}
+    \filaTabla{8 & 7.1 & C}
+    \filaTabla{12 & 9.5 & D}
+    \filaTabla{20 & 2.3 & E}
+}
+
+\lipsum[1][1-8]
+
+\subsection{Análisis}
+
+% TODO: Completar sección
+\lipsum[1][1-6]
+\imagen{assets/images/1.bpmn.png}{Diagrama de proceso de negocios 2}{figura2}
+\lipsum[1][1-4]
+
+\clearpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% [C] CONCLUSIÓN
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\phantomsection
+\addcontentsline{toc}{section}{Conclusión}
+\section*{Conclusión}
+
+% TODO: Completar sección
+\lipsum[1][1-15]
+
+\lipsum[2][1-10]
+
+\lipsum[3][1-6]
+
+\lipsum[4][1-18]
+
+\clearpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% [B] BIBLIOGRAFÍA
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\phantomsection
+\addcontentsline{toc}{section}{Bibliografía}
+
+\printbibliography[title={Bibliografía}]
+
+\clearpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% [AN] ANEXOS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\renewcommand{\thepage}{\hspace*{1em}A\arabic{page}}
+
+\phantomsection
+\addcontentsline{toc}{section}{Anexos}
+
+% TODO: Cambiar anexo 1 por archivo definitivo
+\pdfExterno{Anexo 1: La percepción de la Inteligencia Artificial en contextos educativos tras el lanzamiento de ChatGPT: disrupción o pánico}{assets/pdf/1-ai-en-educacion.pdf}[1-9]
+
+\clearpage
