@@ -1,0 +1,9 @@
+plataforma,modo,estado,n,p50_ms,p95_ms,media_ms,min_ms,max_ms
+aws-lambda,forzado,caliente,125,434.3,486.5,440.2,359.1,541.4
+aws-lambda,forzado,frio,25,753.9,825.7,762.3,638.1,830.5
+cloudflare-workers,forzado,caliente,68,231.2,252.3,230.7,200.3,261.6
+cloudflare-workers,forzado,frio,82,230.9,244.1,230.5,198.6,260.2
+aws-lambda,todos,caliente,125,434.3,486.5,440.2,359.1,541.4
+aws-lambda,todos,frio,25,753.9,825.7,762.3,638.1,830.5
+cloudflare-workers,todos,caliente,68,231.2,252.3,230.7,200.3,261.6
+cloudflare-workers,todos,frio,82,230.9,244.1,230.5,198.6,260.2

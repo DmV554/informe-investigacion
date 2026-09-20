@@ -1,0 +1,42 @@
+{
+  "plataformas": {
+    "aws-lambda": {
+      "url": "https://q55mf7jh23vkposnhj27pc4vqm0zmjgi.lambda-url.us-east-1.on.aws/",
+      "region": "us-east-1",
+      "memoria_mb": 128,
+      "runtime": "nodejs24.x (aws lambda get-function-configuration, consultado 19-09-2026)",
+      "forzable": true,
+      "metodo_forzado": "lambda_env",
+      "aws_function_name": "poc-ti05-terabyte",
+      "aws_log_group": "/aws/lambda/poc-ti05-terabyte",
+      "criterio_frio": "instance_id"
+    },
+    "cloudflare-workers": {
+      "url": "https://poc-ti05-terabyte.vicekase.workers.dev/",
+      "region": "global (edge; ver campo colo)",
+      "memoria_mb": 128,
+      "runtime": "V8 isolate (Workers, plan Free)",
+      "forzable": true,
+      "metodo_forzado": "wrangler_deploy",
+      "criterio_frio": "first_request"
+    },
+    "google-cloud-run": {
+      "url": "PENDIENTE: pegar la URL que entrega gcloud run deploy",
+      "region": "us-east4",
+      "memoria_mb": 128,
+      "runtime": "Node.js 24 (buildpacks; confirmar con node_version de la respuesta)",
+      "ejecucion": "gen1 (gVisor), sin startup CPU boost, CPU solo durante solicitudes, max-instances 1, concurrency 1",
+      "forzable": true,
+      "metodo_forzado": "gcloud_env",
+      "gcloud_service_name": "poc-ti05-terabyte",
+      "gcloud_project": "PENDIENTE",
+      "criterio_frio": "instance_id"
+    }
+  },
+  "_nota_metodo_forzado": "lambda_env: cambia la variable de entorno POC_MARKER (nueva configuración => nuevo entorno de ejecución). wrangler_deploy: publica una versión nueva del Worker con `npx wrangler deploy` (nueva versión => isolates nuevos en cada máquina del PoP; verificado el 19-09-2026: la siguiente petición devuelve first_request=true). gcloud_env: `gcloud run services update ... --update-env-vars POC_MARKER=<n>` (cualquier cambio de configuración crea una revisión nueva => instancia nueva). Los tres son eventos reales del ciclo de vida (un despliegue/actualización), no un mecanismo artificial.",
+  "calientes_por_ciclo": 5,
+  "pausa_entre_calientes_s": 0.5,
+  "timeout_http_s": 20,
+  "csv": "data/mediciones.csv",
+  "_nota_criterio_frio": "instance_id: frío si la instancia que responde es distinta a la anterior de la corrida (Lambda reutiliza el mismo entorno para peticiones secuenciales). first_request: frío solo si la propia instancia declara que esta petición la inicializó (Workers reparte peticiones consecutivas entre varios isolates del mismo PoP, por lo que el cambio de id no implica arranque)."
+}
