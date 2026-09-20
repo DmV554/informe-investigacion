@@ -29,6 +29,7 @@
 \usepackage{styles}
 \usepackage{subcaption}
 \usepackage{pdflscape}   % \begin{landscape} para el cuadro comparativo (3.2)
+\usepackage{placeins}    % \FloatBarrier: impide que una tabla salte de subsección
 
 %% \anexo{X}{Título}: abre un anexo (o documento adjunto) con prefijo X.
 %% Reinicia la numeración de páginas (X1, X2, ...) y la de tablas y figuras
@@ -730,12 +731,14 @@ Los criterios de la Tabla~\ref{tab:criterios-busqueda} se fijaron antes de evalu
     \filaTabla{\textbf{Código} & \textbf{Criterio} & \textbf{Cómo se verifica}}
     \filaTabla{I1 & Vigencia y verificabilidad: el producto se puede contratar hoy; sus límites técnicos están publicados en documentación oficial; y su precio de lista vigente está publicado, o el proveedor declara que solo se entrega por cotización. & Se abren la página oficial de límites y la de precios el día de la consulta. Un ejemplo o escenario con advertencia de que no refleja precios actuales no cuenta como precio publicado.}
     \filaTabla{I2 & Pertenencia a la lista: el producto encaja en el modelo de la lista evaluada como propósito principal, no como complemento de otro producto. En funciones, contenedores, borde y datos: ejecuta código del usuario, o consulta y almacena datos del usuario, bajo el modelo de esa lista. En código abierto: componente de código abierto para construir o ejecutar cargas serverless, sea plataforma, runtime o autoescalado, en línea con lo que la ficha ya incluye. & Se lee la descripción oficial del producto y se confirma que su función principal corresponde al modelo de la lista.}
-    \filaTabla{I3 & Aporte diferencial: agrega al menos una dimensión no cubierta por las plataformas de la ficha en esa lista, entre estas cinco: unidad o modelo de cobro; mecanismo de aislamiento o de escala a cero; proveedor distinto de AWS, Google y Microsoft, u otra jurisdicción; acoplamiento a otro servicio del mismo ecosistema; límites en otro orden de magnitud (tiempo, payload, concurrencia). & Se identifica la dimensión en documentación oficial y se anota cuál. No cuentan popularidad, madurez percibida ni herramientas de desarrollo.}
+    \filaTabla{I3 & Aporte diferencial: agrega al menos una dimensión no cubierta por las plataformas de la ficha en esa lista, entre estas seis: (1)~unidad o modelo de cobro; (2)~mecanismo de aislamiento o de escala a cero; (3)~otra jurisdicción o región de operación documentada (moneda de facturación, ubicación de los datos o de los puntos de presencia); (4)~acoplamiento a otro servicio del mismo ecosistema; (5)~límites en otro orden de magnitud (tiempo, payload, concurrencia); (6)~portabilidad entre despliegue gestionado y autoalojado. & Se identifica la dimensión en documentación oficial y se anota su número en el registro. No cuentan popularidad, madurez percibida, herramientas de desarrollo ni el mero hecho de ser un proveedor distinto.}
     \filaTabla{X1 & Solapamiento dentro de la misma lista: el candidato es una extensión, modo o variante de otro candidato o de una plataforma de la ficha en esa misma lista. Se aplica por lista, no entre listas. & Si se activa entre dos candidatos de la misma lista, se retiene el que gane la regla de desempate y se descarta el otro con este código.}
-    \filaTabla{X2 & Retirado, archivado, o con su función central en vista previa privada sin contratación general. La beta abierta no descarta. & Sitio o repositorio oficial: aviso de fin de soporte, archivo o vista previa privada, con fecha.}
+    \filaTabla{X2 & Retirado o archivado: el producto o proyecto ya no se puede contratar o ya no se mantiene. & Sitio o repositorio oficial: aviso de fin de soporte, de retiro o de archivo, con fecha.}
 }
 
-\paragraph*{Regla de desempate.} Se activa solo cuando, tras aplicar X1, X2, I1, I2 e I3, quedan más de dos candidatos en una lista y dos de ellos aportan el mismo tipo de contraste frente a las plataformas de la ficha. Se retiene el que resulte favorecido por el primer paso que los separe, en este orden: (1)~precio de lista vigente publicado frente a solo por cotización o precio ausente; (2)~límites técnicos publicados frente a no publicados; (3)~disponibilidad general frente a beta, beta abierta o vista previa pública; (4)~documentación oficial más específica para la lista evaluada (página de límites o de precios del propio servicio, no solo la descripción general). Un candidato descartado por esta regla se registra como ``desempate, paso~$n$'', no con un código de puerta.
+\FloatBarrier
+
+\paragraph*{Regla de desempate.} Se activa solo cuando, tras aplicar X1, X2, I1, I2 e I3, quedan más de dos candidatos en una lista. Cuando dos de ellos aportan el mismo tipo de contraste frente a las plataformas de la ficha, se retiene el que resulte favorecido por el primer paso que los separe, en este orden: (1)~precio de lista vigente publicado frente a solo por cotización o precio ausente; (2)~límites técnicos publicados frente a no publicados; (3)~disponibilidad general frente a beta, beta abierta o vista previa, pública o privada; (4)~documentación oficial más específica para la lista evaluada (página de límites o de precios del propio servicio, no solo la descripción general). Si tras esos pasos siguen quedando más de dos candidatos con contrastes distintos entre sí, (5)~se retienen los dos cuya dimensión de aporte sea más útil para el resto del informe, indicando la sección que la usa (unidad de cobro para 2.3 y 4.2; escala a cero y arranque en frío para 2.2; portabilidad para 2.6; jurisdicción y región para 4.3). Un candidato descartado por esta regla se registra como ``desempate, paso~$n$'', no con un código de puerta.
 
 % Nota de registro para las tablas D.2 a D.6 (no va en D.1): cada dato de
 % precio se etiqueta como "precio de lista", "solo por cotización" o "no
@@ -761,18 +764,17 @@ Los criterios de la Tabla~\ref{tab:criterios-busqueda} se fijaron antes de evalu
 Ya nombra la ficha: AWS Lambda, Google Cloud Run functions, Azure Functions. Cada dato de precio se etiquetó como precio de lista, solo por cotización o no publicado; cada límite como publicado o no publicado; la URL y la fecha de consulta de cada fuente están en la entrada bibliográfica citada.
 
 {\scriptsize
-\begin{longtable}{|p{2.7cm}|p{2.7cm}|p{1.5cm}|p{2.5cm}|p{4.8cm}|}
+\begin{longtable}{|p{2.6cm}|p{2.5cm}|p{1.4cm}|p{2.4cm}|p{5.3cm}|}
     \hline
     \textbf{Candidato} & \textbf{Fuente oficial} & \textbf{Fecha} & \textbf{Resultado (criterio)} & \textbf{Motivo / qué aporta} \\
     \hline
     \endhead
-    Oracle Cloud Infrastructure Functions & \parencite{oracle2026ocifunctions,oracle2026ocifunctionslimits} & 2026-09-20 &  &  \\ \hline
-    Alibaba Cloud Function Compute 3.0 & \parencite{alibaba2026fcpayg,alibaba2026fclimits,alibaba2026fctrial} & 2026-09-20 &  &  \\ \hline
-    IBM Cloud Code Engine (functions) & \parencite{ibm2026codeenginelimits,ibm2026codeenginesample} & 2026-09-20 &  &  \\ \hline
-    Scaleway Serverless Functions & \parencite{scaleway2026serverlesspricing,scaleway2026functionslimits} & 2026-09-20 &  &  \\ \hline
-    Huawei Cloud FunctionGraph & \parencite{huawei2026functiongraphprice,huawei2026functiongraphlimits} & 2026-09-20 &  &  \\ \hline
-    Tencent Cloud SCF & \parencite{tencent2026scfpricing,tencent2026scffreetier,tencent2026scfquotas} & 2026-09-20 &  &  \\ \hline
-    & & & & \\ \hline
+    Oracle Cloud Infrastructure Functions & \parencite{oracle2026ocifunctions,oracle2026ocifunctionslimits,oracle2026fnoverview} & 2026-09-20 & Entra (I1, I2, I3) & I3-6: la documentación oficial lo describe como construido sobre el motor de código abierto Fn Project, lo que permite un despliegue gestionado y uno autoalojado del mismo motor. Apoyo I3-5: invocación desacoplada con tiempo máximo de 3.600~s frente a 300~s en modo sincrónico. Límites y precio de lista en USD publicados; concurrencia aprovisionada cobrada al 25~\% de la tarifa mientras no se usa. \\ \hline
+    Alibaba Cloud Function Compute 3.0 & \parencite{alibaba2026fcpayg,alibaba2026fclimits,alibaba2026fctrial} & 2026-09-20 & Descartado (desempate, paso 5) & Cumple I1--I3 (I3-1: cobro por unidad de cómputo agregada, CU, que convierte vCPU, memoria e invocaciones a una sola unidad; I3-5: tiempo máximo 86.400~s, memoria hasta 32~GB). Con más de dos candidatos vivos de contraste distinto, el paso 5 retuvo a Oracle (portabilidad, útil en 2.6) y Scaleway (jurisdicción, útil en 4.3). \\ \hline
+    IBM Cloud Code Engine (functions) & \parencite{ibm2026codeenginelimits,ibm2026codeenginesample} & 2026-09-20 & Descartado (I1) & Límites de functions publicados (tiempo de ejecución 120~s, código en línea 100~KB, memoria hasta 48.000~MB). El precio unitario solo aparece en un escenario oficial de estimación con advertencia expresa de que no refleja precios actuales; no cuenta como precio de lista vigente. \\ \hline
+    Scaleway Serverless Functions & \parencite{scaleway2026serverlesspricing,scaleway2026functionslimits} & 2026-09-20 & Entra (I1, I2, I3) & I3-3: proveedor con operación documentada en la Unión Europea y precio de lista en euros (recurso por GB-s, solicitudes, recursos aprovisionados), con capa gratuita mensual. Límites publicados: tiempo 10~s a 60~min, concurrencia 1 por instancia, hasta 50 instancias, payload 6~MiB. Precio en USD no publicado; se declara. \\ \hline
+    Huawei Cloud FunctionGraph & \parencite{huawei2026functiongraphprice,huawei2026functiongraphlimits} & 2026-09-20 & Descartado (desempate, paso 4) & Cumple I1--I3 (I3-5: duración máxima 259.200~s, memoria 10~GB). Comparte contraste con Alibaba (funciones internacionales con techos altos y cobro por solicitud y GB-s); en el paso 4 se retuvo Alibaba por documentación de cobro más específica (unidad CU definida en su propia página). \\ \hline
+    Tencent Cloud SCF & \parencite{tencent2026scfpricing,tencent2026scffreetier,tencent2026scfquotas} & 2026-09-20 & Descartado (desempate, paso 4) & Cumple I1--I3 (I3-1: capa gratuita temporal de tres meses seguida de un paquete básico diario). Comparte contraste con Alibaba y Huawei; en el paso 4 se retuvo Alibaba. \\ \hline
 \end{longtable}
 }
 
@@ -781,18 +783,17 @@ Ya nombra la ficha: AWS Lambda, Google Cloud Run functions, Azure Functions. Cad
 Ya nombra la ficha: Google Cloud Run, AWS Fargate, Azure Container Apps, AWS App Runner. Cada dato de precio se etiquetó como precio de lista, solo por cotización o no publicado; cada límite como publicado o no publicado; la URL y la fecha de consulta de cada fuente están en la entrada bibliográfica citada.
 
 {\scriptsize
-\begin{longtable}{|p{2.7cm}|p{2.7cm}|p{1.5cm}|p{2.5cm}|p{4.8cm}|}
+\begin{longtable}{|p{2.6cm}|p{2.5cm}|p{1.4cm}|p{2.4cm}|p{5.3cm}|}
     \hline
     \textbf{Candidato} & \textbf{Fuente oficial} & \textbf{Fecha} & \textbf{Resultado (criterio)} & \textbf{Motivo / qué aporta} \\
     \hline
     \endhead
-    Fly.io (Machines) & \parencite{fly2026pricing} & 2026-09-20 &  &  \\ \hline
-    Railway & \parencite{railway2026pricing} & 2026-09-20 &  &  \\ \hline
-    Render & \parencite{render2026pricing,render2026limits,render2026faq} & 2026-09-20 &  &  \\ \hline
-    Scaleway Serverless Containers & \parencite{scaleway2026serverlesspricing,scaleway2026containerslimits} & 2026-09-20 &  &  \\ \hline
-    Koyeb & \parencite{koyeb2026pricing,koyeb2026instances} & 2026-09-20 &  &  \\ \hline
-    DigitalOcean App Platform & \parencite{do2026appplatformpricing,do2026appplatformlimits,do2026appplatformstz} & 2026-09-20 &  &  \\ \hline
-    & & & & \\ \hline
+    Fly.io (Machines) & \parencite{fly2026pricing} & 2026-09-20 & Descartado (I1) & Precio de lista publicado (facturación por segundo de máquina encendida, cargo por disco raíz de máquinas detenidas, egreso por región). Los límites técnicos duros (tamaño máximo, número de máquinas, tiempo de ejecución) no están publicados como cifras fijas; sin límites publicados no cumple I1. \\ \hline
+    Railway & \parencite{railway2026pricing} & 2026-09-20 & Descartado (desempate, paso 5) & Cumple I1--I3 (I3-1: cuota mensual de plan que se abona al consumo, más RAM y CPU medidos por minuto y egreso por GB). Con tres candidatos vivos de contraste distinto, el paso 5 retuvo a Scaleway (jurisdicción, 4.3) y Render (escala a cero dependiente del plan, 2.2 y 4.2). \\ \hline
+    Render & \parencite{render2026pricing,render2026limits,render2026faq} & 2026-09-20 & Entra (I1, I2, I3) & I3-2: dentro de la misma plataforma, el plan gratuito escala a cero (el servicio se apaga tras 15~min sin tráfico entrante) y los planes pagados no escalan a cero (el cómputo queda aprovisionado y se paga aunque no llegue tráfico). Ese comportamiento dependiente del plan no aparece en las plataformas de la ficha y es el fenómeno que modela la sección 4.2. Precio de lista publicado (instancia pagada más pequeña USD~7/mes) y límites por plan publicados. \\ \hline
+    Scaleway Serverless Containers & \parencite{scaleway2026serverlesspricing,scaleway2026containerslimits} & 2026-09-20 & Entra (I1, I2, I3) & I3-3: operación documentada en la Unión Europea y precio de lista en euros por GB-s y por vCPU-s, con capa gratuita mensual de ambos. Límites publicados: tiempo 10~s a 60~min, concurrencia 80, hasta 50 instancias, escala a cero tras 15~min. Mismo proveedor que en D.2: X1 no aplica entre listas, lo que se declara en 3.1. \\ \hline
+    Koyeb & \parencite{koyeb2026pricing,koyeb2026instances} & 2026-09-20 & Descartado (I3) & Cumple I1 e I2. Su escala a cero en disponibilidad general y su facturación por segundo ya están cubiertas en la lista por Cloud Run y Container Apps (escala a cero) y por Fargate y Cloud Run (facturación por segundo); la línea Eco es una tarifa reducida, no otra unidad de cobro. No aporta ninguna de las seis dimensiones. \\ \hline
+    DigitalOcean App Platform & \parencite{do2026appplatformpricing,do2026appplatformlimits,do2026appplatformstz} & 2026-09-20 & Descartado (I3) & Cumple I1 e I2 (precio de entrada publicado, facturación por segundo, límites de aplicación publicados). Su única dimensión potencial, la escala a cero, está en vista previa privada y no se puede contratar en general; el resto (facturación por segundo, plan fijo) lo cubren Fargate y App Runner. \\ \hline
 \end{longtable}
 }
 
@@ -801,41 +802,39 @@ Ya nombra la ficha: Google Cloud Run, AWS Fargate, Azure Container Apps, AWS App
 Ya nombra la ficha: Cloudflare Workers (Durable Objects, D1, R2), Fastly Compute, AWS Lambda@Edge y CloudFront Functions, Vercel, Netlify, Deno Deploy. Cada dato de precio se etiquetó como precio de lista, solo por cotización o no publicado; cada límite como publicado o no publicado; la URL y la fecha de consulta de cada fuente están en la entrada bibliográfica citada.
 
 {\scriptsize
-\begin{longtable}{|p{2.7cm}|p{2.7cm}|p{1.5cm}|p{2.5cm}|p{4.8cm}|}
+\begin{longtable}{|p{2.6cm}|p{2.5cm}|p{1.4cm}|p{2.4cm}|p{5.3cm}|}
     \hline
     \textbf{Candidato} & \textbf{Fuente oficial} & \textbf{Fecha} & \textbf{Resultado (criterio)} & \textbf{Motivo / qué aporta} \\
     \hline
     \endhead
-    Akamai EdgeWorkers & \parencite{akamai2026edgeworkerslimits,akamai2026edgeworkersbilling} & 2026-09-20 &  &  \\ \hline
-    Supabase Edge Functions & \parencite{supabase2026edgefunctionslimits,supabase2026edgefunctionsbilling} & 2026-09-20 &  &  \\ \hline
-    Bunny Edge Scripting & \parencite{bunny2026scriptingpricing,bunny2026scriptinglimits} & 2026-09-20 &  &  \\ \hline
-    Azion Edge Functions & \parencite{azion2026pricing,azion2026functionslimits} & 2026-09-20 &  &  \\ \hline
-    Fermyon Cloud (Spin gestionado) & \parencite{fermyon2026cloudpricing,fermyon2026cloudfaq} & 2026-09-20 &  &  \\ \hline
-    Azure Front Door (Rules Engine / Edge Actions) & \parencite{microsoft2026frontdooredgeactions} & 2026-09-20 & Descartado (I2) & Rules Engine no ejecuta código del usuario (condiciones más acciones predefinidas); Edge Actions sí, pero en vista previa. \textit{[TODO Daniel: confirmar redacción]} \\ \hline
-    & & & & \\ \hline
+    Akamai EdgeWorkers & \parencite{akamai2026edgeworkerslimits,akamai2026edgeworkersbilling} & 2026-09-20 & Descartado (I1) & Límites por nivel publicados (memoria 1,5 / 2,5 / 4~MB; CPU 10 / 20 / 70~ms; tiempo total 4 / 5,5 / 10~s). La documentación no publica precio de lista ni declara expresamente la venta solo por cotización (remite a Marketplace y prueba gratuita); la página comercial no fue accesible. No cumple el segundo requisito de I1. \\ \hline
+    Supabase Edge Functions & \parencite{supabase2026edgefunctionslimits,supabase2026edgefunctionsbilling} & 2026-09-20 & Descartado (desempate, paso 5) & Cumple I1--I3 (I3-4: función de borde acoplada a la base Postgres del mismo proyecto con seguridad por filas; memoria 256~MB, CPU 2~s por solicitud, USD~2 por millón de invocaciones sobre la cuota). Con más de dos candidatos vivos de contraste distinto, el paso 5 retuvo a Azion (región, 4.3) y Bunny (modelo de cobro y límites, 2.3 y 4.2). \\ \hline
+    Bunny Edge Scripting & \parencite{bunny2026scriptingpricing,bunny2026scriptinglimits} & 2026-09-20 & Entra (I1, I2, I3) & I3-1: el cómputo (USD~0,20 por millón de solicitudes más USD~0,02 por 1.000~s de CPU) se factura separado del ancho de banda de la CDN, que se cobra aparte. I3-5: hasta 30~s de CPU por solicitud, frente a límites de milisegundos en otras plataformas de borde de la ficha. Memoria 128~MB, 50 subsolicitudes, arranque documentado de 500~ms; tiempo total de reloj no publicado, se declara. \\ \hline
+    Azion Edge Functions & \parencite{azion2026pricing,azion2026functionslimits} & 2026-09-20 & Entra (I1, I2, I3) & I3-3: proveedor con puntos de presencia y operación documentada en Latinoamérica, con precio de lista en USD (primeras 8~h de cómputo y 3~millones de invocaciones al mes sin cargo; luego USD~0,072 por 1.000~s y USD~0,30 por millón). Límites publicados: CPU 2~s y tiempo de reloj 5~min por solicitud, memoria 512~MB, 50 subsolicitudes, arranque máximo 2~s. \\ \hline
+    Fermyon Cloud (Spin gestionado) & \parencite{fermyon2026cloudpricing,fermyon2026cloudfaq} & 2026-09-20 & Descartado (desempate, paso 5) & Cumple I1--I3 (I3-6: servicio gestionado del mismo motor Spin que la ficha incluye como código abierto). Plataforma en beta abierta sin acuerdo de nivel de servicio documentado, lo que reduce su utilidad como referencia; el paso 5 retuvo a Azion y Bunny. \\ \hline
+    Azure Front Door (Rules Engine / Edge Actions) & \parencite{microsoft2026frontdooredgeactions} & 2026-09-20 & Descartado (I2) & Rules Engine define reglas como condiciones de coincidencia más acciones predefinidas (encabezados, redirecciones, reescritura, caché); no ejecuta código del usuario. Edge Actions sí ejecuta código, pero está en vista previa y no es el propósito principal del producto. \\ \hline
 \end{longtable}
 }
 
 \subsection*{D.5 Código abierto}
 
-Ya nombra la ficha: Knative, OpenFaaS, KEDA, Fermyon Spin / SpinKube, wasmCloud, Wasmtime. Cada dato de precio se etiquetó como precio de lista, solo por cotización o no publicado; cada límite como publicado o no publicado; la URL y la fecha de consulta de cada fuente están en la entrada bibliográfica citada.
+Ya nombra la ficha: Knative, OpenFaaS, KEDA, Fermyon Spin / SpinKube, wasmCloud, Wasmtime. Cada dato de precio se etiquetó como precio de lista, solo por cotización o no publicado; cada límite como publicado o no publicado; la URL y la fecha de consulta de cada fuente están en la entrada bibliográfica citada. En esta lista, \emph{vigente} (I1) equivale a proyecto mantenido con documentación oficial, y el precio es no aplicable por tratarse de software autoalojado.
 
 {\scriptsize
-\begin{longtable}{|p{2.7cm}|p{2.7cm}|p{1.5cm}|p{2.5cm}|p{4.8cm}|}
+\begin{longtable}{|p{2.6cm}|p{2.5cm}|p{1.4cm}|p{2.4cm}|p{5.3cm}|}
     \hline
     \textbf{Candidato} & \textbf{Fuente oficial} & \textbf{Fecha} & \textbf{Resultado (criterio)} & \textbf{Motivo / qué aporta} \\
     \hline
     \endhead
-    Apache OpenWhisk & \parencite{openwhisk2026product,openwhisk2026limits} & 2026-09-20 &  &  \\ \hline
-    Fission & \parencite{fission2026executors,fission2026releases} & 2026-09-20 &  &  \\ \hline
-    Nuclio & \parencite{nuclio2026architecture,nuclio2026triggers,nuclio2026kafka,nuclio2026releases} & 2026-09-20 &  &  \\ \hline
-    Fn Project & \parencite{fnproject2026product,oracle2026fnoverview} & 2026-09-20 &  &  \\ \hline
-    WasmEdge & \parencite{wasmedge2026site,cncf2026wasmedge} & 2026-09-20 &  &  \\ \hline
-    Direktiv & \parencite{direktiv2026docs,direktiv2026github,direktiv2026landscape} & 2026-09-20 &  &  \\ \hline
-    Kubeless & \parencite{vmware2026kubeless} & 2026-09-20 & Descartado (X2) & Repositorio archivado por VMware; el README declara que no se mantiene. Fecha de archivo: \textit{[TODO Daniel: banner de GitHub]} \\ \hline
+    Apache OpenWhisk & \parencite{openwhisk2026product,openwhisk2026limits} & 2026-09-20 & Descartado (I3) & Cumple I1 e I2 (proyecto Apache mantenido; valores por defecto publicados: tiempo 60.000~ms, memoria 256~MB, código 48~MB). Plataforma de funciones sobre Kubernetes del mismo tipo que Knative y OpenFaaS, ya en la ficha; no aporta ninguna de las seis dimensiones. \\ \hline
+    Fission & \parencite{fission2026executors,fission2026releases} & 2026-09-20 & Entra (I1, I2, I3) & I3-2: el ejecutor se elige por función; poolmgr mantiene por defecto 3 pods genéricos precalentados y libera los especializados por tiempo de inactividad, mientras newdeploy y container escalan a cero con \texttt{minScale: 0}. Proyecto mantenido (versión estable v1.27.0, junio de 2026). Sin precio: autoalojado. \\ \hline
+    Nuclio & \parencite{nuclio2026architecture,nuclio2026triggers,nuclio2026kafka,nuclio2026releases} & 2026-09-20 & Descartado (desempate, paso 5) & Cumple I1--I3 (I3-2: consume flujos directamente, una partición de Kafka atendida por una sola réplica y un componente propio que reparte particiones). Con tres candidatos vivos de contraste distinto, el paso 5 retuvo a Fission (escala a cero, 2.2) y Fn Project (portabilidad, 2.6). \\ \hline
+    Fn Project & \parencite{fnproject2026product,oracle2026fnoverview} & 2026-09-20 & Entra (I1, I2, I3) & I3-6: motor de funciones de código abierto sobre el que la documentación oficial de Oracle declara construido OCI Functions, lo que permite comparar el mismo motor autoalojado y gestionado (par con D.2, declarado en 3.1). Proyecto mantenido. Sin precio: autoalojado. \\ \hline
+    WasmEdge & \parencite{wasmedge2026site,cncf2026wasmedge} & 2026-09-20 & Descartado (I3) & Cumple I1 e I2 (runtime WebAssembly, proyecto sandbox del CNCF). La ficha ya incluye Wasmtime, otro runtime WebAssembly; ser un segundo runtime no es ninguna de las seis dimensiones. \\ \hline
+    Direktiv & \parencite{direktiv2026docs,direktiv2026github,direktiv2026landscape} & 2026-09-20 & Descartado (I2) & Motor de flujos dirigidos por eventos sobre Kubernetes y Knative, definidos en YAML. Su propósito principal es la orquestación de flujos, no una plataforma, runtime o autoescalador de cargas serverless; no cumple I2. \\ \hline
+    Kubeless & \parencite{vmware2026kubeless} & 2026-09-20 & Descartado (X2) & Repositorio archivado por VMware; el README declara que ya no se mantiene. Fecha de archivo: \textit{[TODO Daniel: banner de GitHub]}. \\ \hline
     riff & \parencite{projectriff2021final} & 2026-09-20 & Descartado (X2) & Proyecto declarado terminado el 13 de marzo de 2021. \\ \hline
-    IronFunctions & \parencite{oracle2019fnproject} & 2026-09-20 & Descartado (X1) & Sucedido por Fn Project (mismo equipo, bifurcación en Oracle, 2017--2019); se evalúa Fn en su lugar. \\ \hline
-    & & & & \\ \hline
+    IronFunctions & \parencite{oracle2019fnproject} & 2026-09-20 & Descartado (X1) & Bifurcado en Fn Project por el mismo equipo al incorporarse a Oracle; Fn es su continuación y se evalúa en su lugar. \\ \hline
 \end{longtable}
 }
 
@@ -844,28 +843,23 @@ Ya nombra la ficha: Knative, OpenFaaS, KEDA, Fermyon Spin / SpinKube, wasmCloud,
 Ya nombra la ficha: Aurora Serverless, DynamoDB bajo demanda, Neon, Cloudflare D1. Cada dato de precio se etiquetó como precio de lista, solo por cotización o no publicado; cada límite como publicado o no publicado; la URL y la fecha de consulta de cada fuente están en la entrada bibliográfica citada.
 
 {\scriptsize
-\begin{longtable}{|p{2.7cm}|p{2.7cm}|p{1.5cm}|p{2.5cm}|p{4.8cm}|}
+\begin{longtable}{|p{2.6cm}|p{2.5cm}|p{1.4cm}|p{2.4cm}|p{5.3cm}|}
     \hline
     \textbf{Candidato} & \textbf{Fuente oficial} & \textbf{Fecha} & \textbf{Resultado (criterio)} & \textbf{Motivo / qué aporta} \\
     \hline
     \endhead
-    PlanetScale & \parencite{planetscale2026pricing,planetscale2026hobbydeprecate} & 2026-09-20 &  &  \\ \hline
-    Turso (libSQL) & \parencite{turso2026pricing,turso2026usage} & 2026-09-20 &  &  \\ \hline
-    Upstash Redis & \parencite{upstash2026redisbilling,upstash2026redispricing} & 2026-09-20 &  &  \\ \hline
-    CockroachDB Cloud (Basic) & \parencite{cockroach2026basicproduct,cockroach2026pricing} & 2026-09-20 &  &  \\ \hline
-    Firestore & \parencite{firestore2026pricing,firestore2026quotas,firestore2026enterprisepricing} & 2026-09-20 &  &  \\ \hline
-    MongoDB Atlas Serverless & \parencite{mongodb2026flexmigration} & 2026-09-20 & Descartado (X2) & Sin creación de instancias desde febrero de 2025; fin de soporte el 22 de enero de 2026; migradas a Free, Flex o Dedicated. \\ \hline
-    & & & & \\ \hline
+    PlanetScale & \parencite{planetscale2026pricing,planetscale2026hobbydeprecate} & 2026-09-20 & Descartado (desempate, paso 5) & Cumple I1--I3 (I3-1: cobro por clúster mensual tras la deprecación del plan Hobby en 2024, frente al cobro por capacidad o solicitud de la ficha). Motor MySQL/Vitess gestionado, que solapa el eje SQL cubierto por Aurora y Neon; el paso 5 retuvo a Turso y Upstash. \\ \hline
+    Turso (libSQL) & \parencite{turso2026pricing,turso2026usage} & 2026-09-20 & Entra (I1, I2, I3) & I3-1: cobro por filas leídas y escritas más almacenamiento (plan gratuito con 500~millones de filas leídas y 10~millones escritas al mes). I3-6: libSQL, bifurcación de SQLite con licencia MIT, puede ejecutarse fuera de la nube del proveedor. Motor SQLite distinto de los relacionales de la ficha. \\ \hline
+    Upstash Redis & \parencite{upstash2026redisbilling,upstash2026redispricing} & 2026-09-20 & Entra (I1, I2, I3) & I3-1: cobro por comando (USD~0,20 por 100.000), con almacenamiento y ancho de banda aparte y máximo de 10.000 comandos por segundo; en bases globales cada escritura replicada cuenta como comando por región. Motor Redis, ausente de la ficha. \\ \hline
+    CockroachDB Cloud (Basic) & \parencite{cockroach2026basicproduct,cockroach2026pricing} & 2026-09-20 & Descartado (desempate, paso 5) & Cumple I1--I3 (I3-1: cobro por unidades de solicitud, USD~0,20 por millón, más almacenamiento; el plan Basic sucede al antiguo Serverless). SQL distribuido gestionado, que solapa el eje cubierto por Aurora; el paso 5 retuvo a Turso y Upstash. \\ \hline
+    Firestore & \parencite{firestore2026pricing,firestore2026quotas,firestore2026enterprisepricing} & 2026-09-20 & Descartado (desempate, paso 5) & Cumple I1--I3 (I3-1: cobro por lecturas, escrituras y borrados por cada 100.000 operaciones). Base documental gestionada de Google, del mismo tipo que DynamoDB en la ficha; el paso 5 retuvo a Turso y Upstash. \\ \hline
+    MongoDB Atlas Serverless & \parencite{mongodb2026flexmigration} & 2026-09-20 & Descartado (X2) & Sin creación de instancias desde febrero de 2025; fin de soporte el 22 de enero de 2026; instancias migradas a Free, Flex o Dedicated. \\ \hline
 \end{longtable}
 }
 
 \subsection*{D.7 Declaración sobre listas sin alternativas adicionales}
 
-% TODO. Solo si para alguna lista no se encontraron al menos dos alternativas
-% que cumplan los criterios: declararlo expresamente aquí, con las fuentes
-% consultadas y la fecha de cierre de la búsqueda (punto 4, "Declaración
-% cuando no hay más"). Si todas las listas tienen dos o más, dejar una frase
-% que lo diga y remitir a las tablas D.2 a D.6.
+Tras aplicar los criterios de la Tabla~\ref{tab:criterios-busqueda}, las cinco listas alcanzaron al menos dos alternativas que cumplen I1, I2 e I3 (tablas D.2 a D.6), por lo que no corresponde declarar ninguna lista sin alternativas. Las diez alternativas que entran se recogen en la Tabla~\ref{tab:alternativas-adicionales} de la sección~\ref{sec:alternativas}.
 
 \clearpage
 
