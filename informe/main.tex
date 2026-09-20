@@ -278,16 +278,39 @@
 
 \section{Desarrollo y análisis técnico}
 
-%% ---------------------------------------------------------------------------
-%% 2.1                                                    Responsable: Matías
-%% FaaS, contenedores sin servidor y entornos de borde; aislamientos V8
-%% isolates (Cloudflare), microVM Firecracker (AWS), contenedores / gVisor
-%% (Google). Docs oficiales y papers. Candidatos "otros" de FaaS y
-%% contenedores serverless -> pasar a Claudio y Daniel (3.1).
-%% ---------------------------------------------------------------------------
-\subsection{Modelos de ejecución y aislamiento}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% >>> 2.1 MODELOS DE EJECUCIÓN Y AISLAMIENTO                BORRADOR
+%%
+%% Extensión: párrafos 1 y 2 = ~320 palabras. Con el párrafo 3 (50-70
+%% palabras, autoría humana) queda en ~380, un poco sobre el presupuesto de
+%% 300-350. Si falta espacio, lo primero que podemos sacar sin perder el hilo
+%% es la frase de Cloud Run functions (\parencite{gcprunfunctions}).
+%%
+%% Referencias cruzadas a 2.2 y 2.5 van con número fijo porque esas
+%% subsecciones aún no tienen \label (mismo criterio del marco teórico).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% TODO (Matías)
+\subsection{Modelos de ejecución y aislamiento}
+\label{sec:modelos}
+
+Además de la unidad que ejecuta (sección~\ref{sec:marco}), cada modelo se distingue por cómo aísla a los clientes que comparten una máquina \parencite{shafiei2022}. Compartir servidores permite vender tramos cortos de capacidad que de otro modo quedaría ociosa \parencite{liuniu2024}, pero multiplica el costo de toda sobrecarga de aislamiento \parencite{agache2020}. \textcite{agache2020} agrupan los mecanismos en tres familias: los \textit{contenedores}, que comparten el núcleo del anfitrión y obligan a transar entre seguridad y compatibilidad; la \textit{virtualización}, que da a cada carga su propio núcleo y aísla con fuerza, pero ocupa más memoria y tarda segundos en arrancar \parencite{wen2023}; y el \textit{aislamiento por lenguaje}, como los \textit{isolates} de V8, que comparten un proceso a costa de compatibilidad y de exposición a ataques de canal lateral. En medio se ubican las microVM, máquinas virtuales mínimas, y gVisor, un núcleo en espacio de usuario que atiende las llamadas al sistema del contenedor \parencite{wang2022}.
+
+En FaaS, AWS Lambda crea cada entorno en una microVM de Firecracker que no reutiliza entre funciones ni entre cuentas \parencite{awslambdasec}; según sus creadores, Firecracker agrega menos de 5~MB por microVM, arranca en menos de 125~ms, ejecuta binarios Linux sin modificar y sostiene también a Fargate \parencite{agache2020}. Cloud Run, base de las Cloud Run functions \parencite{gcprunfunctions}, ofrece un entorno basado en gVisor, de arranque rápido pero que no emula todas las llamadas al sistema, y otro basado en microVM, totalmente compatible con Linux y con mejor CPU y red, pero de arranque más lento en algunos servicios \parencite{gcprunenv}; ambos suman una capa de virtualización por hardware \parencite{gcprunsec}. En pruebas independientes, gVisor aisló mejor el rendimiento, pero penalizó más las llamadas al sistema y la red \parencite{wang2022}. En el borde, con nodos de pocos recursos donde VM y contenedores resultan pesados \parencite{xie2021}, Cloudflare Workers ejecuta miles de \textit{isolates} por máquina, solo acepta JavaScript y WebAssembly (sección~2.5) y, contra Spectre, restringe relojes e hilos \parencite{cfworkerssec}. En el modelo siempre encendido, la frontera es la VM arrendada: compatibilidad total \parencite{agache2020} y recursos reservados aunque estén ociosos \parencite{liuniu2024}.
+
+Ningún mecanismo aventaja a los demás en todos los frentes a la vez, ya que seguridad, compatibilidad, densidad y velocidad de arranque se transan entre sí, tal como concluyen tanto \textcite{agache2020} como \textcite{wang2022}, quienes afirman textualmente que «ningún runtime es ventajoso en todos los aspectos». Google mismo reconoce que su entorno de segunda generación (microVM) «generalmente rinde más bajo carga sostenida», pero arranca más lento que el basado en gVisor en ciertos servicios \parencite{gcprunenv}, lo que entrega un criterio directo ligado a la condición de carga. Los \textit{isolates} de V8 solo admiten JavaScript y WebAssembly, sin binarios nativos \parencite{cfworkerssec}, mientras que Firecracker sí ejecuta binarios Linux sin modificar \parencite{agache2020}, lo que marca la restricción de compatibilidad de código. \textcite{wang2022} también muestran que gVisor penaliza especialmente las llamadas al sistema, la red y los archivos pequeños. Y aunque Firecracker arranca en menos de 125~ms, Lambda igual mantiene un \textit{pool} de microVM prearrancadas, porque ese tiempo no alcanza para el escalamiento en ráfaga. La elección entre contenedores, microVM, isolates o VM completa depende, entonces, del tipo de código que se ejecutará (lenguaje, binarios, llamadas al sistema), del patrón de carga (ráfagas cortas versus carga sostenida) y de si el costo de mantener recursos siempre listos compensa evitar la latencia de arranque.
+
+%% ---------------------------------------------------------------------------
+%% OPCIONAL: Claude me tiro hacer una tabla resumen (1/4 de página). que nos seria util para la presentación y
+%% para el cuestionario, incluirla en el informe solo si cabe en 15 páginas.
+%% todas las cifras salen de las fuentes citadas en cada fila.
+%% ---------------------------------------------------------------------------
+% \tabla{Mecanismos de aislamiento en plataformas sin servidor y de borde}{aislamiento}{|p{2.6cm}|p{3.3cm}|p{4.4cm}|p{3.6cm}|}{%
+%     \filaTabla{\textbf{Mecanismo} & \textbf{Frontera entre clientes} & \textbf{Ventaja y costo} & \textbf{Dónde se usa}}
+%     \filaTabla{microVM (Firecracker) & Núcleo propio bajo un monitor de VM mínimo & $<$5~MB de sobrecarga, $<$125~ms de arranque, binarios Linux sin cambios \parencite{agache2020} & Lambda, Fargate; Cloud Run 2.\textsuperscript{a} gen. \parencite{gcprunenv}}
+%     \filaTabla{Núcleo de aplicación (gVisor) & Llamadas al sistema atendidas en espacio de usuario & Arranque rápido; no emula todas las llamadas; sobrecarga en llamadas al sistema y red \parencite{gcprunenv,wang2022} & Cloud Run 1.\textsuperscript{a} gen.}
+%     \filaTabla{Isolate V8 & Memoria separada dentro de un proceso compartido & Miles por máquina; solo JavaScript y WebAssembly \parencite{cfworkerssec} & Cloudflare Workers}
+%     \filaTabla{VM completa & Máquina virtual arrendada & Compatibilidad total; recursos reservados aunque estén ociosos \parencite{agache2020,liuniu2024} & Modelo siempre encendido}
+% }
 
 %% ---------------------------------------------------------------------------
 %% 2.2                                                    Responsable: Isidora
