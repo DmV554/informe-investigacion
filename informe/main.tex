@@ -34,6 +34,7 @@
 %% \anexo{X}{Título}: abre un anexo (o documento adjunto) con prefijo X.
 %% Reinicia la numeración de páginas (X1, X2, ...) y la de tablas y figuras
 %% (Tabla X.1, Figura X.1) para que no hereden la del capítulo 5.
+\makeatletter
 \newcommand{\anexo}[2]{%
     \clearpage
     \setcounter{page}{1}%
@@ -44,7 +45,9 @@
     \phantomsection
     \addcontentsline{toc}{section}{#2}%
     \section*{#2}%
+    \def\@currentlabel{#1}%  \ref a un \label puesto tras \anexo imprime la letra
 }
+\makeatother
 
 \renewcommand{\cftdotsep}{4}
 \renewcommand{\cftfigpresnum}{\bfseries Figura }
@@ -334,28 +337,26 @@
 \subsection{Alternativas adicionales}
 \label{sec:alternativas}
 
-% TODO (Claudio y Daniel): dos párrafos + tabla.
-% Estructura acordada: párrafo 1 = método en dos frases y resultado global
-% (cuántas alternativas se evaluaron, cuántas entran, cuántas se descartaron
-% y por qué tipo de motivo) remitiendo al Anexo~\ref{anexo:busqueda};
-% párrafo 2 = análisis: qué dimensiones de comparación agregan las que entran
-% y que las plataformas de la ficha no cubrían; cuáles pasan a ser filas de la
-% Tabla~\ref{tab:cuadro-comparativo}. La tabla de abajo lleva solo las que
-% entran, con la frase de justificación. Los descartes y la búsqueda completa
-% viven en el anexo, no aquí.
+% Redacción: Daniel (borrador propio, corrección de estilo con IA, nivel 1;
+% declarado en Anexo A). Estructura: párrafo 1 método y resultado; párrafo 2
+% análisis por dimensiones y filas que pasan a 3.2; tabla con las diez que entran.
+
+La ficha del tema TI-05 \parencite{moya2026indicaciones} pide, en cada una de sus cinco listas, incorporar al menos dos alternativas que no figuren ya entre las plataformas nombradas. Los candidatos se identificaron a partir de las tablas de plataformas de los surveys citados en el informe, del CNCF Landscape y de la documentación oficial de proveedores, con verificación de fuentes el 20 de septiembre de 2026. Se evaluó un conjunto de treinta y tres candidatos con los criterios del Anexo~\ref{anexo:busqueda} (puertas de descarte, inclusión y, cuando hacía falta, desempate). Diez fueron retenidas tras aplicar esos criterios y la regla de desempate (Tabla~\ref{tab:alternativas-adicionales}); el resto se descartó por falta de vigencia o verificabilidad, por no pertenecer al modelo de la lista, por no aportar una dimensión nueva frente a la ficha, por solapamiento o retiro, o por desempate cuando sobraban más de dos. Fuentes, fechas y motivos figuran en ese anexo.
+
+Las que entran abren ejes que las plataformas de la ficha no cubren: facturación en euros y operación en la Unión Europea (Scaleway, en funciones y en contenedores); el mismo motor de funciones en nube gestionada y en código abierto (OCI Functions y Fn Project ---un solo contraste de portabilidad, contado en dos listas); escala a cero solo en el plan gratuito frente a cómputo siempre aprovisionado en planes pagados (Render), útil para el modelo de costos de la sección~\ref{sec:costos}; cómputo en el borde con presencia en Latinoamérica (Azion) y cobro de solicitudes separado del ancho de banda, con tiempos de CPU de decenas de segundos (Bunny); mecanismos de escala a cero elegibles por función en Kubernetes (Fission); y datos con cobro por filas o por comando Redis, más la opción de autoalojar libSQL (Turso y Upstash). De estas diez, pasan como filas a la Tabla~\ref{tab:cuadro-comparativo} las siguientes: \textit{[TODO: acordar con Rodolfo qué alternativas se incorporan al cuadro y con qué columnas de límites y precio]}.
 
 \tabla{Alternativas adicionales incorporadas a la comparación}{alternativas-adicionales}{|p{3.2cm}|p{3.4cm}|p{7.2cm}|}{%
     \filaTabla{\textbf{Lista de la ficha} & \textbf{Alternativa} & \textbf{Qué aporta a la comparación}}
-    \filaTabla{Funciones como servicio & & }
-    \filaTabla{Funciones como servicio & & }
-    \filaTabla{Contenedores sin servidor & & }
-    \filaTabla{Contenedores sin servidor & & }
-    \filaTabla{Cómputo en el borde & & }
-    \filaTabla{Cómputo en el borde & & }
-    \filaTabla{Código abierto & & }
-    \filaTabla{Código abierto & & }
-    \filaTabla{Datos sin servidor & & }
-    \filaTabla{Datos sin servidor & & }
+    \filaTabla{Funciones como servicio & Oracle Cloud Infrastructure Functions & Mismo motor que Fn Project en nube gestionada; invocación desacoplada hasta 3600~s.}
+    \filaTabla{Funciones como servicio & Scaleway Serverless Functions & Precio de lista en euros y operación en la Unión Europea; concurrencia uno por instancia.}
+    \filaTabla{Contenedores sin servidor & Render & En gratuito se apaga a los 15~min sin tráfico; en pagado el cómputo sigue aprovisionado.}
+    \filaTabla{Contenedores sin servidor & Scaleway Serverless Containers & Cobra vCPU-s y GB-s por separado, cada uno con capa gratuita, en la Unión Europea.}
+    \filaTabla{Cómputo en el borde & Azion Edge Functions & Presencia documentada en Latinoamérica; capa gratuita de horas de cómputo e invocaciones.}
+    \filaTabla{Cómputo en el borde & Bunny Edge Scripting & Solicitudes y CPU cobrados aparte del ancho de banda; hasta 30~s de CPU por solicitud.}
+    \filaTabla{Código abierto & Fission & En Kubernetes, el ejecutor define si hay conjunto caliente o escala a cero por función.}
+    \filaTabla{Código abierto & Fn Project & Motor de código abierto sobre el que corre OCI Functions (par con la fila gestionada).}
+    \filaTabla{Datos sin servidor & Turso (libSQL) & Cobro por filas leídas y escritas; libSQL autoalojable, derivado de SQLite.}
+    \filaTabla{Datos sin servidor & Upstash Redis & Redis sin servidor con cobro por comando; ausente de las bases de la ficha.}
 }
 
 %% ---------------------------------------------------------------------------
@@ -372,6 +373,8 @@
 %% PRECIOS (punto 5): producto, moneda, región, fecha de consulta, lista o
 %% cotización. Verificados en la calculadora oficial. Sin fecha no vale.
 %% "Solo por cotización" si el proveedor no publica precio.
+\FloatBarrier
+
 %% ---------------------------------------------------------------------------
 \subsection{Criterios y cuadro comparativo de plataformas}
 \label{sec:cuadro}
@@ -721,9 +724,8 @@ Declaro que la información consignada en este formulario es completa y veraz, q
 
 En este anexo, \emph{ficha} designa la ficha del tema TI-05 del documento de indicaciones del curso \parencite{moya2026indicaciones}, y \emph{lista} cada una de las cinco categorías de tecnologías que esa ficha pide comparar (funciones como servicio, contenedores sin servidor, cómputo en el borde, código abierto y datos sin servidor). \emph{Plataformas de la ficha} son las que la ficha nombra explícitamente en cada lista.
 
-% TODO (Daniel): período de la búsqueda (inicio y cierre) y fuentes de
-% descubrimiento consultadas, con fecha (tablas de plataformas de los surveys
-% citados, CNCF Landscape, documentación oficial de proveedores).
+Los candidatos se identificaron en tres fuentes de descubrimiento: las tablas de plataformas de los surveys citados en el informe, la categoría \emph{serverless} del CNCF Landscape \parencite{cncf2026landscapeserverless} y la documentación oficial de los proveedores. La búsqueda se realizó entre el \textit{[TODO Daniel: fecha de inicio]} y el 20 de septiembre de 2026, fecha en que se verificaron todas las fuentes citadas en las tablas D.2 a D.6.
+
 
 Los criterios de la Tabla~\ref{tab:criterios-busqueda} se fijaron antes de evaluar el primer candidato y se aplicaron a todos por igual, en este orden: primero las puertas de descarte X1 y X2 a toda la pool de candidatos; luego los criterios de inclusión I1, I2 e I3 a los que quedaron; la regla de desempate se usó solo en las listas donde quedaron más de dos candidatos. Cuando quedaron exactamente dos, no se aplicó. Cuando quedó uno o ninguno, se declara en D.7.
 
