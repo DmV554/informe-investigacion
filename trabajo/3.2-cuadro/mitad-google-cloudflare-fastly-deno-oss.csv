@@ -1,0 +1,13 @@
+Plataforma;Modelo (ficha);[3.2a] Aislamiento;[3.2a] Unidad de cobro y piso mensual;[3.2a] Precio de lista (producto, USD, región, tramo, fecha, capa gratuita, lista/cotización);[3.2a] Arranque en frío p50/p95 (fuente: 4.1 o paper único);[3.2a] Mitigación cold start (¿se factura aparte?);[3.2a] Qué opera el equipo (lista cerrada);[3.2a] Estado externo obligatorio / límite que fuerza rediseño;[3.2b] Tiempo máx. ejecución;[3.2b] Memoria / vCPU;[3.2b] Payload in/out;[3.2b] Concurrencia / escalado;[3.2b] Egreso de datos (precio fechado);URL límites (fecha);URL precios (fecha);URL responsabilidad compartida / arquitectura (fecha);Verificado por / fecha;Notas
+Google Cloud Run functions;funciones como servicio;;;;;;;;;;;;;;;;;
+Google Cloud Run (servicios);contenedores sin servidor;;;;;;;;;;;;;;;;;
+Cloudflare Workers;cómputo en el borde;;;;;;;;;;;;;;;;;
+Fastly Compute;cómputo en el borde;;;;;;;;;;;;;;;;;
+Deno Deploy;cómputo en el borde;;;;;;;;;;;;;;;;;
+Vercel Functions (Fluid compute);cómputo en el borde / FaaS gestionado;;;;;;;;;;;;;;;;;
+Netlify Functions;cómputo en el borde / FaaS gestionado;;;;;;;;;;;;;;;;;
+Knative Serving;funciones como servicio (autoalojado);;no aplica (autoalojado);no aplica (autoalojado);;;todo salvo lo que provea el clúster gestionado;;;;;;no aplica;;;;;
+OpenFaaS;funciones como servicio (autoalojado);;no aplica (autoalojado);no aplica (autoalojado);;;todo salvo lo que provea el clúster gestionado;;;;;;no aplica;;;;;
+Fermyon Spin / SpinKube;cómputo en el borde (Wasm, autoalojado);;no aplica (autoalojado);no aplica (autoalojado);;;todo salvo lo que provea el clúster gestionado;;;;;;no aplica;;;;;
+(alternativa adicional desde 3.1);;;;;;;;;;;;;;;;;;
+(alternativa adicional desde 3.1);;;;;;;;;;;;;;;;;;

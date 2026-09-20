@@ -1,0 +1,22 @@
+# Artefactos de compilación LaTeX (Overleaf / latexmk / biber)
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.lof
+*.lot
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.xmpi
+_minted*/
+informe/main.pdf
+
+# Editores y sistema
+.DS_Store
+*~
+.vscode/

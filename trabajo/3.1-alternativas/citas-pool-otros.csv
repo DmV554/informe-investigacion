@@ -1,0 +1,218 @@
+N°;Lista;Candidato;Campo;Valor exacto;Unidad/moneda;URL oficial;Fecha consulta;Notas;Clave BibTeX sugerida
+1;FaaS;Oracle OCI Functions;Free tier invocaciones;2 million;invocations/month;https://www.oracle.com/cloud/cloud-native/functions/;2026-09-20;First 2M free;oracle2026ocifunctions
+2;FaaS;Oracle OCI Functions;Precio invocación over free;0.0000002;USD/invocation;https://www.oracle.com/cloud/cloud-native/functions/;2026-09-20;Over 2M/month;oracle2026ocifunctions
+3;FaaS;Oracle OCI Functions;Free tier ejecución;400000;GB-s/month;https://www.oracle.com/cloud/cloud-native/functions/;2026-09-20;First 400k GB-s free;oracle2026ocifunctions
+4;FaaS;Oracle OCI Functions;Precio ejecución over free;0.00001417;USD/GB-s;https://www.oracle.com/cloud/cloud-native/functions/;2026-09-20;Over 400k GB-s/month;oracle2026ocifunctions
+5;FaaS;Oracle OCI Functions;Provisioned concurrency idle;25%;% of Execution Time rates;https://www.oracle.com/cloud/cloud-native/functions/;2026-09-20;Unused provisioned concurrency;oracle2026ocifunctions
+6;FaaS;Oracle OCI Functions;Timeout sync máximo;300;seconds;https://docs.oracle.com/en-us/iaas/Content/Functions/Tasks/functionscustomizing.htm;2026-09-20;default 30s;oracle2026ocifunctionslimits
+7;FaaS;Oracle OCI Functions;Timeout detached;5–3600;seconds;https://docs.oracle.com/en-us/iaas/Content/Functions/Tasks/functionscustomizing.htm;2026-09-20;min 5 max 3600;oracle2026ocifunctionslimits
+8;FaaS;Oracle OCI Functions;Memoria opciones;128, 256, 512, 1024, 2048, 3072;MB;https://docs.oracle.com/en-us/iaas/Content/Functions/Tasks/functionscustomizing.htm;2026-09-20;fixed set;oracle2026ocifunctionslimits
+9;FaaS;Oracle OCI Functions;Payload request/response;6;MB;https://docs.oracle.com/en-us/iaas/Content/Functions/Tasks/functionscustomizing.htm;2026-09-20;max each;oracle2026ocifunctionslimits
+10;FaaS;Alibaba Function Compute (FC 3.0);CU Tier 1 list price;0.000020;USD/CU;https://www.alibabacloud.com/help/en/functioncompute/fc/product-overview/pay-as-you-go-billing-methods;2026-09-20;"0–100M CU; regional";alibaba2026fcpayg
+11;FaaS;Alibaba Function Compute (FC 3.0);CU Tier 1 discount (2024-08-27–2026-08-27);0.0000160;USD/CU;https://www.alibabacloud.com/help/en/functioncompute/fc/product-overview/pay-as-you-go-billing-methods;2026-09-20;official discount window;alibaba2026fcpayg
+12;FaaS;Alibaba Function Compute (FC 3.0);CU Tier 2 list price;0.000017;USD/CU;https://www.alibabacloud.com/help/en/functioncompute/fc/product-overview/pay-as-you-go-billing-methods;2026-09-20;100M–500M CU;alibaba2026fcpayg
+13;FaaS;Alibaba Function Compute (FC 3.0);CU Tier 2 discount;0.0000136;USD/CU;https://www.alibabacloud.com/help/en/functioncompute/fc/product-overview/pay-as-you-go-billing-methods;2026-09-20;;alibaba2026fcpayg
+14;FaaS;Alibaba Function Compute (FC 3.0);CU Tier 3 list price;0.000014;USD/CU;https://www.alibabacloud.com/help/en/functioncompute/fc/product-overview/pay-as-you-go-billing-methods;2026-09-20;>500M CU;alibaba2026fcpayg
+15;FaaS;Alibaba Function Compute (FC 3.0);CU Tier 3 discount;0.0000112;USD/CU;https://www.alibabacloud.com/help/en/functioncompute/fc/product-overview/pay-as-you-go-billing-methods;2026-09-20;;alibaba2026fcpayg
+16;FaaS;Alibaba Function Compute (FC 3.0);Trial CU;150000;CU/cycle × 3 cycles;https://www.alibabacloud.com/help/en/functioncompute/trial-quota-1;2026-09-20;first-time users;alibaba2026fctrial
+17;FaaS;Alibaba Function Compute (FC 3.0);Memoria máxima por función;32;GB;https://www.alibabacloud.com/help/en/functioncompute/fc-3-0/product-overview/limits-of-usage;2026-09-20;;alibaba2026fclimits
+18;FaaS;Alibaba Function Compute (FC 3.0);Runtime máximo;86400;seconds;https://www.alibabacloud.com/help/en/functioncompute/fc-3-0/product-overview/limits-of-usage;2026-09-20;;alibaba2026fclimits
+19;FaaS;Alibaba Function Compute (FC 3.0);Máx instancias default por región;300;instances/region;https://www.alibabacloud.com/help/en/functioncompute/fc-3-0/product-overview/limits-of-usage;2026-09-20;Quota Center default;alibaba2026fclimits
+20;FaaS;IBM Code Engine (functions);Runtime máximo functions;120;seconds;https://cloud.ibm.com/docs/codeengine?topic=codeengine-limits;2026-09-20;Function limits table;ibm2026codeenginelimits
+21;FaaS;IBM Code Engine (functions);Memoria máxima functions;48000;MB;https://cloud.ibm.com/docs/codeengine?topic=codeengine-limits;2026-09-20;;ibm2026codeenginelimits
+22;FaaS;IBM Code Engine (functions);Code size inline;100;KB;https://cloud.ibm.com/docs/codeengine?topic=codeengine-limits;2026-09-20;including base64 overhead;ibm2026codeenginelimits
+23;FaaS;IBM Code Engine (functions);Request/response body;5;MB;https://cloud.ibm.com/docs/codeengine?topic=codeengine-limits;2026-09-20;;ibm2026codeenginelimits
+24;FaaS;IBM Code Engine (functions);Free tier vCPU-s (ejemplo);100000;vCPU-s/month;https://cloud.ibm.com/docs/account?topic=account-sample;2026-09-20;estimation scenario;ibm2026codeenginesample
+25;FaaS;IBM Code Engine (functions);Free tier GB-s (ejemplo);200000;GB-s/month;https://cloud.ibm.com/docs/account?topic=account-sample;2026-09-20;;ibm2026codeenginesample
+26;FaaS;IBM Code Engine (functions);Free tier HTTP requests (ejemplo);100000;requests/month;https://cloud.ibm.com/docs/account?topic=account-sample;2026-09-20;;ibm2026codeenginesample
+27;FaaS;IBM Code Engine (functions);Precio ejemplo vCPU-s;0.00003431;USD/vCPU-s;https://cloud.ibm.com/docs/account?topic=account-sample;2026-09-20;disclaimer: not current prices;ibm2026codeenginesample
+28;FaaS;IBM Code Engine (functions);Precio ejemplo GB-s;0.00000356;USD/GB-s;https://cloud.ibm.com/docs/account?topic=account-sample;2026-09-20;disclaimer: not current prices;ibm2026codeenginesample
+29;FaaS;IBM Code Engine (functions);Precio ejemplo requests;0.538;USD/million requests;https://cloud.ibm.com/docs/account?topic=account-sample;2026-09-20;disclaimer: not current prices;ibm2026codeenginesample
+30;FaaS;Scaleway Serverless Functions;Precio resource consumption;0.000005;EUR/GB-s;https://www.scaleway.com/en/pricing/serverless/;2026-09-20;"before tax; after free tier";scaleway2026serverlesspricing
+31;FaaS;Scaleway Serverless Functions;Precio request consumption;0.000015;EUR/100 requests;https://www.scaleway.com/en/pricing/serverless/;2026-09-20;€0.15 per 1M requests;scaleway2026serverlesspricing
+32;FaaS;Scaleway Serverless Functions;Precio provisioned resources;0.000017;EUR/GB-s;https://www.scaleway.com/en/pricing/serverless/;2026-09-20;warm standby;scaleway2026serverlesspricing
+33;FaaS;Scaleway Serverless Functions;Free tier GB-s;400000;GB-s/month/account;https://www.scaleway.com/en/pricing/serverless/;2026-09-20;;scaleway2026serverlesspricing
+34;FaaS;Scaleway Serverless Functions;Free tier requests;1000000;requests/month/account;https://www.scaleway.com/en/pricing/serverless/;2026-09-20;;scaleway2026serverlesspricing
+35;FaaS;Scaleway Serverless Functions;USD list price;no publicado;USD;https://www.scaleway.com/en/pricing/serverless/;2026-09-20;only EUR on page;scaleway2026serverlesspricing
+36;FaaS;Scaleway Serverless Functions;Timeout HTTP;10 seconds to 60 minutes;seconds–minutes;https://www.scaleway.com/en/docs/serverless-functions/reference-content/functions-limitations/;2026-09-20;;scaleway2026functionslimits
+37;FaaS;Scaleway Serverless Functions;Max scale instances;50;instances/function;https://www.scaleway.com/en/docs/serverless-functions/reference-content/functions-limitations/;2026-09-20;;scaleway2026functionslimits
+38;FaaS;Scaleway Serverless Functions;Concurrency por instancia;1;request/instance;https://www.scaleway.com/en/docs/serverless-functions/reference-content/functions-limitations/;2026-09-20;;scaleway2026functionslimits
+39;FaaS;Scaleway Serverless Functions;Payload máximo;6;MiB;https://www.scaleway.com/en/docs/serverless-functions/reference-content/functions-limitations/;2026-09-20;;scaleway2026functionslimits
+40;FaaS;Scaleway Serverless Functions;Total function memory org;600;GiB;https://www.scaleway.com/en/docs/serverless-functions/reference-content/functions-limitations/;2026-09-20;;scaleway2026functionslimits
+41;FaaS;Huawei Cloud FunctionGraph;Precio requests;0.2;USD/1 million requests;https://support.huaweicloud.com/intl/en-us/price-functiongraph/functiongraph_00_0011.html;2026-09-20;"after free tier; intl examples";huawei2026functiongraphprice
+42;FaaS;Huawei Cloud FunctionGraph;Precio ejecución;0.00001667;USD/GB-s;https://support.huaweicloud.com/intl/en-us/price-functiongraph/functiongraph_00_0011.html;2026-09-20;;huawei2026functiongraphprice
+43;FaaS;Huawei Cloud FunctionGraph;Precio reserved idle;0.000005556;USD/GB-s;https://support.huaweicloud.com/intl/en-us/price-functiongraph/functiongraph_00_0011.html;2026-09-20;reserved idle mode;huawei2026functiongraphprice
+44;FaaS;Huawei Cloud FunctionGraph;Free tier requests;1000000;requests/month;https://support.huaweicloud.com/intl/en-us/price-functiongraph/functiongraph_00_0010.html;2026-09-20;first 1M;huawei2026functiongraphitems
+45;FaaS;Huawei Cloud FunctionGraph;Free tier GB-s;400000;GB-s/month;https://support.huaweicloud.com/intl/en-us/price-functiongraph/functiongraph_00_0010.html;2026-09-20;first 400k;huawei2026functiongraphitems
+46;FaaS;Huawei Cloud FunctionGraph;Memoria máxima;10;GB;https://support.huaweicloud.com/intl/en-us/productdesc-functiongraph/functiongraph_01_0150.html;2026-09-20;;huawei2026functiongraphlimits
+47;FaaS;Huawei Cloud FunctionGraph;Duración máxima ejecución;259200;seconds;https://support.huaweicloud.com/intl/en-us/productdesc-functiongraph/functiongraph_01_0150.html;2026-09-20;;huawei2026functiongraphlimits
+48;FaaS;Huawei Cloud FunctionGraph;Sync payload;6;MB;https://support.huaweicloud.com/intl/en-us/productdesc-functiongraph/functiongraph_01_0150.html;2026-09-20;;huawei2026functiongraphlimits
+49;FaaS;Huawei Cloud FunctionGraph;Async payload;256;KB;https://support.huaweicloud.com/intl/en-us/productdesc-functiongraph/functiongraph_01_0150.html;2026-09-20;;huawei2026functiongraphlimits
+50;FaaS;Huawei Cloud FunctionGraph;Concurrent executions/account;100;executions;https://support.huaweicloud.com/intl/en-us/productdesc-functiongraph/functiongraph_01_0150.html;2026-09-20;ticket for more;huawei2026functiongraphlimits
+51;FaaS;Huawei Cloud FunctionGraph;Max functions/account;400;functions;https://support.huaweicloud.com/intl/en-us/productdesc-functiongraph/functiongraph_01_0150.html;2026-09-20;;huawei2026functiongraphlimits
+52;FaaS;Tencent Cloud SCF;Resource usage;0.0000167;USD/GBs;https://intl.cloud.tencent.com/document/product/583/12281;2026-09-20;intl docs;tencent2026scfpricing
+53;FaaS;Tencent Cloud SCF;Invocations;0.002;USD/10000 invocations;https://intl.cloud.tencent.com/document/product/583/12281;2026-09-20;;tencent2026scfpricing
+54;FaaS;Tencent Cloud SCF;Idle provisioned concurrency;0.00000847;USD/GBs;https://intl.cloud.tencent.com/document/product/583/12281;2026-09-20;;tencent2026scfpricing
+55;FaaS;Tencent Cloud SCF;Free tier duración inicial;3;months;https://intl.cloud.tencent.com/document/product/583/12282;2026-09-20;"1M event+1M HTTP; 1M GB; 2GB outbound";tencent2026scffreetier
+56;FaaS;Tencent Cloud SCF;Basic package post free-tier;0.06;USD/day;https://intl.cloud.tencent.com/document/product/583/12282;2026-09-20;"if there was usage; quotas 500k+500k/100k GB/2GB";tencent2026scffreetier
+57;FaaS;Tencent Cloud SCF;Memoria;64–3072;MB;https://intl.cloud.tencent.com/document/product/583/11637;2026-09-20;;tencent2026scfquotas
+58;FaaS;Tencent Cloud SCF;Timeout;1–900;seconds;https://intl.cloud.tencent.com/document/product/583/11637;2026-09-20;;tencent2026scfquotas
+59;FaaS;Tencent Cloud SCF;Tmp storage;512;MB;https://intl.cloud.tencent.com/document/product/583/11637;2026-09-20;;tencent2026scfquotas
+60;FaaS;Tencent Cloud SCF;Sync req/resp;6;MB;https://intl.cloud.tencent.com/document/product/583/11637;2026-09-20;;tencent2026scfquotas
+61;FaaS;Tencent Cloud SCF;Async payload;128;KB;https://intl.cloud.tencent.com/document/product/583/11637;2026-09-20;;tencent2026scfquotas
+62;FaaS;Tencent Cloud SCF;Code size uncompressed w/ layers;500;MB;https://intl.cloud.tencent.com/document/product/583/11637;2026-09-20;;tencent2026scfquotas
+63;Contenedores;Fly.io;Precio shared-cpu-1x 256MB;0.00000075;USD/second;https://fly.io/docs/about/pricing/;2026-09-20;"Ashburn-style table; also $0.0027/h $1.94/mo";fly2026pricing
+64;Contenedores;Fly.io;Stopped rootfs;0.15;USD/GB/30 days;https://fly.io/docs/about/pricing/;2026-09-20;stopped machines;fly2026pricing
+65;Contenedores;Fly.io;Egress North America/Europe;0.02;USD/GB;https://fly.io/docs/about/pricing/;2026-09-20;public internet;fly2026pricing
+66;Contenedores;Fly.io;Egress Asia Pacific/Oceania/South America;0.04;USD/GB;https://fly.io/docs/about/pricing/;2026-09-20;;fly2026pricing
+67;Contenedores;Fly.io;Egress Africa/India;0.12;USD/GB;https://fly.io/docs/about/pricing/;2026-09-20;;fly2026pricing
+68;Contenedores;Fly.io;Hard size/count/timeout;no publicado;N/A;https://fly.io/docs/about/pricing/;2026-09-20;not fixed figures on pricing page;fly2026pricing
+69;Contenedores;Railway;RAM;10;USD/GB/month;https://docs.railway.com/pricing;2026-09-20;;railway2026pricing
+70;Contenedores;Railway;CPU;20;USD/vCPU/month;https://docs.railway.com/pricing;2026-09-20;;railway2026pricing
+71;Contenedores;Railway;Network egress;0.05;USD/GB;https://docs.railway.com/pricing;2026-09-20;;railway2026pricing
+72;Contenedores;Railway;Volume storage;0.15;USD/GB/month;https://docs.railway.com/pricing;2026-09-20;;railway2026pricing
+73;Contenedores;Railway;Plan Hobby;5;USD/month;https://docs.railway.com/pricing;2026-09-20;fee toward resource usage;railway2026pricing
+74;Contenedores;Railway;Plan Pro;20;USD/month;https://docs.railway.com/pricing;2026-09-20;;railway2026pricing
+75;Contenedores;Railway;Plan Free;0;USD/month;https://docs.railway.com/pricing;2026-09-20;;railway2026pricing
+76;Contenedores;Render;Free spin-down inactivity;15;minutes;https://render.com/docs/free;2026-09-20;no inbound traffic;render2026limits
+77;Contenedores;Render;Paid spin-down / scale-to-zero;no;boolean;https://render.com/docs/faq;2026-09-20;Paid compute plans do not spin down;render2026faq
+78;Contenedores;Render;Starter web instance;7;USD/month;https://render.com/pricing;2026-09-20;512 MB RAM, 0.5 CPU;render2026pricing
+79;Contenedores;Render;Workspace Hobby;0;USD/month + compute;https://render.com/pricing;2026-09-20;max 25 services, 5 GB bandwidth;render2026pricing
+80;Contenedores;Render;Workspace Pro;25;USD/month + compute;https://render.com/pricing;2026-09-20;;render2026pricing
+81;Contenedores;Render;Workspace Scale;499;USD/month + compute;https://render.com/pricing;2026-09-20;;render2026pricing
+82;Contenedores;Scaleway Serverless Containers;Precio memoria;0.000002;EUR/GB-s;https://www.scaleway.com/en/pricing/serverless/;2026-09-20;before tax;scaleway2026serverlesspricing
+83;Contenedores;Scaleway Serverless Containers;Precio vCPU;0.00001;EUR/vCPU-s;https://www.scaleway.com/en/pricing/serverless/;2026-09-20;before tax;scaleway2026serverlesspricing
+84;Contenedores;Scaleway Serverless Containers;Free tier GB-s;400000;GB-s/month/account;https://www.scaleway.com/en/pricing/serverless/;2026-09-20;;scaleway2026serverlesspricing
+85;Contenedores;Scaleway Serverless Containers;Free tier vCPU-s;200000;vCPU-s/month/account;https://www.scaleway.com/en/pricing/serverless/;2026-09-20;;scaleway2026serverlesspricing
+86;Contenedores;Scaleway Serverless Containers;Timeout;10 seconds to 60 minutes;seconds–minutes;https://www.scaleway.com/en/docs/serverless-containers/reference-content/containers-limitations/;2026-09-20;;scaleway2026containerslimits
+87;Contenedores;Scaleway Serverless Containers;Max scale;50;instances;https://www.scaleway.com/en/docs/serverless-containers/reference-content/containers-limitations/;2026-09-20;;scaleway2026containerslimits
+88;Contenedores;Scaleway Serverless Containers;Concurrency;80;per container instance;https://www.scaleway.com/en/docs/serverless-containers/reference-content/containers-limitations/;2026-09-20;;scaleway2026containerslimits
+89;Contenedores;Scaleway Serverless Containers;Memoria min/max;128–12228;MB;https://www.scaleway.com/en/docs/serverless-containers/reference-content/containers-limitations/;2026-09-20;;scaleway2026containerslimits
+90;Contenedores;Scaleway Serverless Containers;CPU min/max;70–6000;mvCPU;https://www.scaleway.com/en/docs/serverless-containers/reference-content/containers-limitations/;2026-09-20;;scaleway2026containerslimits
+91;Contenedores;Scaleway Serverless Containers;Time before scale to zero;15;minutes;https://www.scaleway.com/en/docs/serverless-containers/reference-content/containers-limitations/;2026-09-20;;scaleway2026containerslimits
+92;Contenedores;Koyeb;Standard nano price/second;0.000001;USD/second;https://www.koyeb.com/docs/reference/instances;2026-09-20;"0.25 vCPU 256MB; $0.0036/h $2.68/mo";koyeb2026instances
+93;Contenedores;Koyeb;Eco eco-nano price/second;0.0000006;USD/second;https://www.koyeb.com/docs/reference/instances;2026-09-20;"0.1 vCPU 256MB; $0.0022/h $1.61/mo";koyeb2026instances
+94;Contenedores;Koyeb;Plan Pro;29;USD/month + compute;https://www.koyeb.com/pricing;2026-09-20;$10 included compute;koyeb2026pricing
+95;Contenedores;Koyeb;Egress extra EU/US;0.02;USD/GB;https://www.koyeb.com/pricing;2026-09-20;;koyeb2026pricing
+96;Contenedores;Koyeb;Egress extra Asia;0.04;USD/GB;https://www.koyeb.com/pricing;2026-09-20;;koyeb2026pricing
+97;Contenedores;Koyeb;Free Instance RAM;512;MB;https://www.koyeb.com/docs/reference/instances;2026-09-20;"0.1 vCPU 2GB SSD; 1 per org";koyeb2026instances
+98;Contenedores;Koyeb;Free Instance scale-to-zero idle;1;hour;https://www.koyeb.com/docs/reference/instances;2026-09-20;no traffic;koyeb2026instances
+99;Contenedores;Koyeb;Services from price (FAQ);0.000006;USD/second;https://www.koyeb.com/pricing;2026-09-20;FAQ starting at;koyeb2026pricing
+100;Contenedores;DigitalOcean App Platform;Precio contenedor mínimo;5.00;USD/month;https://docs.digitalocean.com/products/app-platform/details/pricing/;2026-09-20;apps-s-1vcpu-0.5gb 512 MiB shared;do2026appplatformpricing
+101;Contenedores;DigitalOcean App Platform;Billing granularity;by the second;time;https://docs.digitalocean.com/products/app-platform/details/pricing/;2026-09-20;1-minute minimum;do2026appplatformpricing
+102;Contenedores;DigitalOcean App Platform;Egress extra;0.02;USD/GiB;https://docs.digitalocean.com/products/app-platform/details/pricing/;2026-09-20;;do2026appplatformpricing
+103;Contenedores;DigitalOcean App Platform;Free tier scope;static sites only;apps;https://docs.digitalocean.com/products/app-platform/details/pricing/;2026-09-20;"up to 3 static apps; 1 GiB outbound/app";do2026appplatformpricing
+104;Contenedores;DigitalOcean App Platform;Max containers/app;250;containers;https://docs.digitalocean.com/products/app-platform/details/limits/;2026-09-20;fixed/CPU autoscaling;do2026appplatformlimits
+105;Contenedores;DigitalOcean App Platform;Request-based autoscaling max;100;instances;https://docs.digitalocean.com/products/app-platform/details/limits/;2026-09-20;;do2026appplatformlimits
+106;Contenedores;DigitalOcean App Platform;Ephemeral local FS;4;GiB;https://docs.digitalocean.com/products/app-platform/details/limits/;2026-09-20;;do2026appplatformlimits
+107;Contenedores;DigitalOcean App Platform;Build timeout;1;hour;https://docs.digitalocean.com/products/app-platform/details/limits/;2026-09-20;;do2026appplatformlimits
+108;Contenedores;DigitalOcean App Platform;Scale to Zero status;private preview;status;https://docs.digitalocean.com/products/app-platform/how-to/scale-to-zero/;2026-09-20;contact Support for access;do2026appplatformstz
+109;Contenedores;DigitalOcean App Platform;Scale to Zero sleep billing;10%;% of standard price;https://docs.digitalocean.com/products/app-platform/how-to/scale-to-zero/;2026-09-20;while sleeping;do2026appplatformstz
+110;Contenedores;DigitalOcean App Platform;Scale to Zero after_seconds;600–86400;seconds;https://docs.digitalocean.com/products/app-platform/how-to/scale-to-zero/;2026-09-20;;do2026appplatformstz
+111;Edge;Akamai EdgeWorkers;Memoria Basic/Dynamic/Enterprise;1.5 / 2.5 / 4;MB;https://techdocs.akamai.com/edgeworkers/docs/resource-tier-limitations;2026-09-20;per event handler;akamai2026edgeworkerslimits
+112;Edge;Akamai EdgeWorkers;CPU time Basic/Dynamic/Enterprise;10 / 20 / 70;ms;https://techdocs.akamai.com/edgeworkers/docs/resource-tier-limitations;2026-09-20;;akamai2026edgeworkerslimits
+113;Edge;Akamai EdgeWorkers;Wall time Basic/Dynamic/Enterprise;4 / 5.5 / 10;seconds;https://techdocs.akamai.com/edgeworkers/docs/resource-tier-limitations;2026-09-20;;akamai2026edgeworkerslimits
+114;Edge;Akamai EdgeWorkers;Lista precios USD;no publicado;USD;https://techdocs.akamai.com/edgeworkers/docs/reporting-and-billing;2026-09-20;Marketplace/account rates;akamai2026edgeworkersbilling
+115;Edge;Supabase Edge Functions;Memoria máxima;256;MB;https://supabase.com/docs/guides/functions/limits;2026-09-20;;supabase2026edgefunctionslimits
+116;Edge;Supabase Edge Functions;CPU time por request;2;seconds;https://supabase.com/docs/guides/functions/limits;2026-09-20;;supabase2026edgefunctionslimits
+117;Edge;Supabase Edge Functions;Worker lifetime Free;150;seconds;https://supabase.com/docs/guides/functions/limits;2026-09-20;wall clock;supabase2026edgefunctionslimits
+118;Edge;Supabase Edge Functions;Worker lifetime Paid;400;seconds;https://supabase.com/docs/guides/functions/limits;2026-09-20;wall clock;supabase2026edgefunctionslimits
+119;Edge;Supabase Edge Functions;Request idle timeout;150;seconds;https://supabase.com/docs/guides/functions/limits;2026-09-20;;supabase2026edgefunctionslimits
+120;Edge;Supabase Edge Functions;Precio invocaciones over quota;2;USD/1 million invocations;https://supabase.com/docs/guides/platform/manage-your-usage/edge-function-invocations;2026-09-20;;supabase2026edgefunctionsbilling
+121;Edge;Supabase Edge Functions;Free quota invocaciones;500000;invocations;https://supabase.com/docs/guides/platform/manage-your-usage/edge-function-invocations;2026-09-20;;supabase2026edgefunctionsbilling
+122;Edge;Supabase Edge Functions;Pro/Team quota invocaciones;2000000;invocations;https://supabase.com/docs/guides/platform/manage-your-usage/edge-function-invocations;2026-09-20;;supabase2026edgefunctionsbilling
+123;Edge;Bunny Edge Scripting;Precio requests;0.20;USD/million requests;https://bunny.net/docs/scripting/pricing;2026-09-20;;bunny2026scriptingpricing
+124;Edge;Bunny Edge Scripting;Precio CPU time;0.02;USD/1000s CPU time;https://bunny.net/docs/scripting/pricing;2026-09-20;;bunny2026scriptingpricing
+125;Edge;Bunny Edge Scripting;CDN bandwidth;billed separately at normal CDN rate;USD;https://bunny.net/docs/scripting/pricing;2026-09-20;not included in CPU/Requests;bunny2026scriptingpricing
+126;Edge;Bunny Edge Scripting;CPU Time per request;30;seconds;https://bunny.net/docs/scripting/limits;2026-09-20;;bunny2026scriptinglimits
+127;Edge;Bunny Edge Scripting;Active memory;128;MB;https://bunny.net/docs/scripting/limits;2026-09-20;;bunny2026scriptinglimits
+128;Edge;Bunny Edge Scripting;Subrequests;50;count;https://bunny.net/docs/scripting/limits;2026-09-20;;bunny2026scriptinglimits
+129;Edge;Bunny Edge Scripting;Script size;10;MB;https://bunny.net/docs/scripting/limits;2026-09-20;;bunny2026scriptinglimits
+130;Edge;Bunny Edge Scripting;Startup time;500;ms;https://bunny.net/docs/scripting/limits;2026-09-20;;bunny2026scriptinglimits
+131;Edge;Bunny Edge Scripting;Wall-clock total time limit separado;no publicado;N/A;https://bunny.net/docs/scripting/limits;2026-09-20;;bunny2026scriptinglimits
+132;Edge;Azion Edge Functions;Compute Time free;8;hours/month;https://www.azion.com/en/documentation/products/pricing/;2026-09-20;then paid;azion2026pricing
+133;Edge;Azion Edge Functions;Compute Time paid;0.072;USD/1000 seconds;https://www.azion.com/en/documentation/products/pricing/;2026-09-20;same US/Canada/Europe/Brazil/Latam/Other;azion2026pricing
+134;Edge;Azion Edge Functions;Invocations free;3000000;invocations/month;https://www.azion.com/en/documentation/products/pricing/;2026-09-20;;azion2026pricing
+135;Edge;Azion Edge Functions;Invocations paid;0.30;USD/million;https://www.azion.com/en/documentation/products/pricing/;2026-09-20;;azion2026pricing
+136;Edge;Azion Edge Functions;Arguments max;100;KB;https://www.azion.com/en/documentation/products/build/applications/functions/;2026-09-20;;azion2026functionslimits
+137;Edge;Azion Edge Functions;Memory/isolate;512;MB;https://www.azion.com/en/documentation/products/build/applications/functions/;2026-09-20;;azion2026functionslimits
+138;Edge;Azion Edge Functions;Code size UI / API;6 / 20;MB;https://www.azion.com/en/documentation/products/build/applications/functions/;2026-09-20;;azion2026functionslimits
+139;Edge;Azion Edge Functions;Sub-requests;50;count;https://www.azion.com/en/documentation/products/build/applications/functions/;2026-09-20;;azion2026functionslimits
+140;Edge;Azion Edge Functions;Max CPU Execution Time;2;seconds;https://www.azion.com/en/documentation/products/build/applications/functions/;2026-09-20;"limits table; distinct from marketing 5 min CPU";azion2026functionslimits
+141;Edge;Azion Edge Functions;Max Execution Time wall-clock;5;minutes;https://www.azion.com/en/documentation/products/build/applications/functions/;2026-09-20;;azion2026functionslimits
+142;Edge;Azion Edge Functions;Max Cold Start;2;seconds;https://www.azion.com/en/documentation/products/build/applications/functions/;2026-09-20;;azion2026functionslimits
+143;Edge;Fermyon Cloud (managed Spin);Plan Starter;0;USD/month;https://www.fermyon.com/pricing;2026-09-20;up to 5 apps, 100k requests, 5 GB egress, 1 region;fermyon2026cloudpricing
+144;Edge;Fermyon Cloud (managed Spin);Plan Growth;19.38;USD/month;https://www.fermyon.com/pricing;2026-09-20;up to 100 apps, 1M requests, 50 GB egress;fermyon2026cloudpricing
+145;Edge;Fermyon Cloud (managed Spin);Estado;open beta;status;https://developer.fermyon.com/cloud/index;2026-09-20;does not provide any SLAs;fermyon2026clouddocs
+146;Edge;Fermyon Cloud (managed Spin);Package size;100;MB;https://developer.fermyon.com/cloud/faq;2026-09-20;;fermyon2026cloudfaq
+147;Edge;Fermyon Cloud (managed Spin);Handler duration;30;seconds;https://developer.fermyon.com/cloud/faq;2026-09-20;;fermyon2026cloudfaq
+148;Edge;Fermyon Cloud (managed Spin);HTTP body;10;MB;https://developer.fermyon.com/cloud/faq;2026-09-20;;fermyon2026cloudfaq
+149;Edge;Fermyon Cloud (managed Spin);Requests per second;1000;req/s;https://developer.fermyon.com/cloud/faq;2026-09-20;;fermyon2026cloudfaq
+150;OSS;Apache OpenWhisk;Timeout default;60000;milliseconds;https://github.com/apache/openwhisk/blob/master/docs/reference.md;2026-09-20;range 100–300000 ms;openwhisk2026limits
+151;OSS;Apache OpenWhisk;Memory default;256;MB;https://github.com/apache/openwhisk/blob/master/docs/reference.md;2026-09-20;range 128–512 MB;openwhisk2026limits
+152;OSS;Apache OpenWhisk;Code size default;48;MB;https://github.com/apache/openwhisk/blob/master/docs/reference.md;2026-09-20;;openwhisk2026limits
+153;OSS;Apache OpenWhisk;Concurrent invocations namespace;100;activations;https://github.com/apache/openwhisk/blob/master/docs/reference.md;2026-09-20;default;openwhisk2026limits
+154;OSS;Apache OpenWhisk;Invocations per minute;120;activations/minute;https://github.com/apache/openwhisk/blob/master/docs/reference.md;2026-09-20;fixed default OSS;openwhisk2026limits
+155;OSS;Apache OpenWhisk;Result/params size;1;MB;https://github.com/apache/openwhisk/blob/master/docs/reference.md;2026-09-20;fixed;openwhisk2026limits
+156;OSS;Apache OpenWhisk;Precio;N/A;OSS self-hosted;https://openwhisk.apache.org/;2026-09-20;;openwhisk2026product
+157;OSS;Fission;poolmgr poolsize default;3;warm pods;https://fission.io/docs/concepts/executors/;2026-09-20;CLI --poolsize default 3;fission2026executors
+158;OSS;Fission;newdeploy/container scale-to-zero;minScale: 0;config;https://fission.io/docs/concepts/executors/;2026-09-20;poolmgr uses idletimeout instead;fission2026executors
+159;OSS;Fission;Latest release;v1.27.0;version;https://github.com/fission/fission/releases;2026-09-20;assets ~2026-06-22;fission2026releases
+160;OSS;Fission;Precio;N/A;OSS;https://fission.io/docs/concepts/executors/;2026-09-20;;fission2026executors
+161;OSS;Nuclio;Kafka partition mapping;one partition / one replica;design;https://docs.nuclio.io/en/stable/reference/triggers/kafka.html;2026-09-20;sequential processing;nuclio2026kafka
+162;OSS;Nuclio;Dealer component;exists;architecture;https://docs.nuclio.io/en/latest/concepts/architecture.html;2026-09-20;distributes N resources to M processors;nuclio2026architecture
+163;OSS;Nuclio;Latest release listed;1.17.8;version;https://github.com/nuclio/nuclio/releases;2026-09-20;~2026-09-10;nuclio2026releases
+164;OSS;Nuclio;Precio;N/A;OSS;https://docs.nuclio.io/en/stable/reference/triggers/;2026-09-20;;nuclio2026triggers
+165;OSS;Fn Project;Relación OCI Functions;powered by the Fn Project open source engine;quote;https://docs.oracle.com/en-us/iaas/Content/Functions/Concepts/functionsoverview.htm;2026-09-20;;oracle2026fnoverview
+166;OSS;Fn Project;Precio;N/A;OSS;https://fnproject.io/;2026-09-20;;fnproject2026product
+167;OSS;WasmEdge;Tipo;Wasm runtime (CNCF sandbox);classification;https://www.cncf.io/projects/wasmedge/;2026-09-20;not full FaaS alone;cncf2026wasmedge
+168;OSS;WasmEdge;Precio;N/A;OSS;https://wasmedge.org/;2026-09-20;;wasmedge2026site
+169;OSS;Direktiv;Descripción;cloud-agnostic serverless flow engine on Kubernetes/Knative;model;https://docs.direktiv.io/;2026-09-20;YAML flows;direktiv2026docs
+170;OSS;Direktiv;Precio managed;no publicado;N/A;https://docs.direktiv.io/;2026-09-20;"OSS self-hosted; no managed price list in consulted docs";direktiv2026docs
+171;OSS;Direktiv;CNCF landscape entry;present in landscape.yml;status;https://raw.githubusercontent.com/cncf/landscape/master/landscape.yml;2026-09-20;not asserting graduated/incubating membership;direktiv2026landscape
+172;OSS;Direktiv;Chart release;direktiv-0.10.0;version;https://github.com/direktiv/direktiv/releases;2026-09-20;GitHub datetime 2025-10-21T12:23:11Z ≈ 2025-10-21 09:23 America/Santiago;direktiv2026releases
+173;OSS;Direktiv;App tag;v0.8.10;version;https://github.com/direktiv/direktiv/releases;2026-09-20;release notes 2024-12-12;direktiv2026releases
+174;OSS;Direktiv;Repo archive status;not archived;status;https://github.com/direktiv/direktiv;2026-09-20;2026-09-20 check;direktiv2026github
+175;Datos;PlanetScale;Postgres non-HA PS-5 mínimo;5;USD/month;https://planetscale.com/pricing;2026-09-20;"us-east-1; 512 MiB";planetscale2026pricing
+176;Datos;PlanetScale;Postgres HA PS-5;15;USD/month;https://planetscale.com/pricing;2026-09-20;us-east-1 3-node;planetscale2026pricing
+177;Datos;PlanetScale;Neki PS-10 arm64;30;USD/month;https://planetscale.com/pricing;2026-09-20;3-node shard SKU example;planetscale2026pricing
+178;Datos;PlanetScale;Hobby upgrade deadline;2024-04-08;date;https://planetscale.com/docs/plans/hobby-plan-deprecation-faq;2026-09-20;then sleep mode;planetscale2026hobbydeprecate
+179;Datos;PlanetScale;Hobby new creation stop;2024-03-06;date;https://planetscale.com/docs/plans/hobby-plan-deprecation-faq;2026-09-20;no longer possible to create;planetscale2026hobbydeprecate
+180;Datos;Turso;Plan Free;0;USD/month;https://turso.tech/pricing;2026-09-20;"100 DBs; 5GB; 500M rows read; 10M rows written";turso2026pricing
+181;Datos;Turso;Free rows read;500000000;rows/month;https://turso.tech/pricing;2026-09-20;;turso2026pricing
+182;Datos;Turso;Free rows written;10000000;rows/month;https://turso.tech/pricing;2026-09-20;;turso2026pricing
+183;Datos;Turso;Free storage;5;GB;https://turso.tech/pricing;2026-09-20;;turso2026pricing
+184;Datos;Turso;Developer from;4.99;USD/month;https://turso.tech/pricing;2026-09-20;annual display;turso2026pricing
+185;Datos;Turso;Overage storage;0.75;USD/GB;https://turso.tech/pricing;2026-09-20;;turso2026pricing
+186;Datos;Turso;Overage rows read;1;USD/Billion;https://turso.tech/pricing;2026-09-20;;turso2026pricing
+187;Datos;Turso;Overage rows written;1;USD/Million;https://turso.tech/pricing;2026-09-20;;turso2026pricing
+188;Datos;Upstash Redis;Commands;0.20;USD/100K commands;https://upstash.com/docs/redis/overall/billing;2026-09-20;;upstash2026redisbilling
+189;Datos;Upstash Redis;Max commands/sec Free/PAYG;10000;commands/sec;https://upstash.com/docs/redis/overall/billing;2026-09-20;;upstash2026redisbilling
+190;Datos;Upstash Redis;Storage PAYG;0.25;USD/GB/month;https://upstash.com/docs/redis/overall/billing;2026-09-20;first 1 GB free;upstash2026redisbilling
+191;Datos;Upstash Redis;Bandwidth free;200;GB/month;https://upstash.com/docs/redis/overall/billing;2026-09-20;then $0.03/GB;upstash2026redisbilling
+192;Datos;Upstash Redis;Bandwidth overage;0.03;USD/GB;https://upstash.com/docs/redis/overall/billing;2026-09-20;;upstash2026redisbilling
+193;Datos;Upstash Redis;Global DB replicated writes;each replicated write counts as a command;billing rule;https://upstash.com/docs/redis/overall/billing;2026-09-20;;upstash2026redisbilling
+194;Datos;CockroachDB Cloud / Basic;RU price;0.20;USD/1M Request Units;https://docs.cockroachlabs.com/docs/cockroachcloud/plan-your-cluster-basic;2026-09-20;;cockroach2026basicproduct
+195;Datos;CockroachDB Cloud / Basic;Storage price;0.50;USD/GiB;https://docs.cockroachlabs.com/docs/cockroachcloud/plan-your-cluster-basic;2026-09-20;;cockroach2026basicproduct
+196;Datos;CockroachDB Cloud / Basic;Free monthly resource benefit;15;USD/month;https://docs.cockroachlabs.com/docs/cockroachcloud/plan-your-cluster-basic;2026-09-20;≈50M RU + 10 GiB for PAYG orgs;cockroach2026basicproduct
+197;Datos;CockroachDB Cloud / Basic;Free RU equivalent;50000000;Request Units;https://docs.cockroachlabs.com/docs/cockroachcloud/plan-your-cluster-basic;2026-09-20;;cockroach2026basicproduct
+198;Datos;CockroachDB Cloud / Basic;Free storage equivalent;10;GiB;https://docs.cockroachlabs.com/docs/cockroachcloud/plan-your-cluster-basic;2026-09-20;;cockroach2026basicproduct
+199;Datos;CockroachDB Cloud / Basic;Ideal RU/s ceiling (docs);30000;RU/second;https://docs.cockroachlabs.com/docs/cockroachcloud/plan-your-cluster-basic;2026-09-20;≈60 vCPU noted in docs;cockroach2026basicproduct
+200;Datos;CockroachDB Cloud / Basic;Continuum Standard example rate;0.092;USD/vCPU-hour;https://www.cockroachlabs.com/pricing/;2026-09-20;"AWS us-east-1; new orgs on/after 2026-09-15";cockroach2026pricing
+201;Datos;CockroachDB Cloud / Basic;Continuum free trial;400;USD credit / 30 days;https://www.cockroachlabs.com/pricing/;2026-09-20;new Cloud organizations;cockroach2026pricing
+202;Datos;CockroachDB Cloud / Basic;Continuum applicability date;2026-09-15;date;https://www.cockroachlabs.com/pricing/;2026-09-20;new deployments on/after;cockroach2026pricing
+203;Datos;MongoDB Atlas (Serverless → Flex);End of creation Serverless instances;February 2025;date;https://www.mongodb.com/docs/atlas/flex-migration/;2026-09-20;can no longer create;mongodb2026flexmigration
+204;Datos;MongoDB Atlas (Serverless → Flex);End of support Serverless instances;2026-01-22;date;https://www.mongodb.com/docs/atlas/flex-migration/;2026-09-20;migrate Free/Flex/Dedicated;mongodb2026flexmigration
+205;Datos;MongoDB Atlas (Serverless → Flex);Rol en pool;nota de descarte/migración;status;https://www.mongodb.com/docs/atlas/flex-migration/;2026-09-20;not a live 'otro' to pick;mongodb2026flexmigration
+206;Datos;Firestore;Document reads Standard us-central1;0.03;USD/100000;https://cloud.google.com/firestore/pricing;2026-09-20;Iowa;firestore2026pricing
+207;Datos;Firestore;Document writes Standard us-central1;0.09;USD/100000;https://cloud.google.com/firestore/pricing;2026-09-20;;firestore2026pricing
+208;Datos;Firestore;Document deletes Standard us-central1;0.01;USD/100000;https://cloud.google.com/firestore/pricing;2026-09-20;;firestore2026pricing
+209;Datos;Firestore;Stored data unit price;0.000205479;USD/GiB;https://cloud.google.com/firestore/pricing;2026-09-20;unit price table;firestore2026pricing
+210;Datos;Firestore;Free tier stored;1;GiB;https://cloud.google.com/firestore/pricing;2026-09-20;;firestore2026pricing
+211;Datos;Firestore;Free tier reads/day;50000;reads/day;https://cloud.google.com/firestore/pricing/;2026-09-20;;firestore2026pricing
+212;Datos;Firestore;Free tier writes/day;20000;writes/day;https://cloud.google.com/firestore/pricing;2026-09-20;;firestore2026pricing
+213;Datos;Firestore;Free tier deletes/day;20000;deletes/day;https://cloud.google.com/firestore/pricing;2026-09-20;;firestore2026pricing
+214;Datos;Firestore;Free tier outbound/month;10;GiB/month;https://cloud.google.com/firestore/pricing;2026-09-20;;firestore2026pricing
+215;Datos;Firestore;Max document size;1;MiB;https://firebase.google.com/docs/firestore/quotas;2026-09-20;;firestore2026quotas
+216;Datos;Firestore;Writes/sec per document fixed max;no publicado;N/A;https://firebase.google.com/docs/firestore/quotas;2026-09-20;workload-dependent;firestore2026quotas
+217;Datos;Firestore;Enterprise Read Units example;0.05;USD/1000000 count;https://cloud.google.com/firestore/enterprise/pricing;2026-09-20;distinct KiB units;firestore2026enterprisepricing

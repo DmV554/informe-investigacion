@@ -197,6 +197,10 @@
 \section*{Introducción y contexto}
 
 % TODO (Daniel): cuerpo de la introducción.
+% TODO (Daniel): definir aquí, la primera vez que aparezcan, los términos
+% "ficha" (ficha del tema TI-05 en \parencite{moya2026indicaciones}) y
+% "lista"/"categoría" (cada una de sus cinco categorías de tecnologías),
+% porque 3.1 y el Anexo D los usan.
 
 % TODO (Daniel): párrafo de identificación del aporte (va aquí, al cierre).
 
@@ -330,6 +334,14 @@
 \label{sec:alternativas}
 
 % TODO (Claudio y Daniel): dos párrafos + tabla.
+% Estructura acordada: párrafo 1 = método en dos frases y resultado global
+% (cuántas alternativas se evaluaron, cuántas entran, cuántas se descartaron
+% y por qué tipo de motivo) remitiendo al Anexo~\ref{anexo:busqueda};
+% párrafo 2 = análisis: qué dimensiones de comparación agregan las que entran
+% y que las plataformas de la ficha no cubrían; cuáles pasan a ser filas de la
+% Tabla~\ref{tab:cuadro-comparativo}. La tabla de abajo lleva solo las que
+% entran, con la frase de justificación. Los descartes y la búsqueda completa
+% viven en el anexo, no aquí.
 
 \tabla{Alternativas adicionales incorporadas a la comparación}{alternativas-adicionales}{|p{3.2cm}|p{3.4cm}|p{7.2cm}|}{%
     \filaTabla{\textbf{Lista de la ficha} & \textbf{Alternativa} & \textbf{Qué aporta a la comparación}}
@@ -688,16 +700,172 @@ Declaro que la información consignada en este formulario es completa y veraz, q
 
 \anexo{D}{Anexo D: Búsqueda documentada de alternativas}
 
-% TODO (Claudio y Daniel)
+%% Estructura del anexo (punto 4 de las Indicaciones, "Declaración cuando no
+%% hay más"): D.1 método común a las cinco listas; D.2 a D.6 un bloque por
+%% lista con el registro de candidatos evaluados; D.7 lo que no se encontró.
+%% La sección 3.1 del cuerpo dice el RESULTADO (qué entra y qué aporta) y
+%% remite aquí con \ref{anexo:busqueda}; este anexo es la EVIDENCIA del
+%% proceso. Registro de trabajo para llenar a mano mientras se busca:
+%% trabajo/3.1-alternativas/registro-busqueda.md (misma estructura).
+%% Todo lo que aparece aquí es de autoría del grupo (punto 6.1).
+\label{anexo:busqueda}
 
-\tabla{Búsqueda de alternativas por lista de la ficha}{busqueda-alternativas}{|p{2.8cm}|p{3.6cm}|p{3.2cm}|p{2.6cm}|p{1.8cm}|}{%
-    \filaTabla{\textbf{Lista} & \textbf{Fuentes consultadas} & \textbf{Criterios de inclusión / descarte} & \textbf{Descartadas (motivo)} & \textbf{Fecha}}
-    \filaTabla{Funciones como servicio & & & & }
-    \filaTabla{Contenedores sin servidor & & & & }
-    \filaTabla{Cómputo en el borde & & & & }
-    \filaTabla{Código abierto & & & & }
-    \filaTabla{Datos sin servidor & & & & }
+\subsection*{D.1 Método de búsqueda}
+
+% Vocabulario: "ficha" es la ficha del tema TI-05 en las Indicaciones del
+% curso \parencite{moya2026indicaciones}; "lista" es cada una de sus cinco
+% categorías de tecnologías a comparar. La definición general va en la
+% introducción (TODO Daniel); aquí se repite en una frase para que el anexo
+% sea autocontenido.
+
+En este anexo, \emph{ficha} designa la ficha del tema TI-05 del documento de indicaciones del curso \parencite{moya2026indicaciones}, y \emph{lista} cada una de las cinco categorías de tecnologías que esa ficha pide comparar (funciones como servicio, contenedores sin servidor, cómputo en el borde, código abierto y datos sin servidor). \emph{Plataformas de la ficha} son las que la ficha nombra explícitamente en cada lista.
+
+% TODO (Daniel): período de la búsqueda (inicio y cierre) y fuentes de
+% descubrimiento consultadas, con fecha (tablas de plataformas de los surveys
+% citados, CNCF Landscape, documentación oficial de proveedores).
+
+Los criterios de la Tabla~\ref{tab:criterios-busqueda} se fijaron antes de evaluar el primer candidato y se aplicaron a todos por igual, en este orden: primero las puertas de descarte X1 y X2 a toda la pool de candidatos; luego los criterios de inclusión I1, I2 e I3 a los que quedaron; la regla de desempate se usó solo en las listas donde quedaron más de dos candidatos. Cuando quedaron exactamente dos, no se aplicó. Cuando quedó uno o ninguno, se declara en D.7.
+
+\tabla{Criterios de inclusión y descarte aplicados a todos los candidatos}{criterios-busqueda}{|p{1.2cm}|p{6.6cm}|p{6.0cm}|}{%
+    \filaTabla{\textbf{Código} & \textbf{Criterio} & \textbf{Cómo se verifica}}
+    \filaTabla{I1 & Vigencia y verificabilidad: el producto se puede contratar hoy; sus límites técnicos están publicados en documentación oficial; y su precio de lista vigente está publicado, o el proveedor declara que solo se entrega por cotización. & Se abren la página oficial de límites y la de precios el día de la consulta. Un ejemplo o escenario con advertencia de que no refleja precios actuales no cuenta como precio publicado.}
+    \filaTabla{I2 & Pertenencia a la lista: el producto encaja en el modelo de la lista evaluada como propósito principal, no como complemento de otro producto. En funciones, contenedores, borde y datos: ejecuta código del usuario, o consulta y almacena datos del usuario, bajo el modelo de esa lista. En código abierto: componente de código abierto para construir o ejecutar cargas serverless, sea plataforma, runtime o autoescalado, en línea con lo que la ficha ya incluye. & Se lee la descripción oficial del producto y se confirma que su función principal corresponde al modelo de la lista.}
+    \filaTabla{I3 & Aporte diferencial: agrega al menos una dimensión no cubierta por las plataformas de la ficha en esa lista, entre estas cinco: unidad o modelo de cobro; mecanismo de aislamiento o de escala a cero; proveedor distinto de AWS, Google y Microsoft, u otra jurisdicción; acoplamiento a otro servicio del mismo ecosistema; límites en otro orden de magnitud (tiempo, payload, concurrencia). & Se identifica la dimensión en documentación oficial y se anota cuál. No cuentan popularidad, madurez percibida ni herramientas de desarrollo.}
+    \filaTabla{X1 & Solapamiento dentro de la misma lista: el candidato es una extensión, modo o variante de otro candidato o de una plataforma de la ficha en esa misma lista. Se aplica por lista, no entre listas. & Si se activa entre dos candidatos de la misma lista, se retiene el que gane la regla de desempate y se descarta el otro con este código.}
+    \filaTabla{X2 & Retirado, archivado, o con su función central en vista previa privada sin contratación general. La beta abierta no descarta. & Sitio o repositorio oficial: aviso de fin de soporte, archivo o vista previa privada, con fecha.}
 }
+
+\paragraph*{Regla de desempate.} Se activa solo cuando, tras aplicar X1, X2, I1, I2 e I3, quedan más de dos candidatos en una lista y dos de ellos aportan el mismo tipo de contraste frente a las plataformas de la ficha. Se retiene el que resulte favorecido por el primer paso que los separe, en este orden: (1)~precio de lista vigente publicado frente a solo por cotización o precio ausente; (2)~límites técnicos publicados frente a no publicados; (3)~disponibilidad general frente a beta, beta abierta o vista previa pública; (4)~documentación oficial más específica para la lista evaluada (página de límites o de precios del propio servicio, no solo la descripción general). Un candidato descartado por esta regla se registra como ``desempate, paso~$n$'', no con un código de puerta.
+
+% Nota de registro para las tablas D.2 a D.6 (no va en D.1): cada dato de
+% precio se etiqueta como "precio de lista", "solo por cotización" o "no
+% publicado"; cada dato de límite como "publicado" o "no publicado"; ambos
+% con URL oficial y fecha de consulta.
+
+%% ---------------------------------------------------------------------------
+%% Un bloque por lista. Columnas del registro (5):
+%%   Candidato · Fuente oficial (\parencite a la entrada del .bib, que lleva URL
+%%   y urldate) · Fecha · Resultado (criterio): "Entra (I1--I3)", "Descartado
+%%   (X2)", "Descartado (I1: límites no publicados)", "Descartado (desempate,
+%%   paso n)" · Motivo / qué aporta.
+%% "Motivo" es una frase: para los que entran, qué aportan a la comparación
+%% (la misma frase que va a la Tabla 3.1); para los descartados, por qué.
+%% Filas precargadas: pool completa revisada (guía del equipo + ampliación
+%% verificada el 2026-09-20). Las filas con Resultado ya escrito son descartes
+%% cerrados por hechos documentados (retiro, archivo, sucesión, no ejecuta
+%% código); el resto lo decide Daniel aplicando D.1. Agregar/quitar libremente.
+%% ---------------------------------------------------------------------------
+
+\subsection*{D.2 Funciones como servicio}
+
+Ya nombra la ficha: AWS Lambda, Google Cloud Run functions, Azure Functions. Cada dato de precio se etiquetó como precio de lista, solo por cotización o no publicado; cada límite como publicado o no publicado; la URL y la fecha de consulta de cada fuente están en la entrada bibliográfica citada.
+
+{\scriptsize
+\begin{longtable}{|p{2.7cm}|p{2.7cm}|p{1.5cm}|p{2.5cm}|p{4.8cm}|}
+    \hline
+    \textbf{Candidato} & \textbf{Fuente oficial} & \textbf{Fecha} & \textbf{Resultado (criterio)} & \textbf{Motivo / qué aporta} \\
+    \hline
+    \endhead
+    Oracle Cloud Infrastructure Functions & \parencite{oracle2026ocifunctions,oracle2026ocifunctionslimits} & 2026-09-20 &  &  \\ \hline
+    Alibaba Cloud Function Compute 3.0 & \parencite{alibaba2026fcpayg,alibaba2026fclimits,alibaba2026fctrial} & 2026-09-20 &  &  \\ \hline
+    IBM Cloud Code Engine (functions) & \parencite{ibm2026codeenginelimits,ibm2026codeenginesample} & 2026-09-20 &  &  \\ \hline
+    Scaleway Serverless Functions & \parencite{scaleway2026serverlesspricing,scaleway2026functionslimits} & 2026-09-20 &  &  \\ \hline
+    Huawei Cloud FunctionGraph & \parencite{huawei2026functiongraphprice,huawei2026functiongraphlimits} & 2026-09-20 &  &  \\ \hline
+    Tencent Cloud SCF & \parencite{tencent2026scfpricing,tencent2026scffreetier,tencent2026scfquotas} & 2026-09-20 &  &  \\ \hline
+    & & & & \\ \hline
+\end{longtable}
+}
+
+\subsection*{D.3 Contenedores sin servidor}
+
+Ya nombra la ficha: Google Cloud Run, AWS Fargate, Azure Container Apps, AWS App Runner. Cada dato de precio se etiquetó como precio de lista, solo por cotización o no publicado; cada límite como publicado o no publicado; la URL y la fecha de consulta de cada fuente están en la entrada bibliográfica citada.
+
+{\scriptsize
+\begin{longtable}{|p{2.7cm}|p{2.7cm}|p{1.5cm}|p{2.5cm}|p{4.8cm}|}
+    \hline
+    \textbf{Candidato} & \textbf{Fuente oficial} & \textbf{Fecha} & \textbf{Resultado (criterio)} & \textbf{Motivo / qué aporta} \\
+    \hline
+    \endhead
+    Fly.io (Machines) & \parencite{fly2026pricing} & 2026-09-20 &  &  \\ \hline
+    Railway & \parencite{railway2026pricing} & 2026-09-20 &  &  \\ \hline
+    Render & \parencite{render2026pricing,render2026limits,render2026faq} & 2026-09-20 &  &  \\ \hline
+    Scaleway Serverless Containers & \parencite{scaleway2026serverlesspricing,scaleway2026containerslimits} & 2026-09-20 &  &  \\ \hline
+    Koyeb & \parencite{koyeb2026pricing,koyeb2026instances} & 2026-09-20 &  &  \\ \hline
+    DigitalOcean App Platform & \parencite{do2026appplatformpricing,do2026appplatformlimits,do2026appplatformstz} & 2026-09-20 &  &  \\ \hline
+    & & & & \\ \hline
+\end{longtable}
+}
+
+\subsection*{D.4 Cómputo en el borde}
+
+Ya nombra la ficha: Cloudflare Workers (Durable Objects, D1, R2), Fastly Compute, AWS Lambda@Edge y CloudFront Functions, Vercel, Netlify, Deno Deploy. Cada dato de precio se etiquetó como precio de lista, solo por cotización o no publicado; cada límite como publicado o no publicado; la URL y la fecha de consulta de cada fuente están en la entrada bibliográfica citada.
+
+{\scriptsize
+\begin{longtable}{|p{2.7cm}|p{2.7cm}|p{1.5cm}|p{2.5cm}|p{4.8cm}|}
+    \hline
+    \textbf{Candidato} & \textbf{Fuente oficial} & \textbf{Fecha} & \textbf{Resultado (criterio)} & \textbf{Motivo / qué aporta} \\
+    \hline
+    \endhead
+    Akamai EdgeWorkers & \parencite{akamai2026edgeworkerslimits,akamai2026edgeworkersbilling} & 2026-09-20 &  &  \\ \hline
+    Supabase Edge Functions & \parencite{supabase2026edgefunctionslimits,supabase2026edgefunctionsbilling} & 2026-09-20 &  &  \\ \hline
+    Bunny Edge Scripting & \parencite{bunny2026scriptingpricing,bunny2026scriptinglimits} & 2026-09-20 &  &  \\ \hline
+    Azion Edge Functions & \parencite{azion2026pricing,azion2026functionslimits} & 2026-09-20 &  &  \\ \hline
+    Fermyon Cloud (Spin gestionado) & \parencite{fermyon2026cloudpricing,fermyon2026cloudfaq} & 2026-09-20 &  &  \\ \hline
+    Azure Front Door (Rules Engine / Edge Actions) & \parencite{microsoft2026frontdooredgeactions} & 2026-09-20 & Descartado (I2) & Rules Engine no ejecuta código del usuario (condiciones más acciones predefinidas); Edge Actions sí, pero en vista previa. \textit{[TODO Daniel: confirmar redacción]} \\ \hline
+    & & & & \\ \hline
+\end{longtable}
+}
+
+\subsection*{D.5 Código abierto}
+
+Ya nombra la ficha: Knative, OpenFaaS, KEDA, Fermyon Spin / SpinKube, wasmCloud, Wasmtime. Cada dato de precio se etiquetó como precio de lista, solo por cotización o no publicado; cada límite como publicado o no publicado; la URL y la fecha de consulta de cada fuente están en la entrada bibliográfica citada.
+
+{\scriptsize
+\begin{longtable}{|p{2.7cm}|p{2.7cm}|p{1.5cm}|p{2.5cm}|p{4.8cm}|}
+    \hline
+    \textbf{Candidato} & \textbf{Fuente oficial} & \textbf{Fecha} & \textbf{Resultado (criterio)} & \textbf{Motivo / qué aporta} \\
+    \hline
+    \endhead
+    Apache OpenWhisk & \parencite{openwhisk2026product,openwhisk2026limits} & 2026-09-20 &  &  \\ \hline
+    Fission & \parencite{fission2026executors,fission2026releases} & 2026-09-20 &  &  \\ \hline
+    Nuclio & \parencite{nuclio2026architecture,nuclio2026triggers,nuclio2026kafka,nuclio2026releases} & 2026-09-20 &  &  \\ \hline
+    Fn Project & \parencite{fnproject2026product,oracle2026fnoverview} & 2026-09-20 &  &  \\ \hline
+    WasmEdge & \parencite{wasmedge2026site,cncf2026wasmedge} & 2026-09-20 &  &  \\ \hline
+    Direktiv & \parencite{direktiv2026docs,direktiv2026github,direktiv2026landscape} & 2026-09-20 &  &  \\ \hline
+    Kubeless & \parencite{vmware2026kubeless} & 2026-09-20 & Descartado (X2) & Repositorio archivado por VMware; el README declara que no se mantiene. Fecha de archivo: \textit{[TODO Daniel: banner de GitHub]} \\ \hline
+    riff & \parencite{projectriff2021final} & 2026-09-20 & Descartado (X2) & Proyecto declarado terminado el 13 de marzo de 2021. \\ \hline
+    IronFunctions & \parencite{oracle2019fnproject} & 2026-09-20 & Descartado (X1) & Sucedido por Fn Project (mismo equipo, bifurcación en Oracle, 2017--2019); se evalúa Fn en su lugar. \\ \hline
+    & & & & \\ \hline
+\end{longtable}
+}
+
+\subsection*{D.6 Datos sin servidor}
+
+Ya nombra la ficha: Aurora Serverless, DynamoDB bajo demanda, Neon, Cloudflare D1. Cada dato de precio se etiquetó como precio de lista, solo por cotización o no publicado; cada límite como publicado o no publicado; la URL y la fecha de consulta de cada fuente están en la entrada bibliográfica citada.
+
+{\scriptsize
+\begin{longtable}{|p{2.7cm}|p{2.7cm}|p{1.5cm}|p{2.5cm}|p{4.8cm}|}
+    \hline
+    \textbf{Candidato} & \textbf{Fuente oficial} & \textbf{Fecha} & \textbf{Resultado (criterio)} & \textbf{Motivo / qué aporta} \\
+    \hline
+    \endhead
+    PlanetScale & \parencite{planetscale2026pricing,planetscale2026hobbydeprecate} & 2026-09-20 &  &  \\ \hline
+    Turso (libSQL) & \parencite{turso2026pricing,turso2026usage} & 2026-09-20 &  &  \\ \hline
+    Upstash Redis & \parencite{upstash2026redisbilling,upstash2026redispricing} & 2026-09-20 &  &  \\ \hline
+    CockroachDB Cloud (Basic) & \parencite{cockroach2026basicproduct,cockroach2026pricing} & 2026-09-20 &  &  \\ \hline
+    Firestore & \parencite{firestore2026pricing,firestore2026quotas,firestore2026enterprisepricing} & 2026-09-20 &  &  \\ \hline
+    MongoDB Atlas Serverless & \parencite{mongodb2026flexmigration} & 2026-09-20 & Descartado (X2) & Sin creación de instancias desde febrero de 2025; fin de soporte el 22 de enero de 2026; migradas a Free, Flex o Dedicated. \\ \hline
+    & & & & \\ \hline
+\end{longtable}
+}
+
+\subsection*{D.7 Declaración sobre listas sin alternativas adicionales}
+
+% TODO. Solo si para alguna lista no se encontraron al menos dos alternativas
+% que cumplan los criterios: declararlo expresamente aquí, con las fuentes
+% consultadas y la fecha de cierre de la búsqueda (punto 4, "Declaración
+% cuando no hay más"). Si todas las listas tienen dos o más, dejar una frase
+% que lo diga y remitir a las tablas D.2 a D.6.
 
 \clearpage
 
