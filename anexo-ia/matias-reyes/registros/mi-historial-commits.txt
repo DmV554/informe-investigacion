@@ -1,0 +1,5 @@
+- cc0c251 2026-09-19 — Marco teorico borrador + .bib
+- e93ee80 2026-09-20 — Se agregó 2.1
+- 32be376 2026-09-20 — referencias.bib actualizado
+- ce446f8 2026-09-21 — Anexo IA Matias Reyes
+- d7630ac 2026-09-21 — Merge branch 'Branch-Uso-IA'
