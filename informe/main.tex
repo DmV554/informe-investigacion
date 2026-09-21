@@ -914,7 +914,7 @@ Para la licitación de TERABYTE el grupo recomienda una arquitectura mixta: el n
     Anexo D: búsqueda documentada de alternativas & Daniel Miranda & 2 & Claude (Cowork, \texttt{claude-fable-5-1}); Grok (xAI) & \texttt{anexo-ia/daniel-miranda/} \\ \hline
     Plantilla LaTeX, bibliografía y organización del repositorio & Daniel Miranda & 2 & Claude (Cowork, \texttt{claude-fable-5-1}) & \texttt{anexo-ia/daniel-miranda/} \\ \hline
     Bibliografía (verificación de cada referencia) & cada autor de sección & & & \\ \hline
-    Cuestionario de 30 preguntas & cada autor de sección & & & \\ \hline
+    Cuestionario de 30 preguntas (Anexo Q) & Claudio Toledo & 1 & \textit{[TODO Claudio: herramienta y versión]} (solo redacción) & no requerida (nivel 1) \\ \hline
     Presentación (diapositivas) & todo el grupo & & & \\ \hline
 \end{longtable}
 }
@@ -1472,8 +1472,9 @@ Tras aplicar los criterios de la Tabla~\ref{tab:criterios-busqueda}, las cinco l
 
 \subsection*{Índice temático}
 
-% Transcrito del documento "Preguntas-Cuestionario.docx" (autor: integrante
-% responsable del cuestionario). Cambios de forma solamente.
+% Transcrito del documento "Preguntas-Cuestionario.docx" (autor: Claudio
+% Toledo). Cambios de forma; la etiqueta de dificultad por pregunta se asignó
+% para cuadrar con los totales por sección del índice del autor.
 
 {\scriptsize
 \begin{longtable}{|p{5.2cm}|p{1.4cm}|p{1.5cm}|p{1.5cm}|p{1.2cm}|p{2.6cm}|}
@@ -1501,55 +1502,55 @@ Tras aplicar los criterios de la Tabla~\ref{tab:criterios-busqueda}, las cinco l
 
 \subsubsection*{Selección múltiple (Q1--Q9)}
 
-\textbf{Q1.} \textit{(Sección 1)} ¿Cuál de las siguientes \emph{no} es una de las tres cualidades esenciales de la computación sin servidor? \\
+\textbf{Q1.} \textit{(Sección 1 · Básica)} ¿Cuál de las siguientes \emph{no} es una de las tres cualidades esenciales de la computación sin servidor? \\
 a) Abstracción de los servidores y de su operación. \\
 b) Cobro por uso en vez de por reserva. \\
 c) Escalamiento automático desde cero. \\
 d) Ejecución del código en el borde de la red, cerca del usuario.
 
-\textbf{Q2.} \textit{(Sección 2.1)} ¿Qué mecanismo de aislamiento usa Cloudflare Workers para separar a sus clientes? \\
+\textbf{Q2.} \textit{(Sección 2.1 · Básica)} ¿Qué mecanismo de aislamiento usa Cloudflare Workers para separar a sus clientes? \\
 a) MicroVM de Firecracker. \\
 b) Núcleo en espacio de usuario (gVisor). \\
 c) \emph{Isolates} de V8 dentro de un proceso compartido. \\
 d) Una máquina virtual completa por cliente.
 
-\textbf{Q3.} \textit{(Sección 2.2)} ¿En qué escenario de carga la concurrencia aprovisionada resulta más económica? \\
+\textbf{Q3.} \textit{(Sección 2.2 · Intermedia)} ¿En qué escenario de carga la concurrencia aprovisionada resulta más económica? \\
 a) Ráfagas esporádicas separadas por largos períodos sin tráfico. \\
 b) Tráfico sostenido, con más de un 60\,\% de uso continuo. \\
 c) Procesos asíncronos que corren fuera de la ruta crítica. \\
 d) Funciones que se invocan una o dos veces al día.
 
-\textbf{Q4.} \textit{(Sección 2.4)} ¿Qué distingue a una cola punto a punto de un esquema de publicación/suscripción? \\
+\textbf{Q4.} \textit{(Sección 2.4 · Básica)} ¿Qué distingue a una cola punto a punto de un esquema de publicación/suscripción? \\
 a) No hay diferencia: son dos nombres para el mismo patrón. \\
 b) La cola garantiza siempre entrega exactamente una vez; publicación/suscripción nunca. \\
 c) Publicación/suscripción exige que publicador y suscriptor estén activos al mismo tiempo. \\
 d) En la cola cada mensaje llega a un único consumidor; en publicación/suscripción el evento se difunde a todos los suscriptores del tópico.
 
-\textbf{Q5.} \textit{(Sección 2.5)} ¿En cuál de estas cargas conviene más ejecutar WebAssembly en el borde? \\
+\textbf{Q5.} \textit{(Sección 2.5 · Intermedia)} ¿En cuál de estas cargas conviene más ejecutar WebAssembly en el borde? \\
 a) Una aplicación que debe migrar sin cambios entre Fastly Compute y Cloudflare Workers. \\
 b) Cómputo numérico intensivo que corre durante varias horas. \\
 c) Funciones intermitentes u orientadas a eventos, que escalan a cero con frecuencia. \\
 d) Un servicio que debe ejecutar un binario nativo de Linux sin recompilarlo.
 
-\textbf{Q6.} \textit{(Sección 3.1)} Entre las alternativas adicionales de cómputo en el borde, ¿qué aporta Azion Edge Functions a la comparación? \\
+\textbf{Q6.} \textit{(Sección 3.1 · Básica)} Entre las alternativas adicionales de cómputo en el borde, ¿qué aporta Azion Edge Functions a la comparación? \\
 a) Presencia y operación documentadas en Latinoamérica. \\
 b) Precio de lista en euros y operación en la Unión Europea. \\
 c) El mismo motor de funciones en versión gestionada y autoalojada. \\
 d) Una base de datos Redis con cobro por comando.
 
-\textbf{Q7.} \textit{(Sección 3.2)} Un proceso de análisis tarda 8 minutos, se invoca por HTTP y debe responder en la misma conexión. Según sus límites máximos publicados, ¿cuál de estas plataformas lo admite sin rediseñar el proceso? \\
+\textbf{Q7.} \textit{(Sección 3.2 · Intermedia)} Un proceso de análisis tarda 8 minutos, se invoca por HTTP y debe responder en la misma conexión. Según sus límites máximos publicados, ¿cuál de estas plataformas lo admite sin rediseñar el proceso? \\
 a) Azure Functions. \\
 b) Google Cloud Run. \\
 c) AWS CloudFront Functions. \\
 d) Fastly Compute.
 
-\textbf{Q8.} \textit{(Sección 4.1)} Con las medianas de la prueba de concepto (frío / caliente, en ms): AWS Lambda 838 / 442, Google Cloud Run 922 / 203 y Cloudflare Workers 569 / 567, ¿qué plataforma tuvo la mayor penalización de arranque y de cuánto fue? \\
-a) Google Cloud Run, unos 719~ms. \\
-b) AWS Lambda, unos 396~ms. \\
+\textbf{Q8.} \textit{(Sección 4.1 · Intermedia)} Con las medianas de la prueba de concepto (frío / caliente, en ms): AWS Lambda 838 / 442, Google Cloud Run 922 / 203 y Cloudflare Workers 569 / 567, ¿qué plataforma tuvo la mayor penalización de arranque y de cuánto fue? \\
+a) Google Cloud Run, unos 720~ms. \\
+b) AWS Lambda, unos 395~ms. \\
 c) Google Cloud Run, unos 922~ms. \\
 d) Cloudflare Workers, unos 569~ms.
 
-\textbf{Q9.} \textit{(Sección 4.3)} ¿Dónde se ubica el tráfico mensual estimado del núcleo transaccional del terminal de TERABYTE respecto del volumen de equilibrio entre AWS Lambda y una flota siempre encendida? \\
+\textbf{Q9.} \textit{(Sección 4.3 · Intermedia)} ¿Dónde se ubica el tráfico mensual estimado del núcleo transaccional del terminal de TERABYTE respecto del volumen de equilibrio entre AWS Lambda y una flota siempre encendida? \\
 a) Muy cerca de los 24,0 millones, por lo que ambos modelos cuestan lo mismo. \\
 b) En el orden de un par de millones de solicitudes al mes, muy por debajo de los 24,0 millones. \\
 c) Sobre los 54,5 millones, donde la flota fija siempre es más barata. \\
@@ -1557,51 +1558,51 @@ d) No puede estimarse con los datos del terminal.
 
 \subsubsection*{Verdadero o falso (Q10--Q16)}
 
-\textbf{Q10.} \textit{(Sección 1)} Que una plataforma sea «sin servidor» significa que no existen servidores ni tareas de operación asociadas a la aplicación. \rule{2.2cm}{0.4pt}
+\textbf{Q10.} \textit{(Sección 1 · Básica)} Que una plataforma sea «sin servidor» significa que no existen servidores ni tareas de operación asociadas a la aplicación. \rule{2.2cm}{0.4pt}
 
-\textbf{Q11.} \textit{(Sección 2.1)} Una aplicación que depende de un binario nativo de Linux ya compilado puede desplegarse sin cambios en Cloudflare Workers, igual que en AWS Lambda. \rule{2.2cm}{0.4pt}
+\textbf{Q11.} \textit{(Sección 2.1 · Intermedia)} Una aplicación que depende de un binario nativo de Linux ya compilado puede desplegarse sin cambios en Cloudflare Workers, igual que en AWS Lambda. \rule{2.2cm}{0.4pt}
 
-\textbf{Q12.} \textit{(Sección 2.3)} Cloudflare Workers cobra por el tiempo de reloj que dura cada solicitud, incluido el tiempo que la función pasa esperando respuestas de red. \rule{2.2cm}{0.4pt}
+\textbf{Q12.} \textit{(Sección 2.3 · Básica)} Cloudflare Workers cobra por el tiempo de reloj que dura cada solicitud, incluido el tiempo que la función pasa esperando respuestas de red. \rule{2.2cm}{0.4pt}
 
-\textbf{Q13.} \textit{(Sección 2.4)} Un consumidor que lee de una cola estándar de Amazon SQS puede asumir que cada mensaje se procesará exactamente una vez, por lo que no necesita ser idempotente. \rule{2.2cm}{0.4pt}
+\textbf{Q13.} \textit{(Sección 2.4 · Intermedia)} Un consumidor que lee de una cola estándar de Amazon SQS puede asumir que cada mensaje se procesará exactamente una vez, por lo que no necesita ser idempotente. \rule{2.2cm}{0.4pt}
 
-\textbf{Q14.} \textit{(Sección 2.5)} Un módulo WebAssembly puede leer archivos o abrir conexiones del sistema anfitrión por defecto, sin declarar ninguna importación. \rule{2.2cm}{0.4pt}
+\textbf{Q14.} \textit{(Sección 2.5 · Básica)} Un módulo WebAssembly puede leer archivos o abrir conexiones del sistema anfitrión por defecto, sin declarar ninguna importación. \rule{2.2cm}{0.4pt}
 
-\textbf{Q15.} \textit{(Sección 3.2)} Según el cuadro comparativo, Cloudflare Workers (plan Paid) no cobra el egreso de datos, mientras que AWS Lambda lo cobra a USD 0,09/GB después de los primeros 100~GB mensuales. \rule{2.2cm}{0.4pt}
+\textbf{Q15.} \textit{(Sección 3.2 · Básica)} Según el cuadro comparativo, Cloudflare Workers (plan Paid) no cobra el egreso de datos, mientras que AWS Lambda lo cobra a USD 0,09/GB después de los primeros 100~GB mensuales. \rule{2.2cm}{0.4pt}
 
-\textbf{Q16.} \textit{(Sección 4.3)} Como el tráfico de TERABYTE está muy por debajo del volumen de equilibrio, la propuesta del grupo ejecuta el núcleo operacional, el \emph{gate} y el patio del terminal sobre funciones sin servidor. \rule{2.2cm}{0.4pt}
+\textbf{Q16.} \textit{(Sección 4.3 · Básica)} Como el tráfico de TERABYTE está muy por debajo del volumen de equilibrio, la propuesta del grupo ejecuta el núcleo operacional, el \emph{gate} y el patio del terminal sobre funciones sin servidor. \rule{2.2cm}{0.4pt}
 
 \subsubsection*{Completar (Q17--Q22)}
 
-\textbf{Q17.} \textit{(Sección 1)} Cuando no hay solicitudes, Google Cloud Run retira incluso la última instancia; en cambio, AWS \rule{2.2cm}{0.4pt} sigue cobrando hasta que la tarea \rule{2.2cm}{0.4pt}. Por eso, en los contenedores sin servidor no siempre hay escala a cero.
+\textbf{Q17.} \textit{(Sección 1 · Intermedia)} Cuando no hay solicitudes, Google Cloud Run retira incluso la última instancia; en cambio, AWS \rule{2.2cm}{0.4pt} sigue cobrando hasta que la tarea \rule{2.2cm}{0.4pt}. Por eso, en los contenedores sin servidor no siempre hay escala a cero.
 
-\textbf{Q18.} \textit{(Sección 2.2)} Cuando no hay instancias disponibles, la plataforma debe reservar recursos, crear el entorno aislado, cargar el \emph{runtime} y las dependencias y ejecutar la inicialización; esa latencia es el arranque en \rule{2.2cm}{0.4pt}. Reutilizar una instancia ya preparada es un arranque en \rule{2.2cm}{0.4pt}.
+\textbf{Q18.} \textit{(Sección 2.2 · Básica)} Cuando no hay instancias disponibles, la plataforma debe reservar recursos, crear el entorno aislado, cargar el \emph{runtime} y las dependencias y ejecutar la inicialización; esa latencia es el arranque en \rule{2.2cm}{0.4pt}. Reutilizar una instancia ya preparada es un arranque en \rule{2.2cm}{0.4pt}.
 
-\textbf{Q19.} \textit{(Sección 2.3)} La factura de una plataforma sin servidor combina cuatro factores: el tiempo de \rule{2.2cm}{0.4pt} facturable, los recursos asignados o consumidos durante ese tiempo, la \rule{2.2cm}{0.4pt} o mínimo de cobro y un cargo fijo por \rule{2.2cm}{0.4pt}.
+\textbf{Q19.} \textit{(Sección 2.3 · Intermedia)} La factura de una plataforma sin servidor combina cuatro factores: el tiempo de \rule{2.2cm}{0.4pt} facturable, los recursos asignados o consumidos durante ese tiempo, la \rule{2.2cm}{0.4pt} o mínimo de cobro y un cargo fijo por \rule{2.2cm}{0.4pt}.
 
-\textbf{Q20.} \textit{(Sección 2.6)} En AWS Lambda, una función puede ejecutarse como máximo \rule{2.2cm}{0.4pt} segundos, y la carga útil síncrona por solicitud y por respuesta está limitada a \rule{2.2cm}{0.4pt}~MB.
+\textbf{Q20.} \textit{(Sección 2.6 · Básica)} En AWS Lambda, una función puede ejecutarse como máximo \rule{2.2cm}{0.4pt} segundos, y la carga útil síncrona por solicitud y por respuesta está limitada a \rule{2.2cm}{0.4pt}~MB.
 
-\textbf{Q21.} \textit{(Sección 4.1)} En la prueba de concepto del grupo, cada petición se clasifica como fría o caliente según \rule{2.2cm}{0.4pt}, y no según su \rule{2.2cm}{0.4pt}.
+\textbf{Q21.} \textit{(Sección 4.1 · Básica)} En la prueba de concepto del grupo, cada petición se clasifica como fría o caliente según \rule{2.2cm}{0.4pt}, y no según su \rule{2.2cm}{0.4pt}.
 
-\textbf{Q22.} \textit{(Sección 4.2)} Al comparar AWS Lambda (512~MB y 200~ms por solicitud) con dos instancias t3.medium reservadas a un año, Lambda es más barata hasta \rule{2.2cm}{0.4pt} millones de solicitudes al mes, volumen en el que iguala los USD \rule{2.2cm}{0.4pt} mensuales del par de instancias.
+\textbf{Q22.} \textit{(Sección 4.2 · Intermedia)} Al comparar AWS Lambda (512~MB y 200~ms por solicitud) con dos instancias t3.medium reservadas a un año, Lambda es más barata hasta \rule{2.2cm}{0.4pt} millones de solicitudes al mes, volumen en el que iguala los USD \rule{2.2cm}{0.4pt} mensuales del par de instancias.
 
 \subsubsection*{Respuesta corta (Q23--Q30)}
 
-\textbf{Q23.} \textit{(Sección 2.1)} Google reconoce que el entorno de Cloud Run basado en microVM rinde más bajo carga sostenida, pero arranca más lento que el basado en gVisor en algunos servicios. ¿Qué implica esto para elegir un mecanismo de aislamiento según el patrón de carga, y por qué se dice que ningún \emph{runtime} gana en todo?
+\textbf{Q23.} \textit{(Sección 2.1 · Avanzada)} Google reconoce que el entorno de Cloud Run basado en microVM rinde más bajo carga sostenida, pero arranca más lento que el basado en gVisor en algunos servicios. ¿Qué implica esto para elegir un mecanismo de aislamiento según el patrón de carga, y por qué se dice que ningún \emph{runtime} gana en todo?
 
-\textbf{Q24.} \textit{(Sección 2.2)} ¿Por qué se afirma que la concurrencia aprovisionada acerca una función al modelo siempre encendido? Menciona además un caso de arranque en frío que esta mitigación no resuelve.
+\textbf{Q24.} \textit{(Sección 2.2 · Avanzada)} ¿Por qué se afirma que la concurrencia aprovisionada acerca una función al modelo siempre encendido? Menciona además un caso de arranque en frío que esta mitigación no resuelve.
 
-\textbf{Q25.} \textit{(Sección 2.3)} Una función pasa 180~ms esperando la respuesta de una base de datos y usa 20~ms de CPU. ¿Por qué el cobro por tiempo de reloj la encarece, qué ocurre si esa función se encadena con otra y cómo cambiaría el costo con un cobro por tiempo de CPU como el de Cloudflare Workers?
+\textbf{Q25.} \textit{(Sección 2.3 · Avanzada)} Una función pasa 180~ms esperando la respuesta de una base de datos y usa 20~ms de CPU. ¿Por qué el cobro por tiempo de reloj la encarece, qué ocurre si esa función se encadena con otra y cómo cambiaría el costo con un cobro por tiempo de CPU como el de Cloudflare Workers?
 
-\textbf{Q26.} \textit{(Sección 2.4)} Un sistema portuario procesa, por un lado, lecturas de sensores de temperatura ambiente y, por otro, cobros de servicios a las navieras. ¿Qué garantía de entrega usarías en cada flujo y qué criterio justifica la diferencia?
+\textbf{Q26.} \textit{(Sección 2.4 · Intermedia)} Un sistema portuario procesa, por un lado, lecturas de sensores de temperatura ambiente y, por otro, cobros de servicios a las navieras. ¿Qué garantía de entrega usarías en cada flujo y qué criterio justifica la diferencia?
 
-\textbf{Q27.} \textit{(Sección 2.6)} ¿Dónde se concentra principalmente la dependencia del proveedor en una arquitectura sin servidor, y cuándo conviene pagar el costo de una capa de abstracción multinube?
+\textbf{Q27.} \textit{(Sección 2.6 · Avanzada)} ¿Dónde se concentra principalmente la dependencia del proveedor en una arquitectura sin servidor, y cuándo conviene pagar el costo de una capa de abstracción multinube?
 
-\textbf{Q28.} \textit{(Sección 3.2)} El análisis del cuadro sostiene que la promesa de «escala a cero y pago estricto por uso» se tensiona en la práctica. Da dos ejemplos concretos del cuadro que lo muestren y explica qué implican para una carga sostenida.
+\textbf{Q28.} \textit{(Sección 3.2 · Avanzada)} El análisis del cuadro sostiene que la promesa de «escala a cero y pago estricto por uso» se tensiona en la práctica. Da dos ejemplos concretos del cuadro que lo muestren y explica qué implican para una carga sostenida.
 
-\textbf{Q29.} \textit{(Sección 4.2)} El volumen de equilibrio de 24,0 millones baja a 5,3 millones con 1~GB y 500~ms por solicitud, y con instancias bajo demanda Lambda ni siquiera llega a cruzar. ¿Qué explica esta sensibilidad y por qué el informe pide leer el resultado como un orden de magnitud?
+\textbf{Q29.} \textit{(Sección 4.2 · Avanzada)} El volumen de equilibrio de 24,0 millones baja a 5,3 millones con 1~GB y 500~ms por solicitud, y con instancias bajo demanda Lambda ni siquiera llega a cruzar. ¿Qué explica esta sensibilidad y por qué el informe pide leer el resultado como un orden de magnitud?
 
-\textbf{Q30.} \textit{(Sección 5)} Un modelo de costos sitúa el equilibrio entre AWS Lambda y una flota fija en 24,0 millones de solicitudes al mes. ¿Por qué en una arquitectura muy descompuesta en funciones, como la del monitoreo de Prime Video, el cruce real llega antes, y qué dato acota esa conclusión?
+\textbf{Q30.} \textit{(Sección 5 · Intermedia)} Un modelo de costos sitúa el equilibrio entre AWS Lambda y una flota fija en 24,0 millones de solicitudes al mes. ¿Por qué en una arquitectura muy descompuesta en funciones, como la del monitoreo de Prime Video, el cruce real llega antes, y qué dato acota esa conclusión?
 
 \subsection*{Pauta de respuestas}
 
@@ -1618,7 +1619,7 @@ d) No puede estimarse con los datos del terminal.
     Q5 & 2.5 & c & Arranca rápido y escala a cero; en cómputo largo es más lento que nativo, la portabilidad entre proveedores no está garantizada y solo ejecuta bytecode Wasm. \\ \hline
     Q6 & 3.1 & a & Azion aporta presencia en Latinoamérica; euros y UE es Scaleway, motor gestionado y autoalojado es OCI Functions / Fn Project, y cobro por comando es Upstash. \\ \hline
     Q7 & 3.2 & b & Cloud Run admite hasta 60~min (subiendo el límite por defecto de 300~s); Azure topa en 230~s y las otras en ms de CPU. \\ \hline
-    Q8 & 4.1 & a & 922 $-$ 203 $\approx$ 719~ms (la resta cancela la red). \\ \hline
+    Q8 & 4.1 & a & 922 $-$ 203 $\approx$ 720~ms con las medianas sin redondear (la resta cancela la red). \\ \hline
     Q9 & 4.3 & b & El terminal ronda un par de millones al mes, lejos de 24,0~M. \\ \hline
     Q10 & 1 & Falso & Los servidores siguen existiendo; su gestión pasa al proveedor. \\ \hline
     Q11 & 2.1 & Falso & Los isolates solo corren JavaScript y WebAssembly, no binarios nativos. \\ \hline
