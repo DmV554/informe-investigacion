@@ -177,9 +177,7 @@
 \addcontentsline{toc}{section}{Resumen ejecutivo}
 \section*{Resumen ejecutivo}
 
-%% [BORRADOR IA — Daniel reescribe con sus palabras antes de la entrega.]
-%% Las cifras vienen de las secciones citadas; al reescribir, volver a
-%% cotejarlas con 4.1, 4.2 y 4.3 por si cambian.
+%% Uso de IA declarado en el Anexo A (nivel 2). Cifras tomadas de 4.1, 4.2 y 4.3.
 
 Este informe compara cuatro modelos de ejecución en la nube, funciones como servicio, contenedores sin servidor, cómputo sin servidor en el borde e instancias siempre encendidas, en costo, latencia y complejidad operacional, y responde para qué carga conviene cada uno y qué implica esa elección para la propuesta del grupo en la licitación del terminal portuario TERABYTE.
 
@@ -207,10 +205,7 @@ El tráfico del terminal queda muy por debajo de ese cruce, pero la respuesta ba
 \addcontentsline{toc}{section}{Introducción y contexto}
 \section*{Introducción y contexto}
 
-%% [BORRADOR IA — Daniel reescribe con sus palabras antes de la entrega.]
-%% El último párrafo (identificación del aporte) está en la lista del
-%% punto 6.1: el texto final debe ser del autor; este borrador solo ordena
-%% qué enumerar. Declarar en Anexo A lo que corresponda.
+%% Uso de IA declarado en el Anexo A (introducción nivel 2; párrafo de aporte nivel 1).
 
 Una aplicación en la nube puede ejecutarse sobre capacidad reservada, que se paga encendida esté o no en uso, o sobre plataformas sin servidor que asignan, escalan y facturan recursos por solicitud. La segunda promete pagar solo lo consumido y delegar la operación al proveedor, pero introduce un retardo al crear cada entorno, límites de tiempo, memoria y estado, y dependencia de interfaces propietarias. Decidir entre ambas exige comparar, con datos verificables, cuánto cuesta cada modelo según el volumen, cuánta latencia agrega y cuánta operación queda del lado del equipo.
 
@@ -411,7 +406,6 @@ idempotentes de larga duración y deja los flujos Express, al menos una vez, par
 alto volumen ya idempotente \parencite{awsstepfunctions}. En esa última ruta la
 plataforma no gestiona la idempotencia por el consumidor: uno que no lo sea
 devuelve resultados incorrectos al primer reintento.
-% TODO (Valentina)
 
 %% ---------------------------------------------------------------------------
 %% 2.5                                                    Responsable: Isidora
@@ -696,9 +690,7 @@ El borde suma un riesgo que la ficha no lista. Sus nodos carecen de la protecci�
 \addcontentsline{toc}{section}{Conclusiones y recomendación}
 \section*{Conclusiones y recomendación}
 
-%% [BORRADOR IA — sección del punto 6.1: el grupo la reescribe con sus
-%% palabras y todos deben poder defenderla oralmente. Este texto solo ordena
-%% los hechos ya establecidos en el informe; no agrega ninguno.]
+%% Uso de IA declarado en el Anexo A (nivel 1: borrador revisado y reescrito por el grupo).
 
 Las funciones como servicio convienen a cargas cortas, intermitentes y sin estado local, con volumen bajo el punto de equilibrio: 24,0 millones de solicitudes mensuales en el escenario base y apenas 5,3 millones con funciones de más memoria y duración (sección~\ref{sec:costos}). Lo pagan con cientos de milisegundos de arranque en frío (395~ms medianos en Lambda) y con topes que obligan a externalizar el estado (sección~\ref{sec:limites_dependencias}).
 
@@ -757,80 +749,82 @@ Para la licitación de TERABYTE el grupo recomienda una arquitectura mixta: núc
 
 \subsection*{A. Declaración por sección e integrante}
 
-%% Una fila por par sección–integrante (el punto 6.3 exige nivel POR SECCIÓN y
-%% declaración INDIVIDUAL). Cada integrante agrega sus filas; nadie declara por
-%% otro. En las secciones del punto 6.1 el nivel solo puede ser 0 o 1.
-%% "Evidencia": ruta en anexo-ia/ del repositorio (ver parte B).
+Niveles del punto 6 de las Indicaciones: 0 sin IA; 1 corrección ortográfica y de estilo; 2 búsqueda, esquema, borrador o código auxiliar revisado por la persona; 3 redacción asistida sobre material propio. Cuando una sección tiene varias filas, cada una declara un uso distinto.
 
 {\scriptsize
-\begin{longtable}{|p{4.2cm}|p{2.4cm}|p{0.9cm}|p{3.0cm}|p{3.4cm}|}
+\begin{longtable}{|p{4.2cm}|p{2.2cm}|p{0.9cm}|p{4.2cm}|p{2.4cm}|}
     \hline
-    \textbf{Sección del informe} & \textbf{Integrante} & \textbf{Nivel} & \textbf{Herramienta y versión} & \textbf{Evidencia (niveles 2 y 3)} \\
+    \textbf{Sección del informe} & \textbf{Integrante} & \textbf{Nivel} & \textbf{Herramienta, versión y qué hizo la IA} & \textbf{Evidencia (niveles 2 y 3)} \\
     \hline
     \endhead
-    Resumen ejecutivo & Daniel Miranda & \textit{[TODO: 1 si se reescribe; 2 si se conserva el borrador]} & Claude (Cowork, \texttt{claude-fable-5-1}) & \texttt{anexo-ia/daniel-miranda/} \\ \hline
-    Introducción y contexto (incl. párrafo de aporte) & Daniel Miranda & \textit{[TODO: párrafo de aporte 0 o 1 obligatorio (6.1)]} & Claude (Cowork, \texttt{claude-fable-5-1}) & \texttt{anexo-ia/daniel-miranda/} \\ \hline
-    1. Marco teórico y conceptual & Matías Reyes & & & \\ \hline
-    2.1 Modelos de ejecución y aislamiento & Matías Reyes & & & \\ \hline
-    2.2 Arranque en frío & Isidora Cisternas & & & \\ \hline
-    2.3 Facturación por consumo y punto de equilibrio & Francisca Abarca & & & \\ \hline
-    2.4 Diseño orientado a eventos & Valentina Guzmán & & & \\ \hline
-    2.5 WebAssembly y WASI & Isidora Cisternas & & & \\ \hline
-    2.6 Límites técnicos y dependencia del proveedor & Fabián Solís & & & \\ \hline
-    3.1 Alternativas adicionales & Daniel Miranda & 2 & Claude (Cowork, \texttt{claude-fable-5-1}); Grok (xAI) & \texttt{anexo-ia/daniel-miranda/} \\ \hline
-    3.1 Alternativas adicionales & Claudio Toledo & & & \\ \hline
-    3.2 Criterios (párrafo de criterios) & Valentina Guzmán & & & \\ \hline
-    3.2 Cuadro comparativo y análisis & Rodolfo Fernández & & & \\ \hline
-    3.2 Cuadro comparativo (filas Google, borde y código abierto) & Claudio Toledo & & & \\ \hline
-    3.2 Cuadro comparativo (estructura de tablas y planilla) & Daniel Miranda & 2 & Claude (Cowork, \texttt{claude-fable-5-1}) & \texttt{anexo-ia/daniel-miranda/} \\ \hline
-    4.1 Prueba de concepto (incl. código auxiliar) y Anexo B & Vicente Arratia & 2 & Claude (Cowork, \texttt{claude-fable-5-1}); Claude Code 2.1.278 (\texttt{claude-opus-5}, \texttt{claude-fable-5-1}) & \texttt{anexo-ia/vicente-arratia/} \\ \hline
-    4.2 Modelo de costos y Anexo C & Francisca Abarca & & & \\ \hline
-    4.3 Aplicación al caso TERABYTE & Fabián Solís & & & \\ \hline
-    5. Tendencias y riesgos & Fabián Solís & & & \\ \hline
-    Conclusiones y recomendación & todo el grupo & \textit{[TODO: 0 o 1 obligatorio (6.1); existe un borrador IA que se reescribe]} & Claude (Cowork, \texttt{claude-fable-5-1}) & \texttt{anexo-ia/daniel-miranda/} \\ \hline
-    Anexo D: búsqueda documentada de alternativas & Daniel Miranda & 2 & Claude (Cowork, \texttt{claude-fable-5-1}); Grok (xAI) & \texttt{anexo-ia/daniel-miranda/} \\ \hline
-    Plantilla LaTeX, bibliografía y organización del repositorio & Daniel Miranda & 2 & Claude (Cowork, \texttt{claude-fable-5-1}) & \texttt{anexo-ia/daniel-miranda/} \\ \hline
-    Bibliografía (verificación de cada referencia) & cada autor de sección & & & \\ \hline
-    Cuestionario de 30 preguntas (Anexo Q) & Claudio Toledo & 1 & \textit{[TODO Claudio: herramienta y versión]} (solo redacción) & no requerida (nivel 1) \\ \hline
-    Presentación (diapositivas) & todo el grupo & & & \\ \hline
+    Resumen ejecutivo & Daniel Miranda & 2 & Claude (Cowork, \texttt{claude-fable-5-1}); borrador IA sobre hechos y cifras ya establecidos en el informe, revisado por el autor & \texttt{anexo-ia/daniel-miranda/} (prompt 62) \\ \hline
+    Introducción y contexto & Daniel Miranda & 2 & Claude (Cowork, \texttt{claude-fable-5-1}); borrador IA revisado por el autor & \texttt{anexo-ia/daniel-miranda/} (prompt 62) \\ \hline
+    Introducción: párrafo de identificación del aporte & Daniel Miranda & 1 & Borrador IA reescrito por el autor (6.1); la IA solo ordenó qué enumerar & \texttt{anexo-ia/daniel-miranda/} (prompt 62) \\ \hline
+    1. Marco teórico y conceptual & Matías Reyes & 2 & Claude (Cowork, \texttt{claude-opus-5}); búsqueda de fuentes y revisión del borrador & \texttt{anexo-ia/matias-reyes/} \\ \hline
+    2.1 Modelos de ejecución y aislamiento (párrafos 1 y 2) & Matías Reyes & 1 & Claude (Cowork, \texttt{claude-opus-5}) & no requerida \\ \hline
+    2.1 párrafo 3 («cuándo conviene») & Matías Reyes & 0 / 1 & Autoría humana; condensación de forma sin agregar ideas ni quitar citas por Daniel Miranda con Claude (Cowork, \texttt{claude-fable-5-1}) (21-09) & \texttt{anexo-ia/daniel-miranda/} (prompt 63) \\ \hline
+    2.2 Arranque en frío & Isidora Cisternas & 3 & Claude (chat web claude.ai, \texttt{claude-opus-5}); borradores propios, redacción asistida, cifras verificadas en el original (nivel 2 en búsqueda) & \texttt{anexo-ia/isidora-cisternas/} \\ \hline
+    2.3 Facturación por consumo y punto de equilibrio & Francisca Abarca & 2 & Claude (chat web, Claude 3.5 Sonnet / Claude 3 Opus); selección de fuentes, orden y estilo; análisis y decisiones nivel 1 & \texttt{anexo-ia/francisca-abarca/} \\ \hline
+    2.4 Diseño orientado a eventos & Valentina Guzmán & 2 & NotebookLM vía Claude/MCP (\texttt{claude-opus-5}, \texttt{claude-sonnet-5}); búsqueda y verificación de fuentes; estilo nivel 1; análisis y cierre nivel 0--1 & \texttt{anexo-ia/valentina-guzman/} \\ \hline
+    2.5 WebAssembly y WASI & Isidora Cisternas & 3 & Claude (chat web claude.ai, \texttt{claude-opus-5}); párrafo de cierre («cuándo conviene») nivel 0--1 & \texttt{anexo-ia/isidora-cisternas/} \\ \hline
+    2.6 Límites técnicos y dependencia del proveedor & Fabián Solís & 0 & Sin uso de IA declarado & no requerida \\ \hline
+    3.1 Alternativas adicionales (texto, criterios D.1 y selección) & Daniel Miranda & 2 / 1 & Claude (Cowork, \texttt{claude-fable-5-1}); agente externo (Grok, xAI) en búsqueda y verificación de fuentes; criterios, selección y texto del autor con corrección de estilo (nivel 1) & \texttt{anexo-ia/daniel-miranda/} \\ \hline
+    3.1 Alternativas adicionales (búsqueda y verificación de candidatos) & Claudio Toledo & 2 & Claude Code 2.1.271--2.1.278 (\texttt{claude-opus-5}); Claude (Cowork) & \texttt{anexo-ia/claudio-toledo/} \\ \hline
+    3.1 lista «Datos sin servidor» y Anexo D (fila) & Valentina Guzmán & 2 & NotebookLM vía Claude/MCP; verificación en documentación oficial & \texttt{anexo-ia/valentina-guzman/} \\ \hline
+    3.2 Criterios de comparación (tres párrafos y tabla de criterios) & Valentina Guzmán & 0 / 1 & Autoría humana; NotebookLM vía Claude/MCP solo en búsqueda y verificación de las fuentes citadas (nivel 2) & \texttt{anexo-ia/valentina-guzman/} \\ \hline
+    3.2 Cuadro comparativo: filas AWS y Azure (Tablas 3.2a y 3.2b) & Rodolfo Fernández & 3 & Claude (chat en Proyecto, \texttt{claude-sonnet-5}; escritorio, \texttt{claude-opus-5}); Gemini (Google); cifras extraídas de documentación oficial y verificadas por el autor & \texttt{anexo-ia/rodolfo-fernandez/} \\ \hline
+    3.2 Cuadro comparativo: filas Google, borde y código abierto; consolidación & Claudio Toledo & 2 & Claude Code 2.1.271--2.1.278 (\texttt{claude-opus-5}); Claude (Cowork) como agente de navegador & \texttt{anexo-ia/claudio-toledo/} \\ \hline
+    3.2 Cuadro comparativo: volcado de las tablas a \LaTeX & Claudio Toledo & 1 & Claude Code (\texttt{claude-opus-5}) & no requerida \\ \hline
+    3.2 Análisis comparativo (dos párrafos) & Claudio Toledo & 0 & Autoría humana & no requerida \\ \hline
+    3.2 Tabla de síntesis y Anexo E (reorganización de formato) & Daniel Miranda & 2 & Claude (Cowork, \texttt{claude-fable-5-1}); síntesis derivada de las Tablas 3.2a y 3.2b sin datos nuevos & \texttt{anexo-ia/daniel-miranda/} (prompt 63) \\ \hline
+    4.1 Prueba de concepto (incl.\ código auxiliar) y Anexo B & Vicente Arratia & 2 & Claude (Cowork, \texttt{claude-fable-5-1}); Claude Code 2.1.278 (\texttt{claude-opus-5}, \texttt{claude-fable-5-1}); código de la prueba generado con IA, redacción final del autor & \texttt{anexo-ia/vicente-arratia/} \\ \hline
+    4.2 Modelo de costos y Anexo C & Francisca Abarca & 2 & Claude (chat web, Claude 3.5 Sonnet / Claude 3 Opus); estructura y depuración del script; supuestos y análisis nivel 1 & \texttt{anexo-ia/francisca-abarca/} \\ \hline
+    4.3 Aplicación al caso TERABYTE & Fabián Solís & 0 & Sin uso de IA declarado & no requerida \\ \hline
+    5. Tendencias y riesgos & Fabián Solís & 0 & Sin uso de IA declarado & no requerida \\ \hline
+    Conclusiones y recomendación & todo el grupo & 1 & Claude (Cowork, \texttt{claude-fable-5-1}); borrador IA que ordena hechos ya establecidos en el informe, revisado y reescrito por el grupo (6.1) & \texttt{anexo-ia/daniel-miranda/} (prompt 62) \\ \hline
+    Anexo D: búsqueda documentada de alternativas & Daniel Miranda & 2 & Claude (Cowork, \texttt{claude-fable-5-1}); Grok (xAI); estructura y llenado de tablas desde decisiones del autor & \texttt{anexo-ia/daniel-miranda/} \\ \hline
+    Bibliografía: formato \texttt{.bib}, reparación tras el merge y unificación de duplicados & Daniel Miranda & 2 & Claude (Cowork, \texttt{claude-fable-5-1}) & \texttt{anexo-ia/daniel-miranda/} \\ \hline
+    Bibliografía: fuentes a su cargo (traducción de resúmenes, formato) & Claudio Toledo & 2 & Claude Code 2.1.271 (\texttt{claude-opus-5}) & \texttt{anexo-ia/claudio-toledo/} \\ \hline
+    Bibliografía: fuentes a su cargo (formato de entradas) & Francisca Abarca & 2 & Claude (chat web) & \texttt{anexo-ia/francisca-abarca/} \\ \hline
+    Bibliografía: verificación de cada referencia en su original & cada autor de sección & 0 & Lectura humana de cada fuente & no requerida \\ \hline
+    Cuestionario de 30 preguntas (Anexo Q) & Claudio Toledo & 1 & Preguntas y respuestas redactadas a mano; IA solo en redacción (Claude Code, \texttt{claude-opus-5}) & no requerida \\ \hline
+    Cuestionario: 4 preguntas de 2.4 y 3.2 & Valentina Guzmán & 1 & Redacción propia; IA solo para revisar dificultad y estilo & no requerida \\ \hline
+    Cuestionario: transcripción al \LaTeX\ y etiquetas de dificultad & Daniel Miranda & 2 & Claude (Cowork, \texttt{claude-fable-5-1}) & \texttt{anexo-ia/daniel-miranda/} (prompt 62) \\ \hline
+    Plantilla \LaTeX, organización del repositorio, estándar del Anexo A y reducción de extensión (formato) & Daniel Miranda & 2 & Claude (Cowork, \texttt{claude-fable-5-1}) & \texttt{anexo-ia/daniel-miranda/} \\ \hline
 \end{longtable}
 }
 
 \subsection*{B. Prompts utilizados (niveles 2 y 3)}
 
-Los prompts efectivamente empleados se entregan íntegros y en orden cronológico en la carpeta \texttt{anexo-ia/} del repositorio del grupo, con una subcarpeta por integrante: \texttt{anexo-ia/<nombre-apellido>/B-prompts.md} contiene los prompts literales agrupados por sesión y herramienta, con el nivel declarado por sección; \texttt{C-evidencia.md} indexa las conversaciones y los commits del integrante; \texttt{registros/} guarda las exportaciones de cada conversación. El archivo \texttt{anexo-ia/README.md} describe el estándar aplicado y contiene el índice general, que se reproduce a continuación.
+Los prompts efectivamente empleados se entregan íntegros, literales y en orden cronológico en la carpeta \texttt{anexo-ia/} del repositorio del grupo, con una subcarpeta por integrante: \texttt{anexo-ia/<nombre-apellido>/B-prompts.md} contiene la cabecera de declaración (secciones, nivel por sección, herramientas, período) y los prompts numerados por sesión; \texttt{C-evidencia.md} contiene los enlaces a las conversaciones cuando la herramienta los provee y la lista de commits del integrante. \texttt{anexo-ia/README.md} fija el estándar común. Índice:
 
-%% TODO (Daniel, al cierre): reemplazar esta tabla por el índice final de
-%% anexo-ia/README.md, una fila por integrante.
 {\scriptsize
-\begin{longtable}{|p{0.6cm}|p{2.8cm}|p{4.3cm}|p{1.3cm}|p{4.9cm}|}
+\begin{longtable}{|p{0.5cm}|p{2.4cm}|p{4.8cm}|p{2.5cm}|p{3.4cm}|}
     \hline
-    \textbf{\#} & \textbf{Integrante} & \textbf{Sección(es)} & \textbf{Nivel} & \textbf{Archivos en \texttt{anexo-ia/}} \\
+    \textbf{\#} & \textbf{Integrante} & \textbf{Sección(es)} & \textbf{Nivel máximo (desglose)} & \textbf{Archivos en \texttt{anexo-ia/}} \\
     \hline
     \endhead
-    1 & Vicente Arratia & 4.1 Prueba de concepto; Anexo B & 2 & \texttt{vicente-arratia/B-prompts.md}, \texttt{C-evidencia.md}, \texttt{registros/}, \texttt{cowork/} \\ \hline
-    2 & Daniel Miranda & 3.1; Anexo D; plantilla y repositorio; Anexo A & 2 (búsqueda, verificación, formato); 1 (estilo en 3.1) & \texttt{daniel-miranda/B-prompts.md}, \texttt{C-evidencia.md}, \texttt{registros/} \\ \hline
-    3 & \textit{[TODO: cada integrante agrega su fila]} & & & \\ \hline
+    1 & Daniel Miranda & Resumen e introducción (borradores); 3.1; Anexo D; síntesis 3.2 y Anexo E; plantilla, bibliografía y repositorio; estándar del Anexo A & 2 (búsqueda, borradores, formato); 1 (estilo en 3.1) & \texttt{daniel-miranda/B-prompts.md}, \texttt{C-evidencia.md} \\ \hline
+    2 & Matías Reyes & 1 Marco teórico; 2.1 & 2 (fuentes y revisión); 1 y 0 en 2.1 & \texttt{matias-reyes/B-prompts.md}, \texttt{C-evidencia.md}, \texttt{registros/} \\ \hline
+    3 & Isidora Cisternas & 2.2; 2.5 & 3 (redacción asistida); 2 (cifras); 0--1 (cierre de 2.5) & \texttt{isidora-cisternas/B-prompts.md}, \texttt{C-evidencia.md} \\ \hline
+    4 & Francisca Abarca & 2.3; 4.2; Anexo C & 2 (fuentes, estilo, script); 1 (análisis y supuestos) & \texttt{francisca-abarca/B-prompts.md}, \texttt{C-evidencia.md} \\ \hline
+    5 & Valentina Guzmán & 2.4; criterios de 3.2; 3.1 «Datos sin servidor»; 4 preguntas del cuestionario & 2 (búsqueda y verificación); 1 (estilo); 0--1 (análisis y criterios) & \texttt{valentina-guzman/B-prompts.md}, \texttt{C-evidencia.md} \\ \hline
+    6 & Fabián Solís & 2.6; 4.3; 5 & 0 & --- \\ \hline
+    7 & Claudio Toledo & 3.1 (búsqueda); 3.2 filas y consolidación; bibliografía; cuestionario & 2 (búsqueda y verificación, traducción); 1 (\LaTeX, cuestionario); 0 (análisis de 3.2) & \texttt{claudio-toledo/B-prompts.md}, \texttt{C-evidencia.md}, \texttt{registros/} \\ \hline
+    8 & Rodolfo Fernández & 3.2 filas AWS y Azure & 3 (celdas desde documentación oficial, verificadas); 2 (estudio) & \texttt{rodolfo-fernandez/B-prompts.md}, \texttt{C-evidencia.md} \\ \hline
+    9 & Vicente Arratia & 4.1; Anexo B & 2 (código auxiliar, formato) & \texttt{vicente-arratia/B-prompts.md}, \texttt{C-evidencia.md}, \texttt{registros/}, \texttt{cowork/} \\ \hline
 \end{longtable}
 }
 
 \subsection*{C. Evidencia trazable adjunta (niveles 2 y 3)}
 
-La evidencia se entrega por tres medios, todos accesibles al profesor:
-
 \begin{enumerate}[nosep]
-    \item \textbf{Repositorio del grupo con su historial de commits:} \url{https://github.com/DmV554/informe-investigacion} (público). La versión entregada corresponde al commit \texttt{\textit{[TODO: hash del commit de entrega]}} de la rama \texttt{main}. El historial por rama muestra quién escribió cada sección y cuándo; los commits realizados con apoyo de IA llevan la coautoría declarada en el mensaje.
-    \item \textbf{Conversaciones:} enlaces a las sesiones cuando la herramienta los provee y exportaciones completas en \texttt{anexo-ia/<integrante>/registros/}, indexadas en cada \texttt{C-evidencia.md}.
-    \item \textbf{Historial del documento:} el propio historial de \texttt{informe/main.tex} y \texttt{informe/referencias.bib} en el repositorio (\texttt{git log -{}-follow}), que permite reconstruir cómo se escribió cada bloque.
+    \item \textbf{Repositorio del grupo con su historial de commits:} \url{https://github.com/DmV554/informe-investigacion} (público). La versión entregada es el commit etiquetado \texttt{entrega} en la rama \texttt{main}. El historial por rama y por autor muestra quién escribió cada sección y cuándo; los commits realizados con apoyo de IA llevan la coautoría declarada en el mensaje.
+    \item \textbf{Prompts y conversaciones:} los prompts literales de cada integrante están versionados en \texttt{anexo-ia/<integrante>/B-prompts.md}; los enlaces a las sesiones, cuando la herramienta los provee, en \texttt{C-evidencia.md}; y las transcripciones que algunos integrantes conservaron, en su \texttt{registros/}. Donde una conversación no es accesible (herramienta sin exportación, cuenta expirada), el archivo lo dice y conserva lo que sí existe: el prompt entregado y la salida archivada.
+    \item \textbf{Historial del documento:} el propio historial de \texttt{informe/main.tex} y \texttt{informe/referencias.bib} (\texttt{git log -{}-follow}), que permite reconstruir cómo se escribió cada bloque.
 \end{enumerate}
 
 \subsection*{D. Firma de los integrantes}
-
-%% Texto del formulario oficial: "Declaro que la información consignada en
-%% este formulario es completa y veraz, que las secciones señaladas en el
-%% punto 6.1 de las indicaciones son de autoría humana y que puedo explicar
-%% oralmente cualquier parte del trabajo entregado."
-%% Cada integrante completa su fila. Nadie firma por otro.
 
 Declaro que la información consignada en este formulario es completa y veraz, que las secciones señaladas en el punto 6.1 de las indicaciones son de autoría humana y que puedo explicar oralmente cualquier parte del trabajo entregado.
 
@@ -840,15 +834,15 @@ Declaro que la información consignada en este formulario es completa y veraz, q
     \textbf{N.\textordmasculine} & \textbf{Nombre completo} & \textbf{Nivel máximo declarado} & \textbf{Firma} \\
     \hline
     \endhead
-    1 & Francisca Antonia Abarca Pezo & & \\ \hline
+    1 & Francisca Antonia Abarca Pezo & 2 & \\ \hline
     2 & Vicente André Arratia Caroca & 2 & \\ \hline
-    3 & Isidora Valentina Cisternas Cisternas & & \\ \hline
-    4 & Rodolfo Antonio Fernández Vera & & \\ \hline
-    5 & Valentina Ignacia Guzmán Elgueta & & \\ \hline
-    6 & Daniel Ignacio Miranda Vázquez & & \\ \hline
-    7 & Matias Ignacio Reyes Pizarro & & \\ \hline
-    8 & Fabián Andres Solís Piñones & & \\ \hline
-    9 & Claudio Patricio Toledo Mac-lean & & \\ \hline
+    3 & Isidora Valentina Cisternas Cisternas & 3 & \\ \hline
+    4 & Rodolfo Antonio Fernández Vera & 3 & \\ \hline
+    5 & Valentina Ignacia Guzmán Elgueta & 2 & \\ \hline
+    6 & Daniel Ignacio Miranda Vázquez & 2 & \\ \hline
+    7 & Matias Ignacio Reyes Pizarro & 2 & \\ \hline
+    8 & Fabián Andres Solís Piñones & 0 & \\ \hline
+    9 & Claudio Patricio Toledo Mac-lean & 2 & \\ \hline
 \end{longtable}
 }
 
@@ -1202,7 +1196,7 @@ print("% no cruza si f/cap >=", c(lam * SEC / 1e6 / (P_H["1a"] * H), 4))
 % Vocabulario: "ficha" es la ficha del tema TI-05 en las Indicaciones del
 % curso \parencite{moya2026indicaciones}; "lista" es cada una de sus cinco
 % categorías de tecnologías a comparar. La definición general va en la
-% introducción (TODO Daniel); aquí se repite en una frase para que el anexo
+% introducción; aquí se repite en una frase para que el anexo
 % sea autocontenido.
 
 En este anexo, \emph{ficha} designa la ficha del tema TI-05 del documento de indicaciones del curso \parencite{moya2026indicaciones}, y \emph{lista} cada una de las cinco categorías de tecnologías que esa ficha pide comparar (funciones como servicio, contenedores sin servidor, cómputo en el borde, código abierto y datos sin servidor). \emph{Plataformas de la ficha} son las que la ficha nombra explícitamente en cada lista.

@@ -16,7 +16,7 @@ Los prompts se transcriben literalmente, tal como fueron formulados (incluidas e
 
 ## Sesión 1 — Claude («Facturación y costos en serverless y edge computing»)
 
-**Enlace o exportación:** Registro literal del chat / Exportación de cuenta.
+**Enlace:** sin enlace estable (chat web de claude.ai; los prompts se transcriben abajo).
 **Secciones a las que sirvió:** 2.3 Facturación por consumo, 4.2 Modelo de costos, Bibliografía, Anexo C.
 
 1. [2.3 y 4.2] debo realizar las secciones "2.3 Facturación por consumo · 4.2 Modelo de costos", y la investigación es "Serverless y Computación en el Borde (Edge Computing)" analiza el problema y continuamos
@@ -32,7 +32,7 @@ Los prompts se transcriben literalmente, tal como fueron formulados (incluidas e
 
 ## Sesión 2 — Claude («Conversación B»)
 
-**Enlace o exportación:** Registro literal del chat / Exportación de cuenta.
+**Enlace:** sin enlace estable (chat web de claude.ai; los prompts se transcriben abajo).
 **Secciones a las que sirvió:** 2.3 Facturación por consumo, 4.2 Modelo de costos, Anexo C, Bibliografía, Anexo A.
 
 1. [2.3 y 4.2] Prompt inicial (reglas del proyecto):

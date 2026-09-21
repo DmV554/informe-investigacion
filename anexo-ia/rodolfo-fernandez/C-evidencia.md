@@ -6,20 +6,20 @@
 
 ## 1. Conversaciones
 
-| # | Herramienta | Fechas | Enlace | Exportación en `registros/` | Secciones |
-|---|---|---|---|---|---|
-| 1 | Claude (chat, Proyecto "FEP Investigación Rodo"), modelo no registrado | 18-09 a 19-09-2026 | No fue posible realizar la exportación en la interfaz de web ni en la interfaz de la aplicacion de escritorio, simplemente no da la opción y se desconoce la razón | *[pendiente]* | 3.2 (matriz AWS/Azure, rondas 1 a 3); guía de lectura de papers (ronda 4) |
-| 2 | Gemini 5 (Google) | 18-09 a 19-09-2026 | https://share.gemini.google/t8dzZiPXFUbG | *[pendiente]* | 3.2 (revisión de documentación oficial, ronda 2) |
-| 3 | Claude (chat, Proyecto "FEP Investigación Rodo") | 19-09-2026 | No fue posible realizar la exportación en la interfaz de web ni en la interfaz de la aplicacion de escritorio, simplemente no da la opción y se desconoce la razón | *[pendiente]* | 3.2 (propuesta de columnas, no aprobada) |
-| 4 | Claude Sonnet 5 (chat, Proyecto "FEP Investigación Rodo") | 19-09 a 21-09-2026 | No fue posible realizar la exportación en la interfaz de web ni en la interfaz de la aplicacion de escritorio, simplemente no da la opción y se desconoce la razón | *[pendiente]* | apoyo de estudio para 3.2; registro del anexo |
-| 5 | Claude Sonnet 5 (chat, Proyecto "FEP Investigación Rodo") | 20-09-2026, 01:43 a ~04:20 | No fue posible realizar la exportación en la interfaz de web ni en la interfaz de la aplicacion de escritorio, simplemente no da la opción y se desconoce la razón | *[pendiente]* | 3.2 (tablas 3.2a/3.2b v1 y v3) |
-| 6 | Claude, sesión con vínculo al computador, `claude-opus-5` | 20-09-2026 y 21-09-2026 | https://claude.ai/code/session_012KA1rRMu2EgdCf7HUgRr9T (accesible con la cuenta del autor) | *[pendiente]* | 3.2 (verificación v2, planilla de verificación); registro del anexo |
-| 7 | Claude, sesión con vínculo al computador, `claude-opus-5` | 21-09-2026 | https://claude.ai/code/session_018wzY8A6UkW8yufR8xzBzMe (accesible con la cuenta del autor) | *[pendiente]* | orientación; registro del anexo (sin contenido del informe) |
-| 8 | Claude, sesión con vínculo al computador, `claude-opus-5` | 21-09-2026 | https://claude.ai/code/session_01Vpj62xautciMCM9uM36cTG (accesible con la cuenta del autor) | *[pendiente]* | este anexo (formato) |
+| # | Herramienta | Fechas | Enlace | Secciones |
+|---|---|---|---|---|
+| 1 | Claude (chat, Proyecto "FEP Investigación Rodo"), modelo no registrado | 18-09 a 19-09-2026 | No fue posible realizar la exportación en la interfaz de web ni en la interfaz de la aplicacion de escritorio, simplemente no da la opción y se desconoce la razón | 3.2 (matriz AWS/Azure, rondas 1 a 3); guía de lectura de papers (ronda 4) |
+| 2 | Gemini 5 (Google) | 18-09 a 19-09-2026 | https://share.gemini.google/t8dzZiPXFUbG | 3.2 (revisión de documentación oficial, ronda 2) |
+| 3 | Claude (chat, Proyecto "FEP Investigación Rodo") | 19-09-2026 | No fue posible realizar la exportación en la interfaz de web ni en la interfaz de la aplicacion de escritorio, simplemente no da la opción y se desconoce la razón | 3.2 (propuesta de columnas, no aprobada) |
+| 4 | Claude Sonnet 5 (chat, Proyecto "FEP Investigación Rodo") | 19-09 a 21-09-2026 | No fue posible realizar la exportación en la interfaz de web ni en la interfaz de la aplicacion de escritorio, simplemente no da la opción y se desconoce la razón | apoyo de estudio para 3.2; registro del anexo |
+| 5 | Claude Sonnet 5 (chat, Proyecto "FEP Investigación Rodo") | 20-09-2026, 01:43 a ~04:20 | No fue posible realizar la exportación en la interfaz de web ni en la interfaz de la aplicacion de escritorio, simplemente no da la opción y se desconoce la razón | 3.2 (tablas 3.2a/3.2b v1 y v3) |
+| 6 | Claude, sesión con vínculo al computador, `claude-opus-5` | 20-09-2026 y 21-09-2026 | https://claude.ai/code/session_012KA1rRMu2EgdCf7HUgRr9T (accesible con la cuenta del autor) | 3.2 (verificación v2, planilla de verificación); registro del anexo |
+| 7 | Claude, sesión con vínculo al computador, `claude-opus-5` | 21-09-2026 | https://claude.ai/code/session_018wzY8A6UkW8yufR8xzBzMe (accesible con la cuenta del autor) | orientación; registro del anexo (sin contenido del informe) |
+| 8 | Claude, sesión con vínculo al computador, `claude-opus-5` | 21-09-2026 | https://claude.ai/code/session_01Vpj62xautciMCM9uM36cTG (accesible con la cuenta del autor) | este anexo (formato) |
 
 **Chats del Proyecto.** La barra lateral de claude.ai muestra, entre otros, estos chats del Proyecto: "Tabla 3.2 AWS-Azure cuestionario", "Sección 3.2 TERABYTE TI-05 tablas", "Matriz de conciliación y estructura de c…", "Conciliacion Correcciones", "VERIFICACION TABLA", "Sesion principal", "Plantilla informe". *[POR COMPLETAR por Rodolfo: asignar cada chat a su número de sesión de la tabla y reemplazar los enlaces pendientes por el enlace de "compartir" de cada uno, para que el profesor pueda abrirlos.]*
 
-**Registro consolidado.** El documento `claude/Consolidado_Uso_IA_Seccion_3.2.md` del Proyecto reúne, por sesión, los prompts, las decisiones del autor, lo que produjo la IA y sus limitaciones declaradas. Lo escribieron las sesiones 4, 6 y 7. *[Sugerido: guardar una copia en `registros/Consolidado_Uso_IA_Seccion_3.2.md`.]*
+**Registro consolidado.** El documento `claude/Consolidado_Uso_IA_Seccion_3.2.md` del Proyecto reúne, por sesión, los prompts, las decisiones del autor, lo que produjo la IA y sus limitaciones declaradas. Lo escribieron las sesiones 4, 6 y 7.
 
 **Archivos de trabajo producidos con IA** (carpeta local del autor, `...\FEP\Investigación\`), que muestran la evolución de las filas AWS/Azure hasta la versión entregada a Claudio Toledo:
 
@@ -32,7 +32,6 @@
 | `Borrador_3.2_Tablas_A_B_v3_resuelto_2026-09-20.md` | 5 | v3 con las decisiones del autor; entregada a Claudio |
 | `Checklist_Verificacion_3.2_AWS_Azure.xlsx` | creada con "otro agente" *[sesión por confirmar]*; reconstruida en la 6 | planilla de verificación (192 ítems) |
 
-*[Sugerido: copiar la v1, la v2, la v3 y la planilla en `registros/` para que la evolución quede en el repositorio.]*
 
 ## 2. Historial de versiones (commits)
 
