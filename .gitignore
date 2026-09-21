@@ -14,3 +14,6 @@ informe/*.synctex.gz
 informe/*.fdb_latexmk
 informe/*.fls
 informe/_minted*/
+
+# Papers descargados para lectura (derechos de ACM): no se redistribuyen
+/*.pdf

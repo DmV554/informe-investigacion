@@ -80,6 +80,9 @@ frío menos p50 caliente), que cancela la red. Código, datos y notas en el Anex
 %%     de una misma ventana la comparación entre plataformas sí es válida.
 %%  d. Función trivial y un solo cliente: no representa cargas reales ni
 %%     concurrencia.
+%%  Claves citables (ya en referencias.bib, verificadas 21-09-2026): cfWorkersLimits
+%%  (128 MB fijos), awsLambdaMemory (CPU proporcional a memoria), gcrCpu (vCPU aparte;
+%%  startup CPU boost), gcrExecEnv (gen1/gen2), gcrHealthchecks (sonda de arranque).
 %% ---------------------------------------------------------------------------
 \textbf{[REDACTAR: limitaciones]}
 
@@ -110,16 +113,18 @@ revisado y ejecutado por el autor; se declara en el Anexo~A.
 
 \tabla{Configuración desplegada}{poc-config}{|p{2.6cm}|p{3.4cm}|p{3.4cm}|p{5cm}|}{%
     \filaTabla{\textbf{Plataforma} & \textbf{Región y aislamiento} & \textbf{Recursos} & \textbf{Evento que induce el frío}}
-    \filaTabla{AWS Lambda & us-east-1; microVM & 128~MB (CPU proporcional), Node.js 24.x, Function URL & Cambio de la variable de entorno \texttt{POC\_MARKER}: el entorno de ejecución queda inválido y la invocación siguiente crea uno nuevo}
-    \filaTabla{Cloudflare Workers & Borde (colo observado: GIG); V8 isolate & 128~MB fijos, plan Free & Publicación de una versión con \texttt{wrangler deploy}: las peticiones siguientes llegan a isolates nuevos (\texttt{first\_request})}
-    \filaTabla{Google Cloud Run & us-east4; contenedor gen1 (gVisor) & 256~MiB, 1 vCPU, sin CPU boost, CPU solo durante solicitudes, min 0 / máx 1 instancia, concurrencia 1, Node.js 24 & \texttt{GET /salir}: el proceso responde y termina; con 0 instancias, la petición siguiente crea el contenedor}
+    \filaTabla{AWS Lambda & us-east-1; microVM & 128~MB (CPU proporcional a la memoria \parencite{awsLambdaMemory}), Node.js 24.x, Function URL \parencite{awsLambdaUrls} & Cambio de la variable de entorno \texttt{POC\_MARKER}: el entorno de ejecución queda inválido y la invocación siguiente crea uno nuevo}
+    \filaTabla{Cloudflare Workers & Borde (colo observado: GIG); V8 isolate \parencite{cfHowWorkersWorks} & 128~MB fijos \parencite{cfWorkersLimits}, plan Free & Publicación de una versión con \texttt{wrangler deploy}: las peticiones siguientes llegan a isolates nuevos (\texttt{first\_request})}
+    \filaTabla{Google Cloud Run & us-east4; contenedor gen1 (gVisor \parencite{gcrExecEnv}) & 256~MiB, 1 vCPU, sin startup CPU boost \parencite{gcrCpu}, CPU solo durante solicitudes \parencite{gcrCpuAllocation}, min 0 / máx 1 instancia, concurrencia 1, Node.js 24 & \texttt{GET /salir}: el proceso responde y termina; con 0 instancias, la petición siguiente crea el contenedor}
 }
 
 \subsection*{B.3 Criterio de clasificación frío/caliente}
 
 Cada petición se clasifica con lo que devuelve la función, nunca con su latencia:
 en Lambda, frío si el \texttt{instance\_id} es distinto al de la petición anterior
-(las peticiones secuenciales reutilizan el mismo entorno); en Workers, frío solo si
+(las peticiones secuenciales reutilizan el mismo entorno de ejecución; la fase de
+inicialización de ese entorno es la que la plataforma reporta como \texttt{Init Duration}
+\parencite{awsLambdaLifecycle}); en Workers, frío solo si
 la instancia declara \texttt{first\_request}, porque Cloudflare reparte peticiones
 consecutivas entre varios isolates vivos del mismo punto de presencia y el cambio
 de identificador no implica arranque; en Cloud Run, frío si la edad del contenedor al
@@ -131,19 +136,27 @@ pudo nacer después de que ella salió del cliente.
 \subsection*{B.4 Notas metodológicas sobre Cloud Run}
 
 Con 128~MiB el contenedor excedía el límite de memoria (los registros del servicio
-reportan entre 128 y 158~MiB usados) y era terminado entre peticiones, lo que
-invalidaba la medición caliente; se subió a 256~MiB y la diferencia se declara.
-Inducir el frío creando una revisión nueva no expone el arranque al cliente: la
-plataforma valida la revisión arrancando un contenedor antes de enrutarle tráfico,
-y en 24 de 25 ciclos la primera petición llegó a un contenedor ya despierto
-(corrida de las 00:05). Por eso se induce con la terminación del proceso
+reportan entre 128 y 158~MiB usados) y era terminado entre peticiones, como documenta
+la plataforma para ese caso \parencite{gcrMemoryLimits}; eso invalidaba la medición
+caliente, así que se subió a 256~MiB y la diferencia se declara (gen1 es la generación
+que admite menos de 512~MiB \parencite{gcrExecEnv}).
+Inducir el frío creando una revisión nueva \parencite{gcrResourceModel} no expone el
+arranque al cliente. Cloud Run configura por defecto una sonda de arranque TCP y
+considera el contenedor listo cuando la pasa \parencite{gcrHealthchecks,gcrContainerContract};
+en la práctica observada, cuando el comando de despliegue retorna ya existe un contenedor
+despierto, y en 24 de 25 ciclos la primera petición llegó a él (corrida de las 00:05).
+Esto último es observación propia, no afirmación de la documentación. Por eso se induce con la terminación del proceso
 (\texttt{GET /salir}, activo solo con la variable \texttt{POC\_SALIR\_HABILITADO=1}).
 Tras la terminación se esperan 2~s: sin esa espera la petición llega a la instancia
 que está muriendo (HTTP 503). La latencia de arranque de contenedor que registra la
-propia plataforma (métrica \texttt{container/startup\_latencies}, ventana de la
+propia plataforma (métrica \texttt{container/startup\_latencies}, ``Container startup
+latency'', distribución en ms \parencite{gcpMetricsRun,gcrMonitoring}; ventana de la
 corrida) fue de 26 arranques con media 1\,014~ms y p95 aproximado 1\,119~ms;
 es otro instrumento (arranque visto por la plataforma, no latencia extremo a
-extremo) y se reporta solo como contraste.
+extremo) y se reporta solo como contraste. Nota de despliegue: en proyectos nuevos la
+cuenta de servicio por defecto de Compute ya no recibe el rol Editor
+\parencite{gcpOrgPolicySA}, por lo que el primer despliegue desde código fuente falla
+con HTTP 403 hasta otorgarle \texttt{roles/cloudbuild.builds.builder}.
 
 \subsection*{B.5 Código de las funciones}
 
