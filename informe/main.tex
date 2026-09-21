@@ -320,10 +320,15 @@ Ningún mecanismo aventaja a los demás en todos los frentes a la vez, ya que se
 %% "las mediciones del grupo (sección 4.1) ..." -> \ref{sec:poc}.
 %% ---------------------------------------------------------------------------
 \subsection{Arranque en frío: causas, medición y mitigaciones}
+\label{subsec:arranque_en_frio}
 
-% TODO (Isidora)
+El escalado a cero libera los entornos inactivos; según mediciones de 2021, AWS desaloja la mitad de sus contenedores cada 380~s~\cite{copik2021sebs}. Sin instancias disponibles, la plataforma debe reservar recursos, crear el entorno aislado (ver~2.1), cargar runtime y dependencias y ejecutar la inicialización~\cite{golec2025coldstart}: esa latencia es el arranque en frío; reutilizar una instancia preparada es un arranque en caliente. Crece con dependencias grandes y runtimes pesados como la JVM o .NET, frente a Python o Node.js~\cite{golec2025coldstart}, y aparece también al escalar de $N$ a $N+1$ instancias en ráfagas~\cite{giannini2022cpuboost}.
 
-%% ---------------------------------------------------------------------------
+Medirlo exige separar inicialización y ejecución comparando invocaciones frías y calientes, como hace Invoc-Overhead~\cite{copik2021sebs}. AWS Lambda registra esa Init Duration y, desde agosto de 2025, la factura en todas las configuraciones: el arranque en frío también es costo~\cite{gupta2025initbilling}.
+
+Las mitigaciones actúan sobre distintas partes del proceso y difieren en costo. La concurrencia aprovisionada lo evita con instancias ya inicializadas (AWS, Cloud Run, Azure Functions)~\cite{aws2023provisionedconcurrency, googlecloudrunmininstances, azurefunctionsflex}, pero paga capacidad ociosa, acercándose al modelo siempre encendido (ver~2.3 y~3.2), y no cubre el paso de $N$ a $N+1$, que Google aborda con startup CPU boost~\cite{giannini2022cpuboost}. Las instantáneas, como SnapStart, se saltan la inicialización restaurando una captura cifrada de la microVM~\cite{aws2022snapstart}, aunque parte del retraso pasa a la ejecución al cargarse la memoria desde disco~\cite{ustiugov2021}. Los entornos livianos (V8, WebAssembly; ver~2.5) abaratan la creación del entorno: en un prototipo, Wasm redujo el arranque en frío cerca de un 94\,\% frente a Docker~\cite{gackstatter2022pushing}, pero exige adaptar el código.
+
+El impacto depende del patrón de carga~\cite{copik2021sebs}. En APIs síncronas, donde degrada la experiencia de usuario, sirven las instantáneas (con costo de caché en Python y .NET)~\cite{aws2022snapstart} o los aislamientos livianos, cambiando de plataforma~\cite{gackstatter2022pushing}; aun así, Cloudflare afirmó en 2020 haberlo eliminado~\cite{cloudflare2020workers}, pero reapareció con scripts más pesados y su técnica de sharding lo redujo 10 veces~\cite{cloudflare2025shard}. En tráfico sostenido, la concurrencia aprovisionada es más económica sobre el 60\,\% de uso continuo~\cite{gupta2025initbilling}. En procesos asíncronos, fuera de la ruta crítica, la latencia es tolerable: es despreciable en funciones de más de 10~s y, sin alta utilización, escalar a cero cuesta menos que una máquina virtual~\cite{copik2021sebs}.%% ---------------------------------------------------------------------------
 %% 2.3                                                    Responsable: Francisca
 %% GB-segundo, vCPU-segundo, tiempo de CPU vs. tiempo de reloj, número de
 %% invocaciones, salida de datos (egress); concepto de punto de equilibrio
