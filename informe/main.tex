@@ -495,7 +495,7 @@
 \subsection{Modelo de costos y volumen de equilibrio}
 \label{sec:costos}
 
-El modelo compara AWS Lambda con contenedores siempre encendidos (ECS sobre instancias EC2 t3.medium), el comparador fijo del cuadro de la sección 3.2. Usa solo los precios de las Tablas 3.2a y 3.2b (us-east-1, USD, precio de lista consultado el 20/09/2026). Con $N$ solicitudes al mes, memoria $m$ (GB) y duración $d$ (s), Lambda cuesta $C_L=\max(0,N-10^{6})\,c_r+\max(0,\,N\,m\,d-4\cdot10^{5})\,c_g$, con $c_r=0{,}20$ USD por millón de solicitudes y $c_g=0{,}0000166667$ USD por GB-s. La flota fija cuesta $C_F=k\,p\cdot730$, con $p=0{,}026$ USD por hora y $k=\max(2,\lceil q_{\mathrm{pico}}/20\rceil)$ instancias. La Tabla~\ref{tab:supuestos-42} declara los supuestos.
+El modelo compara AWS Lambda con contenedores siempre encendidos (ECS sobre instancias EC2 t3.medium), el comparador fijo del cuadro de la sección 3.2. Usa solo los precios de las Tablas 3.2a y 3.2b (us-east-1, USD, precio de lista consultado el 20/09/2026). Con $N$ solicitudes al mes, memoria $m$ (GB), duración $d$ (s) y con $q_{\mathrm{pico}}$ el pico en solicitudes por segundo, Lambda cuesta $C_L=\max(0,N-10^{6})\,c_r+\max(0,\,N\,m\,d-4\cdot10^{5})\,c_g$, con $c_r=0{,}20$ USD por millón de solicitudes y $c_g=0{,}0000166667$ USD por GB-s. La flota fija cuesta $C_F=k\,p\cdot730$, con $p=0{,}026$ USD por hora y $k=\max(2,\lceil q_{\mathrm{pico}}/20\rceil)$ instancias. La Tabla~\ref{tab:supuestos-42} declara los supuestos.
 
 \begin{table}[htbp]
 \centering
@@ -508,7 +508,7 @@ El modelo compara AWS Lambda con contenedores siempre encendidos (ECS sobre inst
 Carga & Solicitudes HTTP tipo API, 730 h al mes; pico igual a 4 veces el promedio & Supuesto \\ \hline
 Sin servidor & AWS Lambda x86, 512 MB y 200 ms por solicitud; 0,20 USD por millón de solicitudes y 0,0000166667 USD/GB-s; capa gratuita de 1 M de solicitudes y 400.000 GB-s & Tabla 3.2a \\ \hline
 Siempre encendido & ECS sobre EC2 \texttt{t3.medium} (2 vCPU, 4 GiB), mínimo 2 instancias, reserva de 1 año a 0,026 USD/h (18,98 USD al mes cada una) & Tabla 3.2a \\ \hline
-Capacidad & 20 solicitudes/s sostenidas por instancia (20 ms de CPU por solicitud) & Supuesto \\ \hline
+Capacidad & 20 solicitudes sostenidas por instancia (20 ms de CPU por solicitud = 0,4 vCPU, el 20\% de los 2 vCPU de la instancia) & Supuesto \\ \hline
 Excluido & Egreso de datos (misma tarifa en ambos lados, Tabla~3.2b), balanceador, API Gateway, NAT, registros y costo de operar la flota & Declarado \\ \hline
 \end{tabular}
 }
