@@ -183,41 +183,83 @@ def main():
         print("matplotlib no instalado: sin gráfico (pip install matplotlib)")
         return
 
+    # Un panel por plataforma con eje Y compartido: el nombre de la plataforma
+    # va una sola vez como título del panel y las cajas se etiquetan solo
+    # "frío"/"caliente", así ninguna etiqueta se pisa con la vecina. La
+    # penalización (p50 frío − p50 caliente) va como subtítulo: es el dato que
+    # la sección 4.1 comenta. Colores por estado (frío azul, caliente naranja);
+    # la identidad la lleva el texto del eje, el color solo la refuerza.
+    COLOR = {"frio": "#2a78d6", "caliente": "#eb6834"}
+    TEXTO, TEXTO_2 = "#0b0b0b", "#52514e"
+    NOTA = {
+        "cloudflare-workers": "frío = isolate recién creado (first_request);\nel cliente no lo percibe",
+        "google-cloud-run": "frío = contenedor creado por la petición\n(uptime < latencia)",
+        "aws-lambda": "frío = entorno de ejecución nuevo\n(instance_id distinto)",
+    }
     plats = sorted({p for (p, _) in grupos_todo})
-    fig, ax = plt.subplots(figsize=(8.5, 4.8))
-    datos, etiquetas, colores, posiciones = [], [], [], []
-    pos = 1.0
-    for i, plat in enumerate(plats):
-        for est, col in (("frio", "#c0504d"), ("caliente", "#4f81bd")):
-            v = grupos_todo.get((plat, est), [])
-            if v:
-                datos.append(v)
-                etiquetas.append(f"{NOMBRES.get(plat, plat)}\n{est} (n={len(v)})")
-                colores.append(col)
-                posiciones.append(pos)
-                pos += 1.0
-        pos += 0.6  # separación visual entre plataformas
-    try:
-        bp = ax.boxplot(datos, positions=posiciones, widths=0.7, tick_labels=etiquetas,
-                        patch_artist=True, showfliers=True)
-    except TypeError:  # matplotlib < 3.9
-        bp = ax.boxplot(datos, positions=posiciones, widths=0.7, labels=etiquetas,
-                        patch_artist=True, showfliers=True)
-    for patch, col in zip(bp["boxes"], colores):
-        patch.set_facecolor(col); patch.set_alpha(0.75)
-    # mediana anotada sobre cada caja
-    for x, v in zip(posiciones, datos):
-        med = pct(v, 50)
-        ax.annotate(f"{med:.0f} ms", (x + 0.38, med), textcoords="offset points", xytext=(4, -3),
-                    ha="left", fontsize=8)
-    ax.set_ylabel("Latencia total desde el cliente (ms)")
-    ax.set_ylim(0, max(max(v) for v in datos) * 1.12)
-    ax.yaxis.set_major_formatter(matplotlib.ticker.FormatStrFormatter("%d"))
-    ax.set_title("Latencia en arranque en frío vs. caliente, por plataforma")
-    ax.grid(axis="y", alpha=0.3)
-    fig.tight_layout()
+    fig, axes = plt.subplots(1, len(plats), figsize=(9.2, 4.0), sharey=True)
+    if len(plats) == 1:
+        axes = [axes]
+    y_max = max(max(v) for (_, e), v in grupos_todo.items() if e in COLOR)
+    rng = __import__("random").Random(7)  # jitter reproducible para los puntos atípicos
+    for ax, plat in zip(axes, plats):
+        estados = [e for e in ("frio", "caliente") if grupos_todo.get((plat, e))]
+        datos = [grupos_todo[(plat, e)] for e in estados]
+        posiciones = [i * 1.35 for i in range(len(estados))]  # aire para la etiqueta de mediana
+        bp = ax.boxplot(datos, positions=posiciones, widths=0.46, patch_artist=True,
+                        showfliers=False, whis=1.5,
+                        medianprops={"color": TEXTO, "linewidth": 1.6},
+                        whiskerprops={"color": TEXTO_2, "linewidth": 1},
+                        capprops={"color": TEXTO_2, "linewidth": 1},
+                        boxprops={"linewidth": 0})
+        for patch, e in zip(bp["boxes"], estados):
+            patch.set_facecolor(COLOR[e]); patch.set_alpha(0.85)
+        # Puntos atípicos: fuera de los bigotes (1.5·IQR), pequeños, con aro
+        # blanco y jitter horizontal para que no se apilen unos sobre otros.
+        for x, v, e in zip(posiciones, datos, estados):
+            q1, q3 = pct(v, 25), pct(v, 75)
+            lo, hi = q1 - 1.5 * (q3 - q1), q3 + 1.5 * (q3 - q1)
+            atip = [y for y in v if y < lo or y > hi]
+            if atip:
+                xs = [x + rng.uniform(-0.12, 0.12) for _ in atip]
+                ax.scatter(xs, atip, s=14, color=COLOR[e], edgecolors="white",
+                           linewidths=0.8, zorder=3)
+            # Mediana como única etiqueta directa, a la derecha de la caja.
+            ax.annotate(f"{pct(v, 50):.0f} ms", (x + 0.25, pct(v, 50)),
+                        textcoords="offset points", xytext=(4, 0), ha="left",
+                        va="center", fontsize=8.5, color=TEXTO)
+        ax.set_xticks(posiciones)
+        ax.set_xticklabels([f"{e.replace('frio', 'frío')}\n(n={len(v)})"
+                            for e, v in zip(estados, datos)], fontsize=9, color=TEXTO)
+        ax.set_xlim(-0.6, posiciones[-1] + 0.95)
+        fr, ca = grupos_todo.get((plat, "frio"), []), grupos_todo.get((plat, "caliente"), [])
+        if len(fr) >= N_MIN_PERCENTIL and ca:
+            sub = f"penalización p50: {pct(fr, 50) - pct(ca, 50):+.0f} ms"
+        else:
+            sub = "frío no visible desde el cliente"
+        ax.set_title(f"{NOMBRES.get(plat, plat)}\n{sub}", fontsize=10.5, color=TEXTO,
+                     loc="left", pad=8)
+        ax.text(0.0, -0.24, NOTA.get(plat, ""), transform=ax.transAxes, fontsize=7.5,
+                color=TEXTO_2, va="top", ha="left", style="italic")
+        ax.grid(axis="y", color="#e6e5e1", linewidth=0.8)
+        ax.set_axisbelow(True)
+        for lado in ("top", "right"):
+            ax.spines[lado].set_visible(False)
+        for lado in ("left", "bottom"):
+            ax.spines[lado].set_color("#c3c2b7")
+        ax.tick_params(colors=TEXTO_2, length=0)
+    axes[0].set_ylabel("Latencia total desde el cliente (ms)", color=TEXTO)
+    axes[0].set_ylim(0, y_max * 1.10)
+    axes[0].yaxis.set_major_formatter(matplotlib.ticker.FormatStrFormatter("%d"))
+    fig.suptitle("Latencia en arranque en frío vs. caliente, por plataforma "
+                 "(25 ciclos forzados, cliente en Chile)", fontsize=11.5, color=TEXTO, x=0.01,
+                 ha="left", y=0.985)
+    # Márgenes fijos en vez de tight_layout: las notas bajo cada panel y el
+    # subtítulo de dos líneas hacían que tight_layout dejara demasiado aire.
+    fig.subplots_adjust(left=0.085, right=0.985, top=0.78, bottom=0.27, wspace=0.28)
     ruta = os.path.join(RAIZ, "results/poc-coldstart.png")
-    fig.savefig(ruta, dpi=160)
+    fig.savefig(ruta, dpi=200, facecolor="white")
+    fig.savefig(ruta[:-4] + ".pdf", facecolor="white")
     print(f"Gráfico -> {ruta}")
 
 
