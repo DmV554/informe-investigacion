@@ -4,7 +4,7 @@
 **Integrante:** Valentina Guzman.
 **Secciones cubiertas:** las mismas de `B-prompts.md`.
 
-## 1. Conversaciones
+## 1. Conversacioness
 
 | # | Herramienta | Fechas | Enlace / exportación | Secciones |
 |---|---|---|---|---|

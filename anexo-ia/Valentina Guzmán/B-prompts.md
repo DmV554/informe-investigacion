@@ -9,7 +9,7 @@
 - 3.1 "Datos sin servidor" (PlanetScale, Turso) y Anexo D: **nivel 2** en la verificación de los candidatos en su documentación oficial vía NotebookLM; la frase de "qué aporta cada candidato" y la decisión de pasarlos al integrante 7 son de autoría propia.
 - Cuestionario (4 preguntas de estas secciones): **nivel 1** — redacción propia; se usó IA únicamente para revisar que las preguntas no fueran demasiado triviales o demasiado específicas y, en algunas, para estilo (humanizer). Ninguna respuesta ni justificación fue redactada por IA.
 **Herramientas:** NotebookLM (Google), cuaderno de trabajo "Serverless" del grupo, operado a través de Claude por MCP, con los modelos `claude-opus-5` (alto) y `claude-sonnet-5` (alto) según la sesión.
-**Período:** 20-09-2026.
+**Período:** Domingo 20-09-2026.
 
 Enlace al cuaderno de gemini notebook: [enlace a cuaderno](https://notebook.google.com/notebook/a2038a46-2a51-4a91-a29e-4c1a344e5d0f)
 Los prompts se transcriben literalmente, tal como fueron escritos (incluidos errores de tipeo), en orden cronológico, agrupados por sesión. Las cuatro sesiones se registraron íntegras, sin resumir, a medida que ocurrieron (nota al pie de cada archivo fuente: "Transcripción exacta e íntegra... sin resumir").
