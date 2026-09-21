@@ -305,8 +305,13 @@
 %% y en las alternativas open source de 3.1 (referencias cruzadas).
 %% ---------------------------------------------------------------------------
 \subsection{Límites técnicos y dependencia del proveedor}
+\label{sec:limites_dependencias}
 
-% TODO (Fabián)
+Toda plataforma serverless multiusuario acota tiempo, memoria y payload para proteger a los demás usuarios y sostener el escalado a cero. AWS Lambda está diseñado para tareas que no retienen estado entre invocaciones, 900~segundos (15~min) máximos y 6~MB de carga útil síncrona por solicitud y respuesta~\parencite{awslambda2026quotas}. Azure Functions suma un tope propio de 230~segundos en funciones HTTP, heredado del balanceador de carga, sobre los 5 a 10~minutos del plan de consumo~\parencite{msazure2026functionsscale}. Cloudflare Workers mide otra magnitud, 128~MB por isolate y tiempo de CPU efectivo, que excluye la espera por red, sin tope de reloj mientras el cliente siga conectado~\parencite{cloudflare2026workerslimits}. El desglose por plataforma está en la sección~\ref{sec:cuadro}. 
+
+Los contenedores sin servidor suben ese techo, Cloud Run admite hasta 60~minutos y 32~GiB por instancia, con el mismo diseño sin estado persistente local~\parencite{gcp2026runtimeout, gcp2026runmemory}. Las instancias siempre encendidas no imponen techo de ejecución ni de payload, a costa de gestión continua. A esos topes se suma una restricción de topología, las funciones no son direccionables en red, así que dos invocaciones concurrentes no comparten estado y deben externalizarlo a un servicio administrado~\parencite{predoaia2024cloudagnostic}. Ahí queda el anclaje, porque portar la aplicación obliga a reescribir su capa de persistencia~\parencite{predoaia2024cloudagnostic, wen2023serverlessreview}. El resto se concentra en las firmas de invocación y en las bibliotecas propietarias del SDK, no en la lógica de negocio~\parencite{rodrigues2022quickfaas}.
+
+Cargas cortas, idempotentes y con estado externalizable caben sin fricción en una función o un contenedor sin servidor, donde la dependencia se paga con velocidad de desarrollo. Procesos largos, con estado voluminoso o payloads mayores obligan a elegir entre instancias siempre encendidas y una plataforma abierta autogestionada (sección~\ref{sec:alternativas}), que devuelve portabilidad a cambio de complejidad operacional. Una capa de abstracción multinube mantiene el código portable a costo medible, la versión agnóstica de una función elevó su arranque en frío en 3,2~\% y 3,8~\% sobre Google Cloud Platform y Azure respectivamente, con memoria equivalente~\parencite{rodrigues2022quickfaas}. Ese margen justifica la abstracción cuando se anticipa migrar; si no, conviene asumir las APIs nativas y aislar la persistencia tras una interfaz propia, dado que la portabilidad de runtime de WASI (sección~\ref{sec:wasm_wasi}) no cubre esa capa.
 
 \clearpage
 
