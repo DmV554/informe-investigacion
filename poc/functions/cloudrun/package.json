@@ -1,0 +1,11 @@
+{
+  "name": "poc-ti05-terabyte-cloudrun",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "24.x.x"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}

@@ -1,0 +1,4 @@
+% Pegar dentro de \tabla{...}{poc-resumen}{...}{ en main.tex; completar REGION/FECHA
+    \filaTabla{AWS Lambda & 838 & 890 & 442 & 507 & n=25/125 / REGION / FECHA}
+    \filaTabla{Cloudflare Workers & 569 & 591 & 567 & 574 & n=107/43 / REGION / FECHA}
+    \filaTabla{Google Cloud Run & 922 & 1656 & 203 & 358 & n=24/125 / REGION / FECHA}

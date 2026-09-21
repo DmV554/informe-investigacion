@@ -1,0 +1,14 @@
+// PoC TI-05 · TERABYTE · Configuración de Wrangler para el Worker de prueba.
+// Apunta al MISMO Worker creado desde el panel (poc-ti05-terabyte), de modo
+// que `npx wrangler deploy` publique una versión nueva del script existente.
+// Se usa para provocar arranques en frío de forma reproducible: cada
+// despliegue obliga a instanciar isolates nuevos en cada máquina que
+// atienda la siguiente solicitud (la función lo reporta con first_request).
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "poc-ti05-terabyte",
+  "main": "functions/cloudflare/worker.js",
+  "compatibility_date": "2026-06-01",
+  "workers_dev": true,
+  "observability": { "enabled": false }
+}

@@ -1,0 +1,15 @@
+plataforma,modo,estado,n,p50_ms,p95_ms,media_ms,min_ms,max_ms
+aws-lambda,forzado,caliente,125,442.3,506.6,452.8,428.2,535.7
+aws-lambda,forzado,frio,25,837.5,890.2,822.4,717.3,898.3
+cloudflare-workers,forzado,caliente,43,567.4,573.8,568.0,561.1,585.7
+cloudflare-workers,forzado,frio,107,568.8,591.3,570.9,560.0,619.0
+google-cloud-run,forzado,caliente,125,202.7,358.2,239.2,172.1,1228.4
+google-cloud-run,forzado,forzado-sin-frio,1,207.0,207.0,207.0,207.0,207.0
+google-cloud-run,forzado,frio,24,922.2,1655.6,907.0,305.8,1682.4
+aws-lambda,todos,caliente,125,442.3,506.6,452.8,428.2,535.7
+aws-lambda,todos,frio,25,837.5,890.2,822.4,717.3,898.3
+cloudflare-workers,todos,caliente,43,567.4,573.8,568.0,561.1,585.7
+cloudflare-workers,todos,frio,107,568.8,591.3,570.9,560.0,619.0
+google-cloud-run,todos,caliente,125,202.7,358.2,239.2,172.1,1228.4
+google-cloud-run,todos,forzado-sin-frio,1,207.0,207.0,207.0,207.0,207.0
+google-cloud-run,todos,frio,24,922.2,1655.6,907.0,305.8,1682.4

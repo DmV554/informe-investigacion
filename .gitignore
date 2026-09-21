@@ -20,3 +20,28 @@ informe/main.pdf
 .DS_Store
 *~
 .vscode/
+# Caché y registro de trabajo de herramientas locales del editor/agente: no pertenece al repositorio compartido
+.atl/
+.claude/
+odd/
+
+# Artefactos de compilación LaTeX
+informe/*.aux
+informe/*.log
+informe/*.out
+informe/*.toc
+informe/*.bbl
+informe/*.blg
+informe/*.synctex.gz
+informe/*.fdb_latexmk
+informe/*.fls
+informe/_minted*/
+
+# Papers descargados para lectura (derechos de ACM): no se redistribuyen
+/*.pdf
+informe/*.bcf
+informe/*.run.xml
+informe/*.pdf
+informe/pdfa.xmpi
+informe/*.minted
+informe/*-SAVE-ERROR

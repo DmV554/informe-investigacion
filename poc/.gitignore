@@ -1,0 +1,10 @@
+# Dependencias y caché de Wrangler: se regeneran con `npm install`
+node_modules/
+.wrangler/
+
+# Caché de Python
+__pycache__/
+*.pyc
+
+# Contexto local del agente: no va al repositorio compartido
+CLAUDE.md
