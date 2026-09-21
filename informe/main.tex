@@ -181,15 +181,11 @@
 %% Las cifras vienen de las secciones citadas; al reescribir, volver a
 %% cotejarlas con 4.1, 4.2 y 4.3 por si cambian.
 
-Este informe compara cuatro modelos de ejecución en la nube, funciones como servicio, contenedores sin servidor, cómputo sin servidor en el borde e instancias siempre encendidas, en las tres dimensiones que fija la ficha del tema TI-05: costo, latencia y complejidad operacional. La pregunta que responde es para qué tipo de carga conviene cada modelo y qué implica esa elección para la propuesta técnica del grupo en la licitación del terminal portuario TERABYTE.
+Este informe compara cuatro modelos de ejecución en la nube, funciones como servicio, contenedores sin servidor, cómputo sin servidor en el borde e instancias siempre encendidas, en costo, latencia y complejidad operacional, y responde para qué carga conviene cada uno y qué implica esa elección para la propuesta del grupo en la licitación del terminal portuario TERABYTE.
 
-El desarrollo (sección~\ref{sec:modelos} a~\ref{sec:limites_dependencias}) muestra que los cuatro modelos se diferencian menos por lo que ejecutan que por cómo aíslan, cómo cobran y qué límites imponen: el mecanismo de aislamiento fija el arranque en frío, la unidad de cobro decide si el tiempo ocioso se paga, y los topes de tiempo, memoria y estado determinan qué aplicaciones deben rediseñarse. El cuadro comparativo (sección~\ref{sec:cuadro}) reúne doce plataformas con precio de lista fechado y límites publicados, sin puntuar la complejidad operacional porque la literatura no ofrece una métrica que lo respalde; a las plataformas de la ficha se suman diez alternativas seleccionadas con criterios explícitos entre treinta y tres candidatos (sección~\ref{sec:alternativas} y Anexo~\ref{anexo:busqueda}).
+Los modelos se diferencian por cómo aíslan, cómo cobran y qué límites imponen (secciones~\ref{sec:modelos} a~\ref{sec:limites_dependencias}). El cuadro comparativo (sección~\ref{sec:cuadro}) reúne doce plataformas con precio de lista fechado y límites publicados, más diez alternativas elegidas con criterios explícitos (sección~\ref{sec:alternativas}). Las mediciones propias (sección~\ref{sec:poc}) dan una penalización mediana de arranque en frío de 395~ms en AWS Lambda, 720~ms en Google Cloud Run y 1~ms en Cloudflare Workers; el modelo de costos (sección~\ref{sec:costos}) sitúa el equilibrio entre Lambda y dos instancias reservadas en 24,0 millones de solicitudes mensuales, sensible a los supuestos.
 
-Las mediciones propias (sección~\ref{sec:poc}) cuantifican el arranque en frío desde un cliente en Chile: la penalización mediana fue de 395~ms en AWS Lambda, 720~ms en Google Cloud Run y 1~ms en Cloudflare Workers, orden que sigue al mecanismo de aislamiento. El modelo de costos (sección~\ref{sec:costos}) sitúa el volumen de equilibrio entre AWS Lambda y un par de instancias reservadas en 24,0 millones de solicitudes mensuales en el escenario base, con un rango que va de 5,3 millones a nunca cruzar según memoria, duración y tipo de reserva. Aplicado al caso (sección~\ref{sec:caso}), el tráfico del terminal queda muy por debajo de ese cruce, pero la exigencia de respuesta bajo un segundo en la cabina de grúa y de 72~horas de autonomía sin enlace descarta un núcleo dependiente de invocaciones remotas.
-
-La recomendación es reservar el modelo sin servidor para las cargas intermitentes, orientadas a eventos y tolerantes al arranque en frío, como el portal público y las notificaciones, y mantener el núcleo operacional sobre capacidad siempre encendida y contenedores gestionados, auditando en la etapa de diseño los caminos de facturación que crecen con el tráfico (sección~\ref{sec:riesgos}).
-
-\clearpage
+El tráfico del terminal queda muy por debajo de ese cruce, pero la respuesta bajo un segundo en la cabina de grúa y las 72~horas de autonomía sin enlace descartan un núcleo dependiente de invocaciones remotas (sección~\ref{sec:caso}). Se recomienda el modelo sin servidor para las cargas intermitentes y tolerantes al arranque en frío (portal público, notificaciones) y capacidad siempre encendida para el núcleo operacional, auditando en el diseño los caminos de facturación que crecen con el tráfico (sección~\ref{sec:riesgos}).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -216,16 +212,14 @@ La recomendación es reservar el modelo sin servidor para las cargas intermitent
 %% punto 6.1: el texto final debe ser del autor; este borrador solo ordena
 %% qué enumerar. Declarar en Anexo A lo que corresponda.
 
-Una aplicación en la nube puede ejecutarse sobre capacidad reservada, que se paga encendida esté o no en uso, o sobre plataformas sin servidor que asignan, escalan y facturan recursos por cada solicitud. La segunda opción promete pagar solo lo que se consume y delegar la operación al proveedor, pero introduce un retardo al crear cada entorno nuevo, límites de tiempo, memoria y estado que no existen en una máquina propia, y una dependencia de las interfaces de cada proveedor. Decidir entre ambas exige comparar, con datos verificables, cuánto cuesta cada modelo según el volumen de tráfico, cuánta latencia agrega y cuánto trabajo de operación queda del lado del equipo.
+Una aplicación en la nube puede ejecutarse sobre capacidad reservada, que se paga encendida esté o no en uso, o sobre plataformas sin servidor que asignan, escalan y facturan recursos por solicitud. La segunda promete pagar solo lo consumido y delegar la operación al proveedor, pero introduce un retardo al crear cada entorno, límites de tiempo, memoria y estado, y dependencia de interfaces propietarias. Decidir entre ambas exige comparar, con datos verificables, cuánto cuesta cada modelo según el volumen, cuánta latencia agrega y cuánta operación queda del lado del equipo.
 
-Este informe realiza esa comparación para cuatro modelos de ejecución: funciones como servicio, contenedores sin servidor, cómputo sin servidor en el borde de la red e instancias siempre encendidas, este último como línea base. El marco lo da la \emph{ficha} del tema TI-05 del documento de indicaciones del curso \parencite{moya2026indicaciones}, que fija las tres dimensiones de comparación (costo, latencia y complejidad operacional) y nombra las plataformas de partida en cinco \emph{listas} o categorías de tecnologías: funciones, contenedores, borde, plataformas de código abierto y datos sin servidor. En adelante, «ficha» y «lista» se usan con ese sentido. El caso de aplicación es la propuesta técnica del grupo para la licitación del sistema operativo del terminal portuario TERABYTE, cuyo tráfico transaccional, exigencias de latencia en la cabina de grúa y autonomía sin enlace ponen a prueba los cuatro modelos a la vez.
+Este informe hace esa comparación para cuatro modelos de ejecución: funciones como servicio, contenedores sin servidor, cómputo sin servidor en el borde e instancias siempre encendidas, este último como línea base. El marco lo da la \emph{ficha} del tema TI-05 del documento de indicaciones del curso \parencite{moya2026indicaciones}, que fija las tres dimensiones de comparación y nombra las plataformas de partida en cinco \emph{listas} o categorías: funciones, contenedores, borde, código abierto y datos sin servidor; «ficha» y «lista» se usan en adelante con ese sentido. El caso de aplicación es la propuesta del grupo para la licitación del sistema operativo del terminal portuario TERABYTE, cuyo tráfico, exigencias de latencia en la cabina de grúa y autonomía sin enlace ponen a prueba los cuatro modelos a la vez.
 
-El documento se organiza así. La sección~\ref{sec:marco} define los términos mínimos. La sección~\ref{sec:modelos} y las que siguen analizan los mecanismos de aislamiento, el arranque en frío, la facturación por consumo y el punto de equilibrio, el diseño orientado a eventos, WebAssembly como entorno de borde y los límites y la dependencia del proveedor. La sección~\ref{sec:alternativas} amplía el conjunto de plataformas y la sección~\ref{sec:cuadro} las compara en un cuadro con precios fechados y límites publicados. La sección~\ref{sec:poc} mide el arranque en frío en tres plataformas, la sección~\ref{sec:costos} construye el modelo de costos y su volumen de equilibrio y la sección~\ref{sec:caso} aplica los resultados al caso. La sección~\ref{sec:riesgos} reúne tendencias, riesgos y evidencia en contra, y el informe cierra con una recomendación.
+La sección~\ref{sec:marco} define los términos mínimos; las secciones~\ref{sec:modelos} a~\ref{sec:limites_dependencias} analizan aislamiento, arranque en frío, facturación y punto de equilibrio, diseño orientado a eventos, WebAssembly y límites y dependencia del proveedor; las secciones~\ref{sec:alternativas} y~\ref{sec:cuadro} amplían y comparan las plataformas; las secciones~\ref{sec:poc} a~\ref{sec:caso} miden, modelan y aplican al caso; la sección~\ref{sec:riesgos} reúne tendencias, riesgos y evidencia en contra, y el informe cierra con una recomendación.
 
-%% Párrafo de identificación del aporte (punto 4 de las Indicaciones).
-De la ficha TI-05 provienen el tema, las tres dimensiones de comparación, las plataformas de partida y los tres entregables mínimos: el cuadro comparativo, la prueba de concepto y el modelo de costos. Es aporte del grupo lo que va más allá de ese encargo: las diez alternativas adicionales seleccionadas con criterios explícitos y trazables (sección~\ref{sec:alternativas}, Anexo~\ref{anexo:busqueda}); las mediciones propias de arranque en frío en tres plataformas desde un cliente en Chile, con código y datos adjuntos (sección~\ref{sec:poc}, Anexo~\ref{anexo:poc}); la decisión de no puntuar la complejidad operacional y su justificación bibliográfica (sección~\ref{sec:cuadro}); el análisis de sensibilidad del volumen de equilibrio (sección~\ref{sec:costos}, Anexo~\ref{anexo:costos}); la aplicación al caso TERABYTE con sus cotas de latencia y autonomía (sección~\ref{sec:caso}); la evidencia contradictoria recogida en la sección~\ref{sec:riesgos}; y la recomendación final, con la que el grupo se compromete.
-
-\clearpage
+%% Párrafo de identificación del aporte (punto 4 de las Indicaciones). 6.1: texto final del autor.
+De la ficha TI-05 provienen el tema, las tres dimensiones, las plataformas de partida y los tres entregables mínimos (cuadro comparativo, prueba de concepto y modelo de costos). Es aporte del grupo lo que va más allá: las diez alternativas adicionales seleccionadas con criterios trazables (sección~\ref{sec:alternativas}, Anexo~\ref{anexo:busqueda}); las mediciones propias de arranque en frío desde Chile, con código y datos (sección~\ref{sec:poc}, Anexo~\ref{anexo:poc}); la decisión justificada de no puntuar la complejidad operacional (sección~\ref{sec:cuadro}); el análisis de sensibilidad del volumen de equilibrio (sección~\ref{sec:costos}, Anexo~\ref{anexo:costos}); la aplicación al caso TERABYTE (sección~\ref{sec:caso}); la evidencia contradictoria de la sección~\ref{sec:riesgos}; y la recomendación final, con la que el grupo se compromete.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -285,7 +279,7 @@ De la ficha TI-05 provienen el tema, las tres dimensiones de comparación, las p
 %%  gojko_adzic_serverless_2017 ....... "application idle time is free".
 %% ---------------------------------------------------------------------------
 
-\clearpage
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -322,7 +316,7 @@ Además de la unidad que ejecuta (sección~\ref{sec:marco}), cada modelo se dist
 
 En FaaS, AWS Lambda crea cada entorno en una microVM de Firecracker que no reutiliza entre funciones ni entre cuentas \parencite{awslambdasec}; según sus creadores, Firecracker agrega menos de 5~MB por microVM, arranca en menos de 125~ms, ejecuta binarios Linux sin modificar y sostiene también a Fargate \parencite{agache2020}. Cloud Run, base de las Cloud Run functions \parencite{gcprunfunctions}, ofrece un entorno basado en gVisor, de arranque rápido pero que no emula todas las llamadas al sistema, y otro basado en microVM, totalmente compatible con Linux y con mejor CPU y red, pero de arranque más lento en algunos servicios \parencite{gcprunenv}; ambos suman una capa de virtualización por hardware \parencite{gcprunsec}. En pruebas independientes, gVisor aisló mejor el rendimiento, pero penalizó más las llamadas al sistema y la red \parencite{wang2022}. En el borde, con nodos de pocos recursos donde VM y contenedores resultan pesados \parencite{xie2021}, Cloudflare Workers ejecuta miles de \textit{isolates} por máquina, solo acepta JavaScript y WebAssembly (sección~2.5) y, contra Spectre, restringe relojes e hilos \parencite{cfworkerssec}. En el modelo siempre encendido, la frontera es la VM arrendada: compatibilidad total \parencite{agache2020} y recursos reservados aunque estén ociosos \parencite{liu2024demystifying}.
 
-Ningún mecanismo aventaja a los demás en todos los frentes a la vez, ya que seguridad, compatibilidad, densidad y velocidad de arranque se transan entre sí, tal como concluyen tanto \textcite{agache2020} como \textcite{wang2022}, quienes afirman textualmente que «ningún runtime es ventajoso en todos los aspectos». Google mismo reconoce que su entorno de segunda generación (microVM) «generalmente rinde más bajo carga sostenida», pero arranca más lento que el basado en gVisor en ciertos servicios \parencite{gcprunenv}, lo que entrega un criterio directo ligado a la condición de carga. Los \textit{isolates} de V8 solo admiten JavaScript y WebAssembly, sin binarios nativos \parencite{cfworkerssec}, mientras que Firecracker sí ejecuta binarios Linux sin modificar \parencite{agache2020}, lo que marca la restricción de compatibilidad de código. \textcite{wang2022} también muestran que gVisor penaliza especialmente las llamadas al sistema, la red y los archivos pequeños. Y aunque Firecracker arranca en menos de 125~ms, Lambda igual mantiene un \textit{pool} de microVM prearrancadas, porque ese tiempo no alcanza para el escalamiento en ráfaga. La elección entre contenedores, microVM, isolates o VM completa depende, entonces, del tipo de código que se ejecutará (lenguaje, binarios, llamadas al sistema), del patrón de carga (ráfagas cortas versus carga sostenida) y de si el costo de mantener recursos siempre listos compensa evitar la latencia de arranque.
+Ningún mecanismo aventaja a los demás en todos los frentes: seguridad, compatibilidad, densidad y velocidad de arranque se transan entre sí, y tanto \textcite{agache2020} como \textcite{wang2022} concluyen que «ningún runtime es ventajoso en todos los aspectos». Google mismo reconoce que su entorno de microVM «generalmente rinde más bajo carga sostenida» pero arranca más lento que el basado en gVisor en ciertos servicios \parencite{gcprunenv}, y aunque Firecracker arranca en menos de 125~ms, Lambda mantiene un \textit{pool} de microVM prearrancadas porque ese tiempo no alcanza para el escalamiento en ráfaga. La elección entre contenedores, microVM, isolates o VM completa depende, entonces, del tipo de código (lenguaje, binarios, llamadas al sistema), del patrón de carga (ráfagas cortas versus carga sostenida) y de si mantener recursos siempre listos compensa evitar la latencia de arranque.
 
 %% ---------------------------------------------------------------------------
 %% OPCIONAL: Claude me tiro hacer una tabla resumen (1/4 de página). que nos seria util para la presentación y
@@ -442,7 +436,7 @@ Los contenedores sin servidor suben ese techo, Cloud Run admite hasta 60~minutos
 
 Cargas cortas, idempotentes y con estado externalizable caben sin fricción en una función o un contenedor sin servidor, donde la dependencia se paga con velocidad de desarrollo. Procesos largos, con estado voluminoso o payloads mayores obligan a elegir entre instancias siempre encendidas y una plataforma abierta autogestionada (sección~\ref{sec:alternativas}), que devuelve portabilidad a cambio de complejidad operacional. Una capa de abstracción multinube mantiene el código portable a costo medible, la versión agnóstica de una función elevó su arranque en frío en 3,2~\% y 3,8~\% sobre Google Cloud Platform y Azure respectivamente, con memoria equivalente~\parencite{rodrigues2022quickfaas}. Ese margen justifica la abstracción cuando se anticipa migrar; si no, conviene asumir las APIs nativas y aislar la persistencia tras una interfaz propia, dado que la portabilidad de runtime de WASI (sección~\ref{sec:wasm_wasi}) no cubre esa capa.
 
-\clearpage
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -475,23 +469,10 @@ Cargas cortas, idempotentes y con estado externalizable caben sin fricción en u
 % declarado en Anexo A). Estructura: párrafo 1 método y resultado; párrafo 2
 % análisis por dimensiones y filas que pasan a 3.2; tabla con las diez que entran.
 
-La ficha del tema TI-05 \parencite{moya2026indicaciones} pide, en cada una de sus cinco listas, incorporar al menos dos alternativas que no figuren ya entre las plataformas nombradas. Los candidatos se identificaron a partir de las tablas de plataformas de los surveys citados en el informe, del CNCF Landscape y de la documentación oficial de proveedores, con verificación de fuentes el 20 de septiembre de 2026. Se evaluó un conjunto de treinta y tres candidatos con los criterios del Anexo~\ref{anexo:busqueda} (puertas de descarte, inclusión y, cuando hacía falta, desempate). Diez fueron retenidas tras aplicar esos criterios y la regla de desempate (Tabla~\ref{tab:alternativas-adicionales}); el resto se descartó por falta de vigencia o verificabilidad, por no pertenecer al modelo de la lista, por no aportar una dimensión nueva frente a la ficha, por solapamiento o retiro, o por desempate cuando sobraban más de dos. Fuentes, fechas y motivos figuran en ese anexo.
+La ficha del tema TI-05 \parencite{moya2026indicaciones} pide, en cada una de sus cinco listas, incorporar al menos dos alternativas que no figuren ya entre las plataformas nombradas. Los candidatos se identificaron a partir de las tablas de plataformas de los surveys citados en el informe, del CNCF Landscape y de la documentación oficial de proveedores, con verificación de fuentes el 20 de septiembre de 2026. Se evaluó un conjunto de treinta y tres candidatos con los criterios del Anexo~\ref{anexo:busqueda} (puertas de descarte, inclusión y, cuando hacía falta, desempate). Diez fueron retenidas tras aplicar esos criterios y la regla de desempate (Tabla~\ref{tab:alternativas-adicionales} del Anexo~\ref{anexo:busqueda}); el resto se descartó por falta de vigencia o verificabilidad, por no pertenecer al modelo de la lista, por no aportar una dimensión nueva frente a la ficha, por solapamiento o retiro, o por desempate cuando sobraban más de dos. Fuentes, fechas y motivos figuran en ese anexo.
 
 Las que entran abren ejes que las plataformas de la ficha no cubren: facturación en euros y operación en la Unión Europea (Scaleway, en funciones y en contenedores); el mismo motor de funciones en nube gestionada y en código abierto (OCI Functions y Fn Project ---un solo contraste de portabilidad, contado en dos listas); escala a cero solo en el plan gratuito frente a cómputo siempre aprovisionado en planes pagados (Render), útil para el modelo de costos de la sección~\ref{sec:costos}; cómputo en el borde con presencia en Latinoamérica (Azion) y cobro de solicitudes separado del ancho de banda, con tiempos de CPU de decenas de segundos (Bunny); mecanismos de escala a cero elegibles por función en Kubernetes (Fission); y datos con cobro por filas o por comando Redis, más la opción de autoalojar libSQL (Turso y Upstash). De estas diez, Oracle OCI Functions y Azion Edge Functions pasan como filas a las Tablas~\ref{tab:cuadro-3-2a} y~\ref{tab:cuadro-3-2b}, y Fission a la Tabla~\ref{tab:cuadro-3-2c}, con las mismas columnas de límites y precio que el resto..
 
-\tabla{Alternativas adicionales incorporadas a la comparación}{alternativas-adicionales}{|p{3.2cm}|p{3.4cm}|p{7.2cm}|}{%
-    \filaTabla{\textbf{Lista de la ficha} & \textbf{Alternativa} & \textbf{Qué aporta a la comparación}}
-    \filaTabla{Funciones como servicio & Oracle Cloud Infrastructure Functions & Mismo motor que Fn Project en nube gestionada; invocación desacoplada hasta 3600~s.}
-    \filaTabla{Funciones como servicio & Scaleway Serverless Functions & Precio de lista en euros y operación en la Unión Europea; concurrencia uno por instancia.}
-    \filaTabla{Contenedores sin servidor & Render & En gratuito se apaga a los 15~min sin tráfico; en pagado el cómputo sigue aprovisionado.}
-    \filaTabla{Contenedores sin servidor & Scaleway Serverless Containers & Cobra vCPU-s y GB-s por separado, cada uno con capa gratuita, en la Unión Europea.}
-    \filaTabla{Cómputo en el borde & Azion Edge Functions & Presencia documentada en Latinoamérica; capa gratuita de horas de cómputo e invocaciones.}
-    \filaTabla{Cómputo en el borde & Bunny Edge Scripting & Solicitudes y CPU cobrados aparte del ancho de banda; hasta 30~s de CPU por solicitud.}
-    \filaTabla{Código abierto & Fission & En Kubernetes, el ejecutor define si hay conjunto caliente o escala a cero por función.}
-    \filaTabla{Código abierto & Fn Project & Motor de código abierto sobre el que corre OCI Functions (par con la fila gestionada).}
-    \filaTabla{Datos sin servidor & Turso (libSQL) & Cobro por filas leídas y escritas; libSQL autoalojable, derivado de SQLite.}
-    \filaTabla{Datos sin servidor & Upstash Redis & Redis sin servidor con cobro por comando; ausente de las bases de la ficha.}
-}
 
 %% ---------------------------------------------------------------------------
 %% 3.2                     Responsables: Valentina (criterios), Rodolfo (AWS y
@@ -518,125 +499,32 @@ Los criterios son los tres que definen el alcance de la ficha (costo, latencia y
 
 Con la latencia la cosa cambia: no existe una única forma de medirla. Las revisiones bibliográficas dan rangos según el mecanismo de aislamiento \parencite{li2022serverless}, mientras que las evaluaciones experimentales reportan percentiles de cola \parencite{aslanpour2024faashouse}, y estos dos tipos de datos no son convertibles entre sí. Por eso el cuadro se limita a las mediciones propias, hechas en la sección~\ref{sec:poc}, en vez de mezclar metodologías ajenas que no son comparables.
 
-La complejidad operacional, en cambio, ni siquiera cuenta con una métrica estandarizada: los \emph{surveys} la resuelven con etiquetas cualitativas que ni sus propias tablas logran respaldar con datos \parencite{castro2019rise}, y la única operacionalización empírica disponible pasa por indicadores indirectos medidos sobre aplicaciones reales \parencite{eismann2021}. Por eso, en el cuadro, este criterio queda sin puntaje.
+La complejidad operacional, en cambio, ni siquiera cuenta con una métrica estandarizada: los \emph{surveys} la resuelven con etiquetas cualitativas que ni sus propias tablas logran respaldar con datos \parencite{castro2019rise}, y la única operacionalización empírica disponible pasa por indicadores indirectos medidos sobre aplicaciones reales \parencite{eismann2021}. Por eso, en el cuadro, este criterio queda sin puntaje. La Tabla~\ref{tab:criterios} del Anexo~\ref{anexo:cuadro} resume, por criterio, por qué importa y cómo se mide.
 
 
-\tabla{Criterios de evaluación aplicados al cuadro comparativo}{criterios}{|p{2.8cm}|p{5.4cm}|p{5.6cm}|}{%
-    \filaTabla{\textbf{Criterio} & \textbf{Por qué importa} & \textbf{Cómo se mide en el cuadro}}
-    \filaTabla{Costo y modelo de cobro & Determina la viabilidad económica en función del tráfico y el riesgo financiero de pisos mínimos o sobrecostos ocultos. & Unidad de cómputo (vCPU-s, GB-s, tiempo de CPU), piso fijo mensual y precio de lista con producto, moneda, región y fecha de consulta; «solo por cotización» cuando el proveedor no publica precio.}
-    \filaTabla{Latencia y aislamiento & Condiciona el tiempo de respuesta frente a ráfagas y la frontera de seguridad multi-inquilino entre cargas de trabajo. & Tecnología de aislamiento declarada (microVM, contenedor, isolate V8, Wasm); p50 y p95 de las mediciones propias de la sección~\ref{sec:poc}, o \emph{sin medición}; mitigación del arranque en frío y si se factura aparte.}
-    \filaTabla{Complejidad operacional & Cuantifica la carga administrativa y de mantenimiento que queda del lado del equipo en vez del proveedor. & Lista cerrada de responsabilidades, idéntica para todas las filas y elaborada por el grupo, sin escala numérica; límite que fuerza rediseño y necesidad de externalizar el estado.}
-}
 
 El análisis comparativo se estructura en doce plataformas representativas que cubren los cuatro modelos de ejecución analizados, complementadas por el panorama de código abierto. Todas las tarifas y cuotas corresponden a documentación oficial consultada el 20 de septiembre de 2026.
 
-\begin{landscape}
-\subsubsection*{Tabla 3.2a: Criterios arquitectónicos, operativos y económicos}
-\label{tab:cuadro-3-2a}
-
-{\scriptsize
-\setlength{\tabcolsep}{3pt}
-\begin{longtable}{|p{2.1cm}|p{1.6cm}|p{2.4cm}|p{2.8cm}|p{3.1cm}|p{1.0cm}|p{2.1cm}|p{2.6cm}|p{2.8cm}|}
-\hline
-\textbf{Plataforma} & \textbf{Modelo} & \textbf{Aislamiento} & \textbf{Unidad de cobro y piso} & \textbf{Precio de lista fechado} & \textbf{Cold start} & \textbf{Mitigación (factura)} & \textbf{Qué opera el equipo} & \textbf{Estado / Límite rediseño} \\ \hline
-\endhead
-
-AWS Lambda & FaaS & MicroVM Firecracker (cgroups/chroot por función) & Solicitudes (\$0.20/M) + GB-s reloj. Sin piso; escala a cero. & us-east-1, USD, 20-09-2026: \$0.0000166667/GB-s x86; Free 1M req/400k GB-s. Lista & (4.1) & Concurrencia aprovisionada: SÍ (\$0.0000041667/GB-s). SnapStart sin cargo & runtime, despliegue, observabilidad & SÍ obligatorio (S3/DynamoDB). Límite: 900~s máx, 6~MB payload sync \\ \hline
-
-Azure Functions (Flex Consumption) & FaaS & Contenedor / microVM en entorno aislado por app & Solicitud (\$0.40/M) + GB-s (\$0.000026). Sin piso; escala a cero. & East US, USD, 20-09-2026: \$0.40/M req + \$0.000026/GB-s; Free 250k req / 100k GB-s. Lista & s/m & Instancias Always Ready: SÍ (\$0.000004/GB-s base + \$0.000016 ejec) & runtime, despliegue, observabilidad & SÍ obligatorio (Blob/Cosmos). Límite: HTTP máx 230~s (Load Balancer) \\ \hline
-
-Google Cloud Run functions & FaaS & gVisor (gen 1) o microVM (gen 2) sobre Cloud Run & vCPU-s, GiB-s y req. Sin piso; escala a cero. Cloud Build/Artifact aparte. & us-east4 (Tier 1), USD, 20-09-2026: CPU \$0.000024/s, RAM \$0.0000025/s, req \$0.40/M. Free tier Tier 1. Lista & s/m & Min instances y Startup CPU boost: SÍ se facturan al arranque & runtime, despliegue, observabilidad & SÍ obligatorio. Límite: 9~min en eventos frente a 60~min en HTTP \\ \hline
-
-Google Cloud Run (servicios) & Contenedor & Sandbox gVisor (gen 1) o microVM Linux (gen 2) & vCPU-s y GiB-s (100~ms) + req. Sin piso mensual; escala a cero. & us-east4 (Tier 1), USD, 20-09-2026: CPU \$0.000024/s, idle \$0.0000025/s, RAM \$0.0000025/s. Lista & (4.1) & Min instances (idle) y CPU boost: SÍ se facturan & runtime, red (VPC/SSL), despliegue, observabilidad & SÍ (disco en RAM). Límite: 60~min máx; tareas largas van a Jobs (168~h) \\ \hline
-
-AWS Fargate (ECS) & Contenedor & MicroVM dedicada por tarea (Firecracker en AWS) & vCPU-h y GB-h por segundo (mín 1~min). Sin piso; escala a cero. & us-east-1, USD, 20-09-2026: \$0.04048/vCPU-h, \$0.004445/GB-h. Fargate Spot desc. 70\%. Lista & s/m & No aplica a nivel función: mantener tareas mínimas activas completas & runtime, red (VPC/ALB), despliegue, observabilidad & Efímero 20~GB; persistencia vía EFS/EBS. Sin timeout de plataforma \\ \hline
-
-Azure Container Apps & Contenedor & Contenedor en clúster K8s/Envoy dedicado por entorno & vCPU-s y GiB-s activos. Sin piso; escala a cero. & East US, USD, 20-09-2026: vCPU \$0.000024/s, idle \$0.000003/s, RAM \$0.000003/s. Free 180k vCPU-s. Lista & s/m & Min replicas en reposo: SÍ se facturan a tarifa idle reducida & runtime, red (VNet), despliegue, observabilidad & SÍ (Azure Files). Límite: 300~s máx en HTTP; batch requiere Jobs \\ \hline
-
-Cloudflare Workers (Paid) & Borde & Isolates V8 multi-tenant en proceso único (espacio virtual común) & Solicitudes (\$0.30/M) + tiempo CPU (\$0.02/M ms). \textbf{Piso: \$5.00/mes cuenta.} & global, USD, 20-09-2026: \$5/mes base (10M req, 30M CPU-ms); reloj sin cobro. Free 100k req/d. Lista & (4.1) & Estructural: isolate en proceso vivo ($<$5~ms); snapshot Wasm. Sin SKU aparte & runtime, despliegue, observabilidad & SÍ obligatorio (DO, KV, D1, R2). Límite: 128~MB RAM y 5~min CPU máx \\ \hline
-
-Fastly Compute & Borde & WebAssembly (WASI) sobre Wasmtime; sandbox por req. & Requests (\$0.50--0.20/M) + vCPU-ms (\$0.05--0.02/M ms). Sin piso. & global, USD, 20-09-2026: tramos uso actual. Free 10M req, 100M ms. Tráfico entrega aparte. Lista & s/m & Estructural: instanciación Wasm en microsegundos. Sin SKU aparte & runtime, despliegue, observabilidad & SÍ (Config/KV/Secret Store). Límite: 50~ms CPU por req., 128~MB heap \\ \hline
-
-AWS Lambda@Edge / CloudFront & Borde & L@E: microVM en PoP edge; CF Functions: proceso liviano JS & L@E: \$0.60/M + \$0.00005001/GB-s. CF Func: \$0.10/M (2M free). Sin piso. & global, USD, 20-09-2026: precios de lista publicados en CDN CloudFront & s/m & CF Func submilisegundo estructural. L@E sin concurrencia aprovisionada & runtime, despliegue (asociación a CDN) & SÍ (sin disco local). Límite: CF Func 1~ms CPU; L@E 5~s viewer / 30~s origin \\ \hline
-
-EC2 reservada (ECS t3.medium) & Siempre encendido & VM dedicada Nitro/KVM; sin aislamiento por invocación & Instancia-hora. \textbf{Piso: mes completo (\$30.37/mes On-Demand). No escala a cero.} & us-east-1, USD, 20-09-2026: On-Demand \$0.0416/h; Reserva 1a \$0.026/h (\$18.98/m); 3a \$0.017/h (\$12.41/m). & n/a & No aplica: proceso residente en memoria absorbe tráfico de inmediato & SO/host, Docker, capacidad, escalado, red, despliegue, observabilidad & Estado en memoria/disco host (EBS). Sin timeout de plataforma \\ \hline
-
-Oracle OCI Functions (3.1) & FaaS & Contenedor gestionado / microVM OCI (motor Fn Project) & Invocaciones (\$0.20/M) + GB-s (\$0.00001417/s). Concurrency idle 25\%. Sin piso. & US East, USD, 20-09-2026: Always Free 2M req + 400k GB-s/mes permanentes. Lista & s/m & Concurrencia aprovisionada: SÍ (25\% tarifa en idle; sin recargo activo) & runtime, despliegue, observabilidad & SÍ (Object Storage, DB). Límite: 300~s sync; modo detached hasta 3600~s \\ \hline
-
-Azion Edge Functions (3.1) & Borde & Isolates V8 sobre Edge Runtime distribuido propio & Compute (\$0.072/1000~s CPU) + req (\$0.30/M). Sin piso en Starter. & Brasil/LATAM/global, USD, 20-09-2026: Free 8~h compute + 3M req/mes. Lista & s/m & Aislamiento liviano V8 ($<$2~s cold start doc, típico ms). Sin SKU & runtime, despliegue, observabilidad & SÍ (Edge Storage/SQL). Límite: \textbf{2~s CPU por req} (wall 5~min); isolate 512~MB \\ \hline
-\end{longtable}
+%% Síntesis del cuadro (formato): resume las Tablas 3.2a y 3.2b, que se
+%% imprimen completas en el Anexo E con sus fuentes y notas metodológicas.
+\tabla{Síntesis del cuadro comparativo (detalle completo en el Anexo~\ref{anexo:cuadro})}{sintesis-cuadro}{|p{2.4cm}|p{1.3cm}|p{2.1cm}|p{2.5cm}|p{2.6cm}|p{1.2cm}|p{2.0cm}|}{%
+    \filaTabla{\textbf{Plataforma} & \textbf{Modelo} & \textbf{Aislamiento} & \textbf{Unidad de cobro y piso} & \textbf{Tiempo máx.\ / memoria} & \textbf{Penaliz.\ frío p50 (4.1)} & \textbf{Egreso}}
+    \filaTabla{AWS Lambda & FaaS & microVM Firecracker & req + GB-s de reloj; sin piso & 900~s; 128--10.240~MB & 395~ms & 0,09~USD/GB tras 100~GB}
+    \filaTabla{Azure Functions (Flex) & FaaS & contenedor/microVM por app & req + GB-s; sin piso & HTTP 230~s; 0,5--4~GB & s/m & 0,087~USD/GB tras 100~GB}
+    \filaTabla{Google Cloud Run functions & FaaS & gVisor o microVM & vCPU-s + GiB-s + req; sin piso & HTTP 60~min, eventos 9~min; hasta 16~GiB & s/m & 0,12~USD/GB tras 1~GiB}
+    \filaTabla{Google Cloud Run (servicios) & Contenedor & gVisor o microVM & vCPU-s + GiB-s + req; sin piso & 60~min; hasta 32~GiB & 720~ms & 0,12~USD/GB tras 1~GiB}
+    \filaTabla{AWS Fargate (ECS) & Contenedor & microVM por tarea & vCPU-h + GB-h (mín.\ 1~min); sin piso & sin límite; 0,25--32~vCPU & s/m & NAT 0,045 + 0,09~USD/GB}
+    \filaTabla{Azure Container Apps & Contenedor & contenedor en clúster dedicado & vCPU-s + GiB-s; sin piso & HTTP 300~s; hasta 4~vCPU / 8~GiB & s/m & 0,087~USD/GB tras 100~GB}
+    \filaTabla{Cloudflare Workers (Paid) & Borde & isolates V8 & req + CPU-ms; \textbf{piso 5~USD/mes} & CPU 5~min (30~s por defecto); 128~MB & 1~ms & sin cargo}
+    \filaTabla{Fastly Compute & Borde & Wasm/WASI por solicitud & req + vCPU-ms; sin piso & CPU 50~ms; 128~MB & s/m & entrega aparte: 0,12~USD/GB tras 100~GB}
+    \filaTabla{AWS Lambda@Edge / CloudFront Functions & Borde & microVM en PoP / proceso JS & req + GB-s / req; sin piso & CF: 1~ms CPU; L@E: 5--30~s & s/m & CloudFront 0,085~USD/GB tras 1~TB}
+    \filaTabla{EC2 reservada (ECS, t3.medium) & Siempre encendido & VM dedicada & instancia-hora; \textbf{piso: mes completo} & sin límite; 2~vCPU / 4~GiB & n/a & 0,09~USD/GB tras 100~GB}
+    \filaTabla{Oracle OCI Functions (3.1) & FaaS & contenedor/microVM (Fn) & req + GB-s; sin piso & 300~s sync, 3.600~s detached; 128--3.072~MB & s/m & 0,0085~USD/GB tras 10~TB}
+    \filaTabla{Azion Edge Functions (3.1) & Borde & isolates V8 & CPU-s + req; sin piso & CPU 2~s (reloj 5~min); 512~MB & s/m & 0,06~USD/GB tras 50~GB}
 }
 
-\clearpage
+Todas las cifras son precio de lista en USD, consultadas el 20-09-2026 en las regiones us-east-1 (AWS), East US (Azure), us-east4 (Google) y global (borde); «s/m» es sin medición propia. Las Tablas~\ref{tab:cuadro-3-2a} y~\ref{tab:cuadro-3-2b} del Anexo~\ref{anexo:cuadro} dan, por plataforma, el precio completo, las mitigaciones del arranque en frío y su facturación, la lista de lo que opera el equipo, los límites de carga útil y concurrencia y las notas metodológicas; la Tabla~\ref{tab:cuadro-3-2c} compara las plataformas de código abierto.
 
-\subsubsection*{Tabla 3.2b: Límites técnicos y tarifas de egreso de datos}
-\label{tab:cuadro-3-2b}
-
-{\scriptsize
-\setlength{\tabcolsep}{3pt}
-\begin{longtable}{|p{2.6cm}|p{3.2cm}|p{3.4cm}|p{3.2cm}|p{3.6cm}|p{4.2cm}|}
-\hline
-\textbf{Plataforma} & \textbf{Tiempo máx. ejecución} & \textbf{Memoria / vCPU} & \textbf{Payload in / out} & \textbf{Concurrencia / escalado} & \textbf{Egreso de datos (precio fechado)} \\ \hline
-\endhead
-
-AWS Lambda & 900~s (15~min) & 128 a 10.240~MB (1~vCPU a 1.769~MB, máx 6~vCPU) & Sync: 6~MB. Async: 256~KB & 1.000 concurrentes regional default (ampliable). Escala a cero & 100~GB/mes gratis; luego \$0.09/GB (primeros 10~TB us-east-1). 20-09-2026 \\ \hline
-
-Azure Functions (Flex) & HTTP: 230~s (techo Load Balancer); otros triggers 30~min (máx unbounded) & 512~MB (0.5~vCPU), 2048~MB (1~vCPU), 4096~MB (2~vCPU) & HTTP 100~MB en gateway; Storage Queues 4~MB & Hasta 1.000 instancias por app. Escala a cero & 100~GB/mes gratis; luego \$0.087/GB (East US). 20-09-2026 \\ \hline
-
-Google Cloud Run functions & HTTP hasta 60~min; eventos hasta 9~min (API v2) & Default 256~MiB; máx 16~GiB / 4~vCPU según tabla funciones & HTTP/1 32~MiB req/resp. Sin límite bajo HTTP/2 & Hasta 1.000 req concurrentes por instancia. Escala a cero & Premium Tier: 1~GiB gratis; luego \$0.12/GB hacia Norteamérica. 20-09-2026 \\ \hline
-
-Google Cloud Run (servicios) & 300~s default; máx 3600~s (60~min). Jobs 168~h & Default 512~MiB (mín 128~MiB, máx 32~GiB); vCPU default 1 (0.08 a 8) & HTTP/1 32~MiB. Sin límite con streaming HTTP/2 & Instancia: default 80, máx 1.000. Revisión: máx 100 inst. default. Escala a cero & Premium Tier: 1~GiB gratis; luego \$0.12/GB (1--1.024~GiB). Interno sin cargo. 20-09-2026 \\ \hline
-
-AWS Fargate (ECS) & Sin límite de plataforma (proceso continuo) & 0.25~vCPU (0.5--2~GB) a 32~vCPU (hasta 244~GB en doc ECS) & Sin límite de plataforma (ALB máx 100~MB cuerpo) & Cuota default 1.000 tareas regional. Escala a cero si desired=0 & Salida vía NAT Gateway (\$0.045/GB + \$0.045/h) + egreso EC2 (\$0.09/GB). 20-09-2026 \\ \hline
-
-Azure Container Apps & HTTP 300~s máx; Jobs sin límite (hasta 7 días) & 0.25~vCPU / 0.5~GiB a 4.0~vCPU / 8.0~GiB en Consumption & HTTP hasta 100~MB soportados vía ingress Envoy & Hasta 300 réplicas por app (default 10--30). Escala a cero & 100~GB/mes gratis; luego \$0.087/GB hacia internet. 20-09-2026 \\ \hline
-
-Cloudflare Workers (Paid) & CPU: 5~min máx (\textbf{30~s default}). Reloj: \textbf{SIN LÍMITE} en HTTP & 128~MB por isolate, NO configurable. vCPU no expuesta & URL 16~KB; cabeceras 128~KB; body req según plan (100~MB a 5~GB) & Sin límite numérico publicado; 10.000 subsolicitudes en Paid. Escala a cero & \textbf{SIN CARGO declarado:} egreso y ancho de banda incluidos en Workers Paid. 20-09-2026 \\ \hline
-
-Fastly Compute & CPU: \textbf{50~ms por ejecución}. Reloj: 2~min (60~s trial) & 1~MB stack y 128~MB heap por ejecución, no configurable & Cabeceras 128~KB; URL 8~KB; caché 100~MB; paquete Wasm 100~MB & Instancia aislada por req. Encadenamiento máx 20 saltos y 6 servicios & \textbf{Entrega (Full Site Delivery) aparte:} 100~GB free; luego \$0.12/GB (US/EU), \$0.19 (LATAM). 20-09-2026 \\ \hline
-
-AWS Lambda@Edge / CF Func & CF Func: \textbf{1~ms CPU}. L@E: 5~s viewer / 30~s origin & CF Func: 2~MB fijos. L@E: 128~MB (viewer) o 128--10.240~MB (origin) & CF Func: sin cuerpo. L@E: 40~KB viewer, 1~MB origin (40~MB stream) & Integrado en escala CDN global CloudFront. Escala a cero & Tarifa CloudFront: 1~TB/mes gratis; luego \$0.085/GB primer tramo en Norteamérica. 20-09-2026 \\ \hline
-
-EC2 reservada (ECS t3.medium) & Sin límite de plataforma (ejecución continua) & Fijo de instancia: 2~vCPU y 4.0~GiB de RAM dedicados & Sin límite de plataforma; gobernado por memoria de host y proxy & Capacidad física de t3.medium; autoescalado por ASG (no a cero) & Salida estándar EC2: 100~GB/mes gratis; luego \$0.09/GB (us-east-1). 20-09-2026 \\ \hline
-
-Oracle OCI Functions (3.1) & Sync: 300~s (\textbf{default 30~s}). Detached: 5 a \textbf{3.600~s (60~min)} & Opciones fijas: 128, 256, 512, 1024, 2048 y 3072~MB & Solicitud y respuesta HTTP: 6~MB cada una & 60 concurrentes por AD default (ampliable). Escala a cero & \textbf{Primeros 10~TB/mes gratis hacia internet}; luego \$0.0085/GB. 20-09-2026 \\ \hline
-
-Azion Edge Functions (3.1) & CPU: \textbf{2~s máx por req}. Reloj wall-clock: máx \textbf{5~min (300~s)} & Hasta 512~MB por isolate de función. vCPU no expuesta & Args JSON 100~KB. Código: UI 6~MB, API 20~MB. Sub-requests: 50 & Autoescalado sobre red distribuida de PoPs edge. Escala a cero & Red Edge por GB (Brasil/LATAM \$0.06/GB en inicio; 50~GB gratis). 20-09-2026 \\ \hline
-\end{longtable}
-}
-\end{landscape}
-
-\subsubsection*{Tabla 3.2c: Ecosistema de plataformas de código abierto}
-\label{tab:cuadro-3-2c}
-
-{\scriptsize
-\setlength{\tabcolsep}{3pt}
-\begin{longtable}{|p{2.3cm}|p{2.4cm}|p{2.2cm}|p{1.3cm}|p{3.6cm}|p{2.7cm}|}
-\hline
-\textbf{Proyecto} & \textbf{Modelo} & \textbf{Aislamiento} & \textbf{Escala 0 default} & \textbf{Defaults configurables (timeout / concurrencia)} & \textbf{Acreditación CNCF u otra} \\ \hline
-\endhead
-
-Knative Serving & Contenedores K8s & Contenedor (pod K8s) & \textbf{Sí (30~s gracia)} & Timeout 300~s default (máx 600~s). Concurrencia 0 (ilimitada default, máx 1000) & \textbf{Graduado CNCF (11-09-2025)}. Categoría: Scheduling \& Orchestration \\ \hline
-
-OpenFaaS & FaaS sobre K8s / host & Contenedor (gVisor opcional en Pro) & No (opt-in) & Timeouts en gateway y función configurables. JetStream ack\_wait 60~s. Soporta \texttt{faasd} sin K8s & \textbf{No es CNCF}. OpenFaaS Ltd. Licencias CE (EULA) y comercial Pro/Edge \\ \hline
-
-KEDA & Autoescalador K8s & No aplica (escala otros) & \textbf{Sí} & No aplica en ejecución HTTP. Sondeo default 30~s (\texttt{pollingInterval}) & \textbf{Graduado CNCF (22-08-2023)}. Scheduling \& Orchestration \\ \hline
-
-Fermyon SpinKube & Serverless Wasm en K8s & WebAssembly (\texttt{containerd-shim-spin}) & No nativo (delega KEDA) & Timeouts gobernados por pod de K8s y triggers de Spin. Wasm en nodo sin contenedor & \textbf{Sandbox CNCF (21-01-2025)}. Runtime Spin en org \texttt{spinframework} \\ \hline
-
-wasmCloud & Componentes Wasm & WebAssembly (Wasmtime Component Model) & \textbf{Sí (por diseño)} & Concurrencia ilimitada default (\texttt{wash scale}). Control timeout 2000~ms default & \textbf{Incubating CNCF (08-11-2024)}. Scheduling \& Orchestration \\ \hline
-
-Fission (3.1) & FaaS sobre K8s & Contenedor (pods precalentados o dedicados) & Configurable por función & Router timeout 300~s default. Warm pools (\texttt{poolmgr}, 3 pods) vs escala a cero (\texttt{newdeploy}) & \textbf{No es CNCF}. Proyecto comunitario activo (v1.27.0, 2026) \\ \hline
-\end{longtable}
-}
-
-\subsubsection*{Notas metodológicas y de trazabilidad al pie de las tablas}
-\begin{itemize}
-    \item \textbf{Nota (a) --- Complejidad operacional («Qué opera el equipo»):} La lista cerrada corresponde a la matriz estandarizada construida por el grupo a partir de las matrices de responsabilidad de AWS, Azure y Google Cloud, y el Whitepaper de Serverless del CNCF. Los proveedores de borde no publican una matriz formal; las responsabilidades son una inferencia técnica documentada desde sus contratos de arquitectura.
-    \item \textbf{Nota (b) --- Arranque en frío:} La marca \texttt{(4.1)} remite a los ensayos de laboratorio del grupo (Vicente Arratia). Para las demás plataformas se declara \texttt{sin medición propia} (\texttt{s/m}) para no distorsionar la comparación con benchmarks heterogéneos de proveedores o literatura. La instancia siempre encendida declara \texttt{no aplica} (\texttt{n/a}).
-    \item \textbf{Nota (c) --- Lambda@Edge y CloudFront Functions:} Se consolidan en fila conjunta por representar la oferta escalonada de AWS sobre CDN, diferenciando manipulación rápida de cabeceras (1~ms CPU) de cómputo regional (hasta 30~s).
-    \item \textbf{Nota (d) --- Respaldo teórico del aislamiento en el borde:} Cloudflare Workers y Fastly Compute utilizan aislamiento a nivel de lenguaje (\emph{V8 Isolates} y \emph{WebAssembly/WASI}) en un mismo espacio de memoria virtual para ofrecer arranque sub-milisegundo. Como demuestran Schwarzl et al.\ \parencite{schwarzl2022spectre} en \emph{Robust and Scalable Process Isolation against Spectre in the Cloud}, este enfoque optimiza la densidad a costa de exposición a canales laterales microarquitectónicos (\emph{Spectre-PHT}), lo que obliga a incorporar defensas probabilísticas activas (\emph{DyPrIs}).
-\end{itemize}
 
 %% ---------------------------------------------------------------------------
 %% Análisis comparativo de plataformas (Sección 3.2)
@@ -645,7 +533,7 @@ El análisis transversal del cuadro comparativo revela que la promesa teórica d
 
 En segundo lugar, la complejidad operacional no desaparece en las arquitecturas serverless, sino que se redistribuye entre la infraestructura y el diseño de la aplicación. La transición desde FaaS hacia contenedores sin servidor (AWS Fargate y Azure Container Apps) amplía la flexibilidad de empaquetado y elimina las cuotas de tiempo (soportando procesos batch continuos o tareas de hasta 7 días), pero transfiere al equipo responsabilidades de ingeniería de red considerables: requiere provisionar subredes VPC privadas, balanceadores de carga de aplicación (ALB) y pasarelas NAT (cuyo costo base de \$0,045/hora más \$0,045/GB suele exceder el cómputo en volúmenes medios), además de sintonizar manualmente políticas de autoescalado (KEDA o métricas de CPU). Esta fricción se acentúa por límites duros no configurables de la infraestructura subyacente que contradicen las cuotas promocionadas por los proveedores: en Azure Functions, si bien la plataforma publicita tiempos de ejecución de hasta 60~minutos o modo no acotado (\emph{unbounded}), las funciones disparadas por HTTP enfrentan un techo infranqueable de 230~segundos impuesto por el \emph{idle timeout} del Azure Load Balancer, obligando a rediseñar procesos analíticos hacia patrones asíncronos desacoplados mediante colas o \emph{Durable Functions}. Finalmente, el ecosistema serverless introduce un riesgo latente de dependencia y obsolescencia que valida la necesidad de evaluar alternativas portables (Sección~\ref{sec:alternativas}): el anuncio oficial de AWS cerrando App Runner a nuevos clientes en 2026 demuestra que las abstracciones gestionadas de alta conveniencia están sujetas a discontinuación unilateral del proveedor, consolidando a las plataformas basadas en contenedores abiertos y estándares de la CNCF (Knative, Fn Project, Fission) como salvaguardas indispensables para la soberanía arquitectónica institucional.
 
-\clearpage
+
 
 
 
@@ -669,7 +557,12 @@ latencia. Se reportan la latencia total percibida y la penalización de arranque
 frío menos p50 caliente), que cancela la red. La Figura~\ref{fig:poc} muestra la
 distribución de latencias por plataforma. Código, datos y notas en el Anexo~B.
 
-\imagen{assets/images/poc-coldstart.pdf}{Latencia total desde el cliente en arranque en frío y en caliente, por plataforma (25 ciclos forzados, 150 peticiones por plataforma, 21-09-2026). La caja cubre el rango intercuartílico, la línea es la mediana y los puntos son valores atípicos.}{poc}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.78\textwidth]{assets/images/poc-coldstart.pdf}
+    \caption{\leyendaFont{Latencia total desde el cliente en arranque en frío y en caliente, por plataforma (25 ciclos forzados, 150 peticiones por plataforma, 21-09-2026). La caja cubre el rango intercuartílico, la línea es la mediana y los puntos son valores atípicos.}}
+    \label{fig:poc}
+\end{figure}
 Como podemos observar en la Tabla~\ref{tab:poc-resumen}, la penalización de arranque
 sigue al tipo de aislamiento de cada plataforma. Restando la mediana caliente a la
 fría, arrancar cuesta 1~ms en Workers, 395~ms en Lambda y 720~ms en Cloud Run, el
@@ -714,24 +607,8 @@ concurrencia ni carga real.
 \subsection{Modelo de costos y volumen de equilibrio}
 \label{sec:costos}
 
-El modelo compara AWS Lambda con contenedores siempre encendidos (ECS sobre instancias EC2 t3.medium), el comparador fijo del cuadro de la sección 3.2. Usa solo los precios de las Tablas 3.2a y 3.2b (us-east-1, USD, precio de lista consultado el 20/09/2026). Con $N$ solicitudes al mes, memoria $m$ (GB), duración $d$ (s) y con $q_{\mathrm{pico}}$ el pico en solicitudes por segundo, Lambda cuesta $C_L=\max(0,N-10^{6})\,c_r+\max(0,\,N\,m\,d-4\cdot10^{5})\,c_g$, con $c_r=0{,}20$ USD por millón de solicitudes y $c_g=0{,}0000166667$ USD por GB-s. La flota fija cuesta $C_F=k\,p\cdot730$, con $p=0{,}026$ USD por hora y $k=\max(2,\lceil q_{\mathrm{pico}}/20\rceil)$ instancias. La Tabla~\ref{tab:supuestos-42} declara los supuestos.
+El modelo compara AWS Lambda con contenedores siempre encendidos (ECS sobre instancias EC2 t3.medium), el comparador fijo del cuadro de la sección 3.2. Usa solo los precios de las Tablas 3.2a y 3.2b (us-east-1, USD, precio de lista consultado el 20/09/2026). Con $N$ solicitudes al mes, memoria $m$ (GB), duración $d$ (s) y con $q_{\mathrm{pico}}$ el pico en solicitudes por segundo, Lambda cuesta $C_L=\max(0,N-10^{6})\,c_r+\max(0,\,N\,m\,d-4\cdot10^{5})\,c_g$, con $c_r=0{,}20$ USD por millón de solicitudes y $c_g=0{,}0000166667$ USD por GB-s. La flota fija cuesta $C_F=k\,p\cdot730$, con $p=0{,}026$ USD por hora y $k=\max(2,\lceil q_{\mathrm{pico}}/20\rceil)$ instancias. La Tabla~\ref{tab:supuestos-42} del Anexo~\ref{anexo:costos} declara los supuestos.
 
-\begin{table}[htbp]
-\centering
-\caption{Supuestos del modelo de costos}
-\label{tab:supuestos-42}
-{\scriptsize
-\begin{tabular}{|p{0.17\linewidth}|p{0.56\linewidth}|p{0.17\linewidth}|}
-\hline
-\textbf{Supuesto} & \textbf{Valor} & \textbf{Origen} \\ \hline
-Carga & Solicitudes HTTP tipo API, 730 h al mes; pico igual a 4 veces el promedio & Supuesto \\ \hline
-Sin servidor & AWS Lambda x86, 512 MB y 200 ms por solicitud; 0,20 USD por millón de solicitudes y 0,0000166667 USD/GB-s; capa gratuita de 1 M de solicitudes y 400.000 GB-s & Tabla 3.2a \\ \hline
-Siempre encendido & ECS sobre EC2 \texttt{t3.medium} (2 vCPU, 4 GiB), mínimo 2 instancias, reserva de 1 año a 0,026 USD/h (18,98 USD al mes cada una) & Tabla 3.2a \\ \hline
-Capacidad & 20 solicitudes sostenidas por instancia (20 ms de CPU por solicitud = 0,4 vCPU, el 20\% de los 2 vCPU de la instancia) & Supuesto \\ \hline
-Excluido & Egreso de datos (misma tarifa en ambos lados, Tabla~3.2b), balanceador, API Gateway, NAT, registros y costo de operar la flota & Declarado \\ \hline
-\end{tabular}
-}
-\end{table}
 
 Con esos supuestos, Lambda es más barata hasta $N^{*} = 24{,}0$ millones de solicitudes al mes (unas 9 por segundo en promedio), donde iguala los 37,96 USD mensuales del par de instancias (Figura~\ref{fig:equilibrio}). Sobre ese volumen la ventaja cambia de signo cada vez que el pico exige otra instancia, y desde unos 54,5 millones la flota fija es siempre más barata. La causa es la distinción de la sección 2.3 entre tiempo de reloj y de CPU \cite{lin_demystifying_2026}. Lambda factura los 200 ms completos de cada solicitud. La instancia, con 20 ms de CPU por solicitud (supuesto), reparte la espera entre solicitudes concurrentes.
 
@@ -739,7 +616,7 @@ Con esos supuestos, Lambda es más barata hasta $N^{*} = 24{,}0$ millones de sol
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-    width=\linewidth, height=6.2cm,
+    width=\linewidth, height=5cm,
     xlabel={Solicitudes por mes (millones)},
     ylabel={Costo mensual (USD)},
     xmin=0, xmax=60, ymin=0, ymax=115,
@@ -777,7 +654,7 @@ El resultado es sensible al escenario (Anexo C). Con 1 GB y 500 ms el equilibrio
 
 El terminal ya opera 972.000 movimientos de grúa y 1.290.000 de patio al año, más 1.450 camiones diarios con picos de 2.600. Contando registro, confirmación y evidencia por cada evento físico, el tráfico del núcleo transaccional se ubica en el orden de un par de millones de solicitudes mensuales, muy por debajo de los 24,0 millones que fijan el equilibrio de Lambda frente a una flota reservada (\ref{sec:costos}). En pura aritmética de facturación, serverless gana con holgura hoy y seguirá ganando tras crecer a 920.000 TEU en tres años. El costo no cierra la decisión. La prueba de concepto mide 395~ms de penalización mediana por arranque frío en Lambda frente a 1~ms en un borde tipo Workers (\ref{sec:poc}), y el caso impone una cota más dura: la cabina de grúa resuelve el estado en menos de un segundo, sin menús ni confirmaciones, mientras las pilas de contenedores generan jaulas de Faraday que alteran la cobertura del patio cada hora. Sumada a la autonomía exigida de 72~horas sin enlace hacia la nube, esa combinación descarta un núcleo dependiente de invocaciones remotas facturadas por evento. La propuesta técnica del grupo responde fijando el núcleo operacional, el gate y el patio sobre cómputo local siempre encendido y contenedores gestionados, y reserva el borde serverless para el portal público y las notificaciones, donde la continuidad offline no aplica; el patrón replica el monitoreo de cadena de frío ya validado en puertos \parencite{kjorveziroski2021iot}. Esa elección fija también el perfil financiero de la propuesta. Terabyte deja de cotizar CAPEX de servidores propios y pasa a OPEX íntegro, capacidad reservada más nodos locales, de consumo acotado y no proporcional a cada movimiento facturable. Un núcleo puramente serverless habría atado la factura al éxito comercial del terminal, a más TEU y más mensajería EDIFACT exigida por la alianza naviera desde 2029: el riesgo de \textit{expense explosion} que documenta la literatura de precios de FaaS \parencite{liu2024demystifying}. El modelo resultante, coherente con \ref{sec:limites_dependencias} y \ref{sec:cuadro}, conviene al caso, la porción crítica se paga como flota reservada previsible, y solo el tráfico externo y tolerante a arranque en frío se traslada al proveedor por consumo.
 
-\clearpage
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -801,7 +678,7 @@ El framework "Skyler" formaliza el riesgo económico. Modela el flujo de control
 
 El borde suma un riesgo que la ficha no lista. Sus nodos carecen de la protección física de un centro de datos y corren sobre contenedores con aislamiento más débil que una máquina virtual, expuestos a ataques directos por vulnerabilidades del kernel~\parencite{xie2021}. La comparación de aislamientos de la sección~\ref{sec:wasm_wasi} se lee entonces como criterio de seguridad. El paso a OPEX puro del caso TERABYTE (sección~\ref{sec:caso}) conecta ambos riesgos y convierte cada decisión de descomposición en una factura recurrente, que crece con el tráfico que trae el propio éxito del sistema. La reserva práctica acota serverless a las cargas intermitentes y audita los \emph{economic sinks} en la etapa de diseño, antes del primer despliegue.
 
-\clearpage
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -823,15 +700,15 @@ El borde suma un riesgo que la ficha no lista. Sus nodos carecen de la protecci�
 %% palabras y todos deben poder defenderla oralmente. Este texto solo ordena
 %% los hechos ya establecidos en el informe; no agrega ninguno.]
 
-Las funciones como servicio convienen a cargas cortas, intermitentes y sin estado local, activadas por eventos o solicitudes, cuyo volumen queda por debajo del punto de equilibrio: en el escenario base, 24,0 millones de solicitudes mensuales frente a dos instancias reservadas, y tan bajo como 5,3 millones con funciones de más memoria y duración (sección~\ref{sec:costos}). Pagan esa conveniencia con un arranque en frío de cientos de milisegundos (395~ms medianos en Lambda, sección~\ref{sec:poc}) y con topes de tiempo y carga útil que obligan a externalizar el estado (sección~\ref{sec:limites_dependencias}).
+Las funciones como servicio convienen a cargas cortas, intermitentes y sin estado local, con volumen bajo el punto de equilibrio: 24,0 millones de solicitudes mensuales en el escenario base y apenas 5,3 millones con funciones de más memoria y duración (sección~\ref{sec:costos}). Lo pagan con cientos de milisegundos de arranque en frío (395~ms medianos en Lambda) y con topes que obligan a externalizar el estado (sección~\ref{sec:limites_dependencias}).
 
-Los contenedores sin servidor extienden ese modelo a procesos más largos y a imágenes propias, con techos de una hora y decenas de gigabytes, pero no siempre escalan a cero y su arranque en frío fue el mayor medido (720~ms en Cloud Run). Son la opción para cargas variables que ya están empaquetadas como contenedor y toleran ese retardo o lo mitigan con instancias mínimas, acercándose entonces al costo de la capacidad reservada (sección~\ref{sec:coldstart}).
+Los contenedores sin servidor extienden ese modelo a procesos largos e imágenes propias, pero no siempre escalan a cero y tuvieron el mayor arranque en frío medido (720~ms en Cloud Run). Sirven para cargas variables ya empaquetadas que toleran ese retardo o lo mitigan con instancias mínimas, acercándose al costo de la capacidad reservada (sección~\ref{sec:coldstart}).
 
-El cómputo sin servidor en el borde elimina el arranque en frío perceptible (1~ms en Workers) y acerca la respuesta al cliente, a cambio de aceptar solo JavaScript y WebAssembly, memoria de 128~MB por aislado y APIs propias que limitan la portabilidad (secciones~\ref{sec:modelos} y~\ref{sec:wasm_wasi}). Conviene a lógica ligera en la ruta del usuario: portales, notificaciones, validación y enrutamiento.
+El cómputo sin servidor en el borde elimina el arranque en frío perceptible (1~ms en Workers) y acerca la respuesta al cliente, a cambio de aceptar solo JavaScript y WebAssembly, 128~MB por aislado y APIs propias (secciones~\ref{sec:modelos} y~\ref{sec:wasm_wasi}). Conviene a lógica ligera en la ruta del usuario: portales, notificaciones, validación y enrutamiento.
 
-Las instancias siempre encendidas siguen siendo la opción para el núcleo de un sistema con tráfico sostenido, estado voluminoso, latencia acotada bajo el segundo y continuidad sin enlace, porque no imponen límites de plataforma y su costo es previsible; su precio es la operación completa del lado del equipo (sección~\ref{sec:cuadro}) y la capacidad ociosa cuando la carga cae.
+Las instancias siempre encendidas siguen siendo la opción para un núcleo con tráfico sostenido, estado voluminoso, latencia bajo el segundo y continuidad sin enlace, porque no imponen límites de plataforma y su costo es previsible; su precio es la operación completa del lado del equipo y la capacidad ociosa cuando la carga cae.
 
-Para la licitación de TERABYTE el grupo recomienda una arquitectura mixta: el núcleo operacional, el \emph{gate} y el patio sobre cómputo local siempre encendido y contenedores gestionados, y el borde sin servidor para el portal público y las notificaciones (sección~\ref{sec:caso}). El volumen del terminal no justifica por sí solo esa decisión, la justifican la cota de latencia de la cabina de grúa, la autonomía de 72~horas y el riesgo de una factura que crezca con cada movimiento (sección~\ref{sec:riesgos}). Antes del primer despliegue, cada camino de facturación por evento debe auditarse y acotarse en la etapa de diseño.
+Para la licitación de TERABYTE el grupo recomienda una arquitectura mixta: núcleo operacional, \emph{gate} y patio sobre cómputo local siempre encendido y contenedores gestionados, y borde sin servidor para el portal público y las notificaciones (sección~\ref{sec:caso}). No lo justifica el volumen, sino la cota de latencia de la cabina de grúa, la autonomía de 72~horas y el riesgo de una factura que crezca con cada movimiento (sección~\ref{sec:riesgos}); cada camino de facturación por evento debe auditarse y acotarse antes del primer despliegue.
 
 \clearpage
 
@@ -914,7 +791,7 @@ Para la licitación de TERABYTE el grupo recomienda una arquitectura mixta: el n
     Anexo D: búsqueda documentada de alternativas & Daniel Miranda & 2 & Claude (Cowork, \texttt{claude-fable-5-1}); Grok (xAI) & \texttt{anexo-ia/daniel-miranda/} \\ \hline
     Plantilla LaTeX, bibliografía y organización del repositorio & Daniel Miranda & 2 & Claude (Cowork, \texttt{claude-fable-5-1}) & \texttt{anexo-ia/daniel-miranda/} \\ \hline
     Bibliografía (verificación de cada referencia) & cada autor de sección & & & \\ \hline
-    Cuestionario de 30 preguntas & cada autor de sección & & & \\ \hline
+    Cuestionario de 30 preguntas (Anexo Q) & Claudio Toledo & 1 & \textit{[TODO Claudio: herramienta y versión]} (solo redacción) & no requerida (nivel 1) \\ \hline
     Presentación (diapositivas) & todo el grupo & & & \\ \hline
 \end{longtable}
 }
@@ -1078,6 +955,25 @@ de los siguientes archivos.
 
 \anexo{C}{Anexo C: Planilla del modelo de costos}
 \label{anexo:costos}\label{anx:planilla}
+
+\subsection*{Supuestos}
+
+\begin{table}[htbp]
+\centering
+\caption{Supuestos del modelo de costos (sección~\ref{sec:costos})}
+\label{tab:supuestos-42}
+{\scriptsize
+\begin{tabular}{|p{0.17\linewidth}|p{0.56\linewidth}|p{0.17\linewidth}|}
+\hline
+\textbf{Supuesto} & \textbf{Valor} & \textbf{Origen} \\ \hline
+Carga & Solicitudes HTTP tipo API, 730 h al mes; pico igual a 4 veces el promedio & Supuesto \\ \hline
+Sin servidor & AWS Lambda x86, 512 MB y 200 ms por solicitud; 0,20 USD por millón de solicitudes y 0,0000166667 USD/GB-s; capa gratuita de 1 M de solicitudes y 400.000 GB-s & Tabla 3.2a \\ \hline
+Siempre encendido & ECS sobre EC2 \texttt{t3.medium} (2 vCPU, 4 GiB), mínimo 2 instancias, reserva de 1 año a 0,026 USD/h (18,98 USD al mes cada una) & Tabla 3.2a \\ \hline
+Capacidad & 20 solicitudes sostenidas por instancia (20 ms de CPU por solicitud = 0,4 vCPU, el 20\% de los 2 vCPU de la instancia) & Supuesto \\ \hline
+Excluido & Egreso de datos (misma tarifa en ambos lados, Tabla~3.2b), balanceador, API Gateway, NAT, registros y costo de operar la flota & Declarado \\ \hline
+\end{tabular}
+}
+\end{table}
 
 \subsection*{Parámetros y fórmulas}
 
@@ -1450,8 +1346,153 @@ Ya nombra la ficha: Aurora Serverless, DynamoDB bajo demanda, Neon, Cloudflare D
 
 Tras aplicar los criterios de la Tabla~\ref{tab:criterios-busqueda}, las cinco listas alcanzaron al menos dos alternativas que cumplen I1, I2 e I3 (tablas D.2 a D.6), por lo que no corresponde declarar ninguna lista sin alternativas. Las diez alternativas que entran se recogen en la Tabla~\ref{tab:alternativas-adicionales} de la sección~\ref{sec:alternativas}.
 
+\tabla{Alternativas adicionales incorporadas a la comparación (resultado de la sección~\ref{sec:alternativas})}{alternativas-adicionales}{|p{3.2cm}|p{3.4cm}|p{7.2cm}|}{%
+    \filaTabla{\textbf{Lista de la ficha} & \textbf{Alternativa} & \textbf{Qué aporta a la comparación}}
+    \filaTabla{Funciones como servicio & Oracle Cloud Infrastructure Functions & Mismo motor que Fn Project en nube gestionada; invocación desacoplada hasta 3600~s.}
+    \filaTabla{Funciones como servicio & Scaleway Serverless Functions & Precio de lista en euros y operación en la Unión Europea; concurrencia uno por instancia.}
+    \filaTabla{Contenedores sin servidor & Render & En gratuito se apaga a los 15~min sin tráfico; en pagado el cómputo sigue aprovisionado.}
+    \filaTabla{Contenedores sin servidor & Scaleway Serverless Containers & Cobra vCPU-s y GB-s por separado, cada uno con capa gratuita, en la Unión Europea.}
+    \filaTabla{Cómputo en el borde & Azion Edge Functions & Presencia documentada en Latinoamérica; capa gratuita de horas de cómputo e invocaciones.}
+    \filaTabla{Cómputo en el borde & Bunny Edge Scripting & Solicitudes y CPU cobrados aparte del ancho de banda; hasta 30~s de CPU por solicitud.}
+    \filaTabla{Código abierto & Fission & En Kubernetes, el ejecutor define si hay conjunto caliente o escala a cero por función.}
+    \filaTabla{Código abierto & Fn Project & Motor de código abierto sobre el que corre OCI Functions (par con la fila gestionada).}
+    \filaTabla{Datos sin servidor & Turso (libSQL) & Cobro por filas leídas y escritas; libSQL autoalojable, derivado de SQLite.}
+    \filaTabla{Datos sin servidor & Upstash Redis & Redis sin servidor con cobro por comando; ausente de las bases de la ficha.}
+}
+
+
 \clearpage
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% >>> ANEXO E. CUADRO COMPARATIVO COMPLETO         Responsables: Rodolfo, Claudio, Valentina
+%% Tablas 3.2a, 3.2b y 3.2c completas, con sus notas metodológicas. La
+%% sección 3.2 del cuerpo las resume en la Tabla de síntesis y remite aquí.
+%% Los nombres "Tabla 3.2a/b/c" se conservan porque el texto los cita así.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\anexo{E}{Anexo E: Cuadro comparativo completo}
+\label{anexo:cuadro}
+
+Este anexo contiene la tabla de criterios y las tres tablas del cuadro comparativo de la sección~\ref{sec:cuadro} con todas sus columnas y las notas metodológicas y de trazabilidad al pie. Toda tarifa y cuota corresponde a documentación oficial consultada el 20 de septiembre de 2026.
+
+\tabla{Criterios de evaluación aplicados al cuadro comparativo (sección~\ref{sec:cuadro})}{criterios}{|p{2.8cm}|p{5.4cm}|p{5.6cm}|}{%
+    \filaTabla{\textbf{Criterio} & \textbf{Por qué importa} & \textbf{Cómo se mide en el cuadro}}
+    \filaTabla{Costo y modelo de cobro & Determina la viabilidad económica en función del tráfico y el riesgo financiero de pisos mínimos o sobrecostos ocultos. & Unidad de cómputo (vCPU-s, GB-s, tiempo de CPU), piso fijo mensual y precio de lista con producto, moneda, región y fecha de consulta; «solo por cotización» cuando el proveedor no publica precio.}
+    \filaTabla{Latencia y aislamiento & Condiciona el tiempo de respuesta frente a ráfagas y la frontera de seguridad multi-inquilino entre cargas de trabajo. & Tecnología de aislamiento declarada (microVM, contenedor, isolate V8, Wasm); p50 y p95 de las mediciones propias de la sección~\ref{sec:poc}, o \emph{sin medición}; mitigación del arranque en frío y si se factura aparte.}
+    \filaTabla{Complejidad operacional & Cuantifica la carga administrativa y de mantenimiento que queda del lado del equipo en vez del proveedor. & Lista cerrada de responsabilidades, idéntica para todas las filas y elaborada por el grupo, sin escala numérica; límite que fuerza rediseño y necesidad de externalizar el estado.}
+}
+
+
+\begin{landscape}
+\subsubsection*{Tabla 3.2a: Criterios arquitectónicos, operativos y económicos}
+{\makeatletter\def\@currentlabel{3.2a}\makeatother\label{tab:cuadro-3-2a}}
+
+{\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{|p{2.1cm}|p{1.6cm}|p{2.4cm}|p{2.8cm}|p{3.1cm}|p{1.0cm}|p{2.1cm}|p{2.6cm}|p{2.8cm}|}
+\hline
+\textbf{Plataforma} & \textbf{Modelo} & \textbf{Aislamiento} & \textbf{Unidad de cobro y piso} & \textbf{Precio de lista fechado} & \textbf{Cold start} & \textbf{Mitigación (factura)} & \textbf{Qué opera el equipo} & \textbf{Estado / Límite rediseño} \\ \hline
+\endhead
+
+AWS Lambda & FaaS & MicroVM Firecracker (cgroups/chroot por función) & Solicitudes (\$0.20/M) + GB-s reloj. Sin piso; escala a cero. & us-east-1, USD, 20-09-2026: \$0.0000166667/GB-s x86; Free 1M req/400k GB-s. Lista & (4.1) & Concurrencia aprovisionada: SÍ (\$0.0000041667/GB-s). SnapStart sin cargo & runtime, despliegue, observabilidad & SÍ obligatorio (S3/DynamoDB). Límite: 900~s máx, 6~MB payload sync \\ \hline
+
+Azure Functions (Flex Consumption) & FaaS & Contenedor / microVM en entorno aislado por app & Solicitud (\$0.40/M) + GB-s (\$0.000026). Sin piso; escala a cero. & East US, USD, 20-09-2026: \$0.40/M req + \$0.000026/GB-s; Free 250k req / 100k GB-s. Lista & s/m & Instancias Always Ready: SÍ (\$0.000004/GB-s base + \$0.000016 ejec) & runtime, despliegue, observabilidad & SÍ obligatorio (Blob/Cosmos). Límite: HTTP máx 230~s (Load Balancer) \\ \hline
+
+Google Cloud Run functions & FaaS & gVisor (gen 1) o microVM (gen 2) sobre Cloud Run & vCPU-s, GiB-s y req. Sin piso; escala a cero. Cloud Build/Artifact aparte. & us-east4 (Tier 1), USD, 20-09-2026: CPU \$0.000024/s, RAM \$0.0000025/s, req \$0.40/M. Free tier Tier 1. Lista & s/m & Min instances y Startup CPU boost: SÍ se facturan al arranque & runtime, despliegue, observabilidad & SÍ obligatorio. Límite: 9~min en eventos frente a 60~min en HTTP \\ \hline
+
+Google Cloud Run (servicios) & Contenedor & Sandbox gVisor (gen 1) o microVM Linux (gen 2) & vCPU-s y GiB-s (100~ms) + req. Sin piso mensual; escala a cero. & us-east4 (Tier 1), USD, 20-09-2026: CPU \$0.000024/s, idle \$0.0000025/s, RAM \$0.0000025/s. Lista & (4.1) & Min instances (idle) y CPU boost: SÍ se facturan & runtime, red (VPC/SSL), despliegue, observabilidad & SÍ (disco en RAM). Límite: 60~min máx; tareas largas van a Jobs (168~h) \\ \hline
+
+AWS Fargate (ECS) & Contenedor & MicroVM dedicada por tarea (Firecracker en AWS) & vCPU-h y GB-h por segundo (mín 1~min). Sin piso; escala a cero. & us-east-1, USD, 20-09-2026: \$0.04048/vCPU-h, \$0.004445/GB-h. Fargate Spot desc. 70\%. Lista & s/m & No aplica a nivel función: mantener tareas mínimas activas completas & runtime, red (VPC/ALB), despliegue, observabilidad & Efímero 20~GB; persistencia vía EFS/EBS. Sin timeout de plataforma \\ \hline
+
+Azure Container Apps & Contenedor & Contenedor en clúster K8s/Envoy dedicado por entorno & vCPU-s y GiB-s activos. Sin piso; escala a cero. & East US, USD, 20-09-2026: vCPU \$0.000024/s, idle \$0.000003/s, RAM \$0.000003/s. Free 180k vCPU-s. Lista & s/m & Min replicas en reposo: SÍ se facturan a tarifa idle reducida & runtime, red (VNet), despliegue, observabilidad & SÍ (Azure Files). Límite: 300~s máx en HTTP; batch requiere Jobs \\ \hline
+
+Cloudflare Workers (Paid) & Borde & Isolates V8 multi-tenant en proceso único (espacio virtual común) & Solicitudes (\$0.30/M) + tiempo CPU (\$0.02/M ms). \textbf{Piso: \$5.00/mes cuenta.} & global, USD, 20-09-2026: \$5/mes base (10M req, 30M CPU-ms); reloj sin cobro. Free 100k req/d. Lista & (4.1) & Estructural: isolate en proceso vivo ($<$5~ms); snapshot Wasm. Sin SKU aparte & runtime, despliegue, observabilidad & SÍ obligatorio (DO, KV, D1, R2). Límite: 128~MB RAM y 5~min CPU máx \\ \hline
+
+Fastly Compute & Borde & WebAssembly (WASI) sobre Wasmtime; sandbox por req. & Requests (\$0.50--0.20/M) + vCPU-ms (\$0.05--0.02/M ms). Sin piso. & global, USD, 20-09-2026: tramos uso actual. Free 10M req, 100M ms. Tráfico entrega aparte. Lista & s/m & Estructural: instanciación Wasm en microsegundos. Sin SKU aparte & runtime, despliegue, observabilidad & SÍ (Config/KV/Secret Store). Límite: 50~ms CPU por req., 128~MB heap \\ \hline
+
+AWS Lambda@Edge / CloudFront & Borde & L@E: microVM en PoP edge; CF Functions: proceso liviano JS & L@E: \$0.60/M + \$0.00005001/GB-s. CF Func: \$0.10/M (2M free). Sin piso. & global, USD, 20-09-2026: precios de lista publicados en CDN CloudFront & s/m & CF Func submilisegundo estructural. L@E sin concurrencia aprovisionada & runtime, despliegue (asociación a CDN) & SÍ (sin disco local). Límite: CF Func 1~ms CPU; L@E 5~s viewer / 30~s origin \\ \hline
+
+EC2 reservada (ECS t3.medium) & Siempre encendido & VM dedicada Nitro/KVM; sin aislamiento por invocación & Instancia-hora. \textbf{Piso: mes completo (\$30.37/mes On-Demand). No escala a cero.} & us-east-1, USD, 20-09-2026: On-Demand \$0.0416/h; Reserva 1a \$0.026/h (\$18.98/m); 3a \$0.017/h (\$12.41/m). & n/a & No aplica: proceso residente en memoria absorbe tráfico de inmediato & SO/host, Docker, capacidad, escalado, red, despliegue, observabilidad & Estado en memoria/disco host (EBS). Sin timeout de plataforma \\ \hline
+
+Oracle OCI Functions (3.1) & FaaS & Contenedor gestionado / microVM OCI (motor Fn Project) & Invocaciones (\$0.20/M) + GB-s (\$0.00001417/s). Concurrency idle 25\%. Sin piso. & US East, USD, 20-09-2026: Always Free 2M req + 400k GB-s/mes permanentes. Lista & s/m & Concurrencia aprovisionada: SÍ (25\% tarifa en idle; sin recargo activo) & runtime, despliegue, observabilidad & SÍ (Object Storage, DB). Límite: 300~s sync; modo detached hasta 3600~s \\ \hline
+
+Azion Edge Functions (3.1) & Borde & Isolates V8 sobre Edge Runtime distribuido propio & Compute (\$0.072/1000~s CPU) + req (\$0.30/M). Sin piso en Starter. & Brasil/LATAM/global, USD, 20-09-2026: Free 8~h compute + 3M req/mes. Lista & s/m & Aislamiento liviano V8 ($<$2~s cold start doc, típico ms). Sin SKU & runtime, despliegue, observabilidad & SÍ (Edge Storage/SQL). Límite: \textbf{2~s CPU por req} (wall 5~min); isolate 512~MB \\ \hline
+\end{longtable}
+}
+
+
+
+\subsubsection*{Tabla 3.2b: Límites técnicos y tarifas de egreso de datos}
+{\makeatletter\def\@currentlabel{3.2b}\makeatother\label{tab:cuadro-3-2b}}
+
+{\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{|p{2.6cm}|p{3.2cm}|p{3.4cm}|p{3.2cm}|p{3.6cm}|p{4.2cm}|}
+\hline
+\textbf{Plataforma} & \textbf{Tiempo máx. ejecución} & \textbf{Memoria / vCPU} & \textbf{Payload in / out} & \textbf{Concurrencia / escalado} & \textbf{Egreso de datos (precio fechado)} \\ \hline
+\endhead
+
+AWS Lambda & 900~s (15~min) & 128 a 10.240~MB (1~vCPU a 1.769~MB, máx 6~vCPU) & Sync: 6~MB. Async: 256~KB & 1.000 concurrentes regional default (ampliable). Escala a cero & 100~GB/mes gratis; luego \$0.09/GB (primeros 10~TB us-east-1). 20-09-2026 \\ \hline
+
+Azure Functions (Flex) & HTTP: 230~s (techo Load Balancer); otros triggers 30~min (máx unbounded) & 512~MB (0.5~vCPU), 2048~MB (1~vCPU), 4096~MB (2~vCPU) & HTTP 100~MB en gateway; Storage Queues 4~MB & Hasta 1.000 instancias por app. Escala a cero & 100~GB/mes gratis; luego \$0.087/GB (East US). 20-09-2026 \\ \hline
+
+Google Cloud Run functions & HTTP hasta 60~min; eventos hasta 9~min (API v2) & Default 256~MiB; máx 16~GiB / 4~vCPU según tabla funciones & HTTP/1 32~MiB req/resp. Sin límite bajo HTTP/2 & Hasta 1.000 req concurrentes por instancia. Escala a cero & Premium Tier: 1~GiB gratis; luego \$0.12/GB hacia Norteamérica. 20-09-2026 \\ \hline
+
+Google Cloud Run (servicios) & 300~s default; máx 3600~s (60~min). Jobs 168~h & Default 512~MiB (mín 128~MiB, máx 32~GiB); vCPU default 1 (0.08 a 8) & HTTP/1 32~MiB. Sin límite con streaming HTTP/2 & Instancia: default 80, máx 1.000. Revisión: máx 100 inst. default. Escala a cero & Premium Tier: 1~GiB gratis; luego \$0.12/GB (1--1.024~GiB). Interno sin cargo. 20-09-2026 \\ \hline
+
+AWS Fargate (ECS) & Sin límite de plataforma (proceso continuo) & 0.25~vCPU (0.5--2~GB) a 32~vCPU (hasta 244~GB en doc ECS) & Sin límite de plataforma (ALB máx 100~MB cuerpo) & Cuota default 1.000 tareas regional. Escala a cero si desired=0 & Salida vía NAT Gateway (\$0.045/GB + \$0.045/h) + egreso EC2 (\$0.09/GB). 20-09-2026 \\ \hline
+
+Azure Container Apps & HTTP 300~s máx; Jobs sin límite (hasta 7 días) & 0.25~vCPU / 0.5~GiB a 4.0~vCPU / 8.0~GiB en Consumption & HTTP hasta 100~MB soportados vía ingress Envoy & Hasta 300 réplicas por app (default 10--30). Escala a cero & 100~GB/mes gratis; luego \$0.087/GB hacia internet. 20-09-2026 \\ \hline
+
+Cloudflare Workers (Paid) & CPU: 5~min máx (\textbf{30~s default}). Reloj: \textbf{SIN LÍMITE} en HTTP & 128~MB por isolate, NO configurable. vCPU no expuesta & URL 16~KB; cabeceras 128~KB; body req según plan (100~MB a 5~GB) & Sin límite numérico publicado; 10.000 subsolicitudes en Paid. Escala a cero & \textbf{SIN CARGO declarado:} egreso y ancho de banda incluidos en Workers Paid. 20-09-2026 \\ \hline
+
+Fastly Compute & CPU: \textbf{50~ms por ejecución}. Reloj: 2~min (60~s trial) & 1~MB stack y 128~MB heap por ejecución, no configurable & Cabeceras 128~KB; URL 8~KB; caché 100~MB; paquete Wasm 100~MB & Instancia aislada por req. Encadenamiento máx 20 saltos y 6 servicios & \textbf{Entrega (Full Site Delivery) aparte:} 100~GB free; luego \$0.12/GB (US/EU), \$0.19 (LATAM). 20-09-2026 \\ \hline
+
+AWS Lambda@Edge / CF Func & CF Func: \textbf{1~ms CPU}. L@E: 5~s viewer / 30~s origin & CF Func: 2~MB fijos. L@E: 128~MB (viewer) o 128--10.240~MB (origin) & CF Func: sin cuerpo. L@E: 40~KB viewer, 1~MB origin (40~MB stream) & Integrado en escala CDN global CloudFront. Escala a cero & Tarifa CloudFront: 1~TB/mes gratis; luego \$0.085/GB primer tramo en Norteamérica. 20-09-2026 \\ \hline
+
+EC2 reservada (ECS t3.medium) & Sin límite de plataforma (ejecución continua) & Fijo de instancia: 2~vCPU y 4.0~GiB de RAM dedicados & Sin límite de plataforma; gobernado por memoria de host y proxy & Capacidad física de t3.medium; autoescalado por ASG (no a cero) & Salida estándar EC2: 100~GB/mes gratis; luego \$0.09/GB (us-east-1). 20-09-2026 \\ \hline
+
+Oracle OCI Functions (3.1) & Sync: 300~s (\textbf{default 30~s}). Detached: 5 a \textbf{3.600~s (60~min)} & Opciones fijas: 128, 256, 512, 1024, 2048 y 3072~MB & Solicitud y respuesta HTTP: 6~MB cada una & 60 concurrentes por AD default (ampliable). Escala a cero & \textbf{Primeros 10~TB/mes gratis hacia internet}; luego \$0.0085/GB. 20-09-2026 \\ \hline
+
+Azion Edge Functions (3.1) & CPU: \textbf{2~s máx por req}. Reloj wall-clock: máx \textbf{5~min (300~s)} & Hasta 512~MB por isolate de función. vCPU no expuesta & Args JSON 100~KB. Código: UI 6~MB, API 20~MB. Sub-requests: 50 & Autoescalado sobre red distribuida de PoPs edge. Escala a cero & Red Edge por GB (Brasil/LATAM \$0.06/GB en inicio; 50~GB gratis). 20-09-2026 \\ \hline
+\end{longtable}
+}
+\end{landscape}
+
+\subsubsection*{Tabla 3.2c: Ecosistema de plataformas de código abierto}
+{\makeatletter\def\@currentlabel{3.2c}\makeatother\label{tab:cuadro-3-2c}}
+
+{\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{|p{2.3cm}|p{2.4cm}|p{2.2cm}|p{1.3cm}|p{3.6cm}|p{2.7cm}|}
+\hline
+\textbf{Proyecto} & \textbf{Modelo} & \textbf{Aislamiento} & \textbf{Escala 0 default} & \textbf{Defaults configurables (timeout / concurrencia)} & \textbf{Acreditación CNCF u otra} \\ \hline
+\endhead
+
+Knative Serving & Contenedores K8s & Contenedor (pod K8s) & \textbf{Sí (30~s gracia)} & Timeout 300~s default (máx 600~s). Concurrencia 0 (ilimitada default, máx 1000) & \textbf{Graduado CNCF (11-09-2025)}. Categoría: Scheduling \& Orchestration \\ \hline
+
+OpenFaaS & FaaS sobre K8s / host & Contenedor (gVisor opcional en Pro) & No (opt-in) & Timeouts en gateway y función configurables. JetStream ack\_wait 60~s. Soporta \texttt{faasd} sin K8s & \textbf{No es CNCF}. OpenFaaS Ltd. Licencias CE (EULA) y comercial Pro/Edge \\ \hline
+
+KEDA & Autoescalador K8s & No aplica (escala otros) & \textbf{Sí} & No aplica en ejecución HTTP. Sondeo default 30~s (\texttt{pollingInterval}) & \textbf{Graduado CNCF (22-08-2023)}. Scheduling \& Orchestration \\ \hline
+
+Fermyon SpinKube & Serverless Wasm en K8s & WebAssembly (\texttt{containerd-shim-spin}) & No nativo (delega KEDA) & Timeouts gobernados por pod de K8s y triggers de Spin. Wasm en nodo sin contenedor & \textbf{Sandbox CNCF (21-01-2025)}. Runtime Spin en org \texttt{spinframework} \\ \hline
+
+wasmCloud & Componentes Wasm & WebAssembly (Wasmtime Component Model) & \textbf{Sí (por diseño)} & Concurrencia ilimitada default (\texttt{wash scale}). Control timeout 2000~ms default & \textbf{Incubating CNCF (08-11-2024)}. Scheduling \& Orchestration \\ \hline
+
+Fission (3.1) & FaaS sobre K8s & Contenedor (pods precalentados o dedicados) & Configurable por función & Router timeout 300~s default. Warm pools (\texttt{poolmgr}, 3 pods) vs escala a cero (\texttt{newdeploy}) & \textbf{No es CNCF}. Proyecto comunitario activo (v1.27.0, 2026) \\ \hline
+\end{longtable}
+}
+
+\subsubsection*{Notas metodológicas y de trazabilidad al pie de las tablas}
+\begin{itemize}
+    \item \textbf{Nota (a) --- Complejidad operacional («Qué opera el equipo»):} La lista cerrada corresponde a la matriz estandarizada construida por el grupo a partir de las matrices de responsabilidad de AWS, Azure y Google Cloud, y el Whitepaper de Serverless del CNCF. Los proveedores de borde no publican una matriz formal; las responsabilidades son una inferencia técnica documentada desde sus contratos de arquitectura.
+    \item \textbf{Nota (b) --- Arranque en frío:} La marca \texttt{(4.1)} remite a los ensayos de laboratorio del grupo (Vicente Arratia). Para las demás plataformas se declara \texttt{sin medición propia} (\texttt{s/m}) para no distorsionar la comparación con benchmarks heterogéneos de proveedores o literatura. La instancia siempre encendida declara \texttt{no aplica} (\texttt{n/a}).
+    \item \textbf{Nota (c) --- Lambda@Edge y CloudFront Functions:} Se consolidan en fila conjunta por representar la oferta escalonada de AWS sobre CDN, diferenciando manipulación rápida de cabeceras (1~ms CPU) de cómputo regional (hasta 30~s).
+    \item \textbf{Nota (d) --- Respaldo teórico del aislamiento en el borde:} Cloudflare Workers y Fastly Compute utilizan aislamiento a nivel de lenguaje (\emph{V8 Isolates} y \emph{WebAssembly/WASI}) en un mismo espacio de memoria virtual para ofrecer arranque sub-milisegundo. Como demuestran Schwarzl et al.\ \parencite{schwarzl2022spectre} en \emph{Robust and Scalable Process Isolation against Spectre in the Cloud}, este enfoque optimiza la densidad a costa de exposición a canales laterales microarquitectónicos (\emph{Spectre-PHT}), lo que obliga a incorporar defensas probabilísticas activas (\emph{DyPrIs}).
+\end{itemize}
+
+\clearpage
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% >>> DOCUMENTO ADJUNTO: CUESTIONARIO DE 30 PREGUNTAS
@@ -1472,8 +1513,9 @@ Tras aplicar los criterios de la Tabla~\ref{tab:criterios-busqueda}, las cinco l
 
 \subsection*{Índice temático}
 
-% Transcrito del documento "Preguntas-Cuestionario.docx" (autor: integrante
-% responsable del cuestionario). Cambios de forma solamente.
+% Transcrito del documento "Preguntas-Cuestionario.docx" (autor: Claudio
+% Toledo). Cambios de forma; la etiqueta de dificultad por pregunta se asignó
+% para cuadrar con los totales por sección del índice del autor.
 
 {\scriptsize
 \begin{longtable}{|p{5.2cm}|p{1.4cm}|p{1.5cm}|p{1.5cm}|p{1.2cm}|p{2.6cm}|}
@@ -1501,55 +1543,55 @@ Tras aplicar los criterios de la Tabla~\ref{tab:criterios-busqueda}, las cinco l
 
 \subsubsection*{Selección múltiple (Q1--Q9)}
 
-\textbf{Q1.} \textit{(Sección 1)} ¿Cuál de las siguientes \emph{no} es una de las tres cualidades esenciales de la computación sin servidor? \\
+\textbf{Q1.} \textit{(Sección 1 · Básica)} ¿Cuál de las siguientes \emph{no} es una de las tres cualidades esenciales de la computación sin servidor? \\
 a) Abstracción de los servidores y de su operación. \\
 b) Cobro por uso en vez de por reserva. \\
 c) Escalamiento automático desde cero. \\
 d) Ejecución del código en el borde de la red, cerca del usuario.
 
-\textbf{Q2.} \textit{(Sección 2.1)} ¿Qué mecanismo de aislamiento usa Cloudflare Workers para separar a sus clientes? \\
+\textbf{Q2.} \textit{(Sección 2.1 · Básica)} ¿Qué mecanismo de aislamiento usa Cloudflare Workers para separar a sus clientes? \\
 a) MicroVM de Firecracker. \\
 b) Núcleo en espacio de usuario (gVisor). \\
 c) \emph{Isolates} de V8 dentro de un proceso compartido. \\
 d) Una máquina virtual completa por cliente.
 
-\textbf{Q3.} \textit{(Sección 2.2)} ¿En qué escenario de carga la concurrencia aprovisionada resulta más económica? \\
+\textbf{Q3.} \textit{(Sección 2.2 · Intermedia)} ¿En qué escenario de carga la concurrencia aprovisionada resulta más económica? \\
 a) Ráfagas esporádicas separadas por largos períodos sin tráfico. \\
 b) Tráfico sostenido, con más de un 60\,\% de uso continuo. \\
 c) Procesos asíncronos que corren fuera de la ruta crítica. \\
 d) Funciones que se invocan una o dos veces al día.
 
-\textbf{Q4.} \textit{(Sección 2.4)} ¿Qué distingue a una cola punto a punto de un esquema de publicación/suscripción? \\
+\textbf{Q4.} \textit{(Sección 2.4 · Básica)} ¿Qué distingue a una cola punto a punto de un esquema de publicación/suscripción? \\
 a) No hay diferencia: son dos nombres para el mismo patrón. \\
 b) La cola garantiza siempre entrega exactamente una vez; publicación/suscripción nunca. \\
 c) Publicación/suscripción exige que publicador y suscriptor estén activos al mismo tiempo. \\
 d) En la cola cada mensaje llega a un único consumidor; en publicación/suscripción el evento se difunde a todos los suscriptores del tópico.
 
-\textbf{Q5.} \textit{(Sección 2.5)} ¿En cuál de estas cargas conviene más ejecutar WebAssembly en el borde? \\
+\textbf{Q5.} \textit{(Sección 2.5 · Intermedia)} ¿En cuál de estas cargas conviene más ejecutar WebAssembly en el borde? \\
 a) Una aplicación que debe migrar sin cambios entre Fastly Compute y Cloudflare Workers. \\
 b) Cómputo numérico intensivo que corre durante varias horas. \\
 c) Funciones intermitentes u orientadas a eventos, que escalan a cero con frecuencia. \\
 d) Un servicio que debe ejecutar un binario nativo de Linux sin recompilarlo.
 
-\textbf{Q6.} \textit{(Sección 3.1)} Entre las alternativas adicionales de cómputo en el borde, ¿qué aporta Azion Edge Functions a la comparación? \\
+\textbf{Q6.} \textit{(Sección 3.1 · Básica)} Entre las alternativas adicionales de cómputo en el borde, ¿qué aporta Azion Edge Functions a la comparación? \\
 a) Presencia y operación documentadas en Latinoamérica. \\
 b) Precio de lista en euros y operación en la Unión Europea. \\
 c) El mismo motor de funciones en versión gestionada y autoalojada. \\
 d) Una base de datos Redis con cobro por comando.
 
-\textbf{Q7.} \textit{(Sección 3.2)} Un proceso de análisis tarda 8 minutos, se invoca por HTTP y debe responder en la misma conexión. Según sus límites máximos publicados, ¿cuál de estas plataformas lo admite sin rediseñar el proceso? \\
+\textbf{Q7.} \textit{(Sección 3.2 · Intermedia)} Un proceso de análisis tarda 8 minutos, se invoca por HTTP y debe responder en la misma conexión. Según sus límites máximos publicados, ¿cuál de estas plataformas lo admite sin rediseñar el proceso? \\
 a) Azure Functions. \\
 b) Google Cloud Run. \\
 c) AWS CloudFront Functions. \\
 d) Fastly Compute.
 
-\textbf{Q8.} \textit{(Sección 4.1)} Con las medianas de la prueba de concepto (frío / caliente, en ms): AWS Lambda 838 / 442, Google Cloud Run 922 / 203 y Cloudflare Workers 569 / 567, ¿qué plataforma tuvo la mayor penalización de arranque y de cuánto fue? \\
-a) Google Cloud Run, unos 719~ms. \\
-b) AWS Lambda, unos 396~ms. \\
+\textbf{Q8.} \textit{(Sección 4.1 · Intermedia)} Con las medianas de la prueba de concepto (frío / caliente, en ms): AWS Lambda 838 / 442, Google Cloud Run 922 / 203 y Cloudflare Workers 569 / 567, ¿qué plataforma tuvo la mayor penalización de arranque y de cuánto fue? \\
+a) Google Cloud Run, unos 720~ms. \\
+b) AWS Lambda, unos 395~ms. \\
 c) Google Cloud Run, unos 922~ms. \\
 d) Cloudflare Workers, unos 569~ms.
 
-\textbf{Q9.} \textit{(Sección 4.3)} ¿Dónde se ubica el tráfico mensual estimado del núcleo transaccional del terminal de TERABYTE respecto del volumen de equilibrio entre AWS Lambda y una flota siempre encendida? \\
+\textbf{Q9.} \textit{(Sección 4.3 · Intermedia)} ¿Dónde se ubica el tráfico mensual estimado del núcleo transaccional del terminal de TERABYTE respecto del volumen de equilibrio entre AWS Lambda y una flota siempre encendida? \\
 a) Muy cerca de los 24,0 millones, por lo que ambos modelos cuestan lo mismo. \\
 b) En el orden de un par de millones de solicitudes al mes, muy por debajo de los 24,0 millones. \\
 c) Sobre los 54,5 millones, donde la flota fija siempre es más barata. \\
@@ -1557,51 +1599,51 @@ d) No puede estimarse con los datos del terminal.
 
 \subsubsection*{Verdadero o falso (Q10--Q16)}
 
-\textbf{Q10.} \textit{(Sección 1)} Que una plataforma sea «sin servidor» significa que no existen servidores ni tareas de operación asociadas a la aplicación. \rule{2.2cm}{0.4pt}
+\textbf{Q10.} \textit{(Sección 1 · Básica)} Que una plataforma sea «sin servidor» significa que no existen servidores ni tareas de operación asociadas a la aplicación. \rule{2.2cm}{0.4pt}
 
-\textbf{Q11.} \textit{(Sección 2.1)} Una aplicación que depende de un binario nativo de Linux ya compilado puede desplegarse sin cambios en Cloudflare Workers, igual que en AWS Lambda. \rule{2.2cm}{0.4pt}
+\textbf{Q11.} \textit{(Sección 2.1 · Intermedia)} Una aplicación que depende de un binario nativo de Linux ya compilado puede desplegarse sin cambios en Cloudflare Workers, igual que en AWS Lambda. \rule{2.2cm}{0.4pt}
 
-\textbf{Q12.} \textit{(Sección 2.3)} Cloudflare Workers cobra por el tiempo de reloj que dura cada solicitud, incluido el tiempo que la función pasa esperando respuestas de red. \rule{2.2cm}{0.4pt}
+\textbf{Q12.} \textit{(Sección 2.3 · Básica)} Cloudflare Workers cobra por el tiempo de reloj que dura cada solicitud, incluido el tiempo que la función pasa esperando respuestas de red. \rule{2.2cm}{0.4pt}
 
-\textbf{Q13.} \textit{(Sección 2.4)} Un consumidor que lee de una cola estándar de Amazon SQS puede asumir que cada mensaje se procesará exactamente una vez, por lo que no necesita ser idempotente. \rule{2.2cm}{0.4pt}
+\textbf{Q13.} \textit{(Sección 2.4 · Intermedia)} Un consumidor que lee de una cola estándar de Amazon SQS puede asumir que cada mensaje se procesará exactamente una vez, por lo que no necesita ser idempotente. \rule{2.2cm}{0.4pt}
 
-\textbf{Q14.} \textit{(Sección 2.5)} Un módulo WebAssembly puede leer archivos o abrir conexiones del sistema anfitrión por defecto, sin declarar ninguna importación. \rule{2.2cm}{0.4pt}
+\textbf{Q14.} \textit{(Sección 2.5 · Básica)} Un módulo WebAssembly puede leer archivos o abrir conexiones del sistema anfitrión por defecto, sin declarar ninguna importación. \rule{2.2cm}{0.4pt}
 
-\textbf{Q15.} \textit{(Sección 3.2)} Según el cuadro comparativo, Cloudflare Workers (plan Paid) no cobra el egreso de datos, mientras que AWS Lambda lo cobra a USD 0,09/GB después de los primeros 100~GB mensuales. \rule{2.2cm}{0.4pt}
+\textbf{Q15.} \textit{(Sección 3.2 · Básica)} Según el cuadro comparativo, Cloudflare Workers (plan Paid) no cobra el egreso de datos, mientras que AWS Lambda lo cobra a USD 0,09/GB después de los primeros 100~GB mensuales. \rule{2.2cm}{0.4pt}
 
-\textbf{Q16.} \textit{(Sección 4.3)} Como el tráfico de TERABYTE está muy por debajo del volumen de equilibrio, la propuesta del grupo ejecuta el núcleo operacional, el \emph{gate} y el patio del terminal sobre funciones sin servidor. \rule{2.2cm}{0.4pt}
+\textbf{Q16.} \textit{(Sección 4.3 · Básica)} Como el tráfico de TERABYTE está muy por debajo del volumen de equilibrio, la propuesta del grupo ejecuta el núcleo operacional, el \emph{gate} y el patio del terminal sobre funciones sin servidor. \rule{2.2cm}{0.4pt}
 
 \subsubsection*{Completar (Q17--Q22)}
 
-\textbf{Q17.} \textit{(Sección 1)} Cuando no hay solicitudes, Google Cloud Run retira incluso la última instancia; en cambio, AWS \rule{2.2cm}{0.4pt} sigue cobrando hasta que la tarea \rule{2.2cm}{0.4pt}. Por eso, en los contenedores sin servidor no siempre hay escala a cero.
+\textbf{Q17.} \textit{(Sección 1 · Intermedia)} Cuando no hay solicitudes, Google Cloud Run retira incluso la última instancia; en cambio, AWS \rule{2.2cm}{0.4pt} sigue cobrando hasta que la tarea \rule{2.2cm}{0.4pt}. Por eso, en los contenedores sin servidor no siempre hay escala a cero.
 
-\textbf{Q18.} \textit{(Sección 2.2)} Cuando no hay instancias disponibles, la plataforma debe reservar recursos, crear el entorno aislado, cargar el \emph{runtime} y las dependencias y ejecutar la inicialización; esa latencia es el arranque en \rule{2.2cm}{0.4pt}. Reutilizar una instancia ya preparada es un arranque en \rule{2.2cm}{0.4pt}.
+\textbf{Q18.} \textit{(Sección 2.2 · Básica)} Cuando no hay instancias disponibles, la plataforma debe reservar recursos, crear el entorno aislado, cargar el \emph{runtime} y las dependencias y ejecutar la inicialización; esa latencia es el arranque en \rule{2.2cm}{0.4pt}. Reutilizar una instancia ya preparada es un arranque en \rule{2.2cm}{0.4pt}.
 
-\textbf{Q19.} \textit{(Sección 2.3)} La factura de una plataforma sin servidor combina cuatro factores: el tiempo de \rule{2.2cm}{0.4pt} facturable, los recursos asignados o consumidos durante ese tiempo, la \rule{2.2cm}{0.4pt} o mínimo de cobro y un cargo fijo por \rule{2.2cm}{0.4pt}.
+\textbf{Q19.} \textit{(Sección 2.3 · Intermedia)} La factura de una plataforma sin servidor combina cuatro factores: el tiempo de \rule{2.2cm}{0.4pt} facturable, los recursos asignados o consumidos durante ese tiempo, la \rule{2.2cm}{0.4pt} o mínimo de cobro y un cargo fijo por \rule{2.2cm}{0.4pt}.
 
-\textbf{Q20.} \textit{(Sección 2.6)} En AWS Lambda, una función puede ejecutarse como máximo \rule{2.2cm}{0.4pt} segundos, y la carga útil síncrona por solicitud y por respuesta está limitada a \rule{2.2cm}{0.4pt}~MB.
+\textbf{Q20.} \textit{(Sección 2.6 · Básica)} En AWS Lambda, una función puede ejecutarse como máximo \rule{2.2cm}{0.4pt} segundos, y la carga útil síncrona por solicitud y por respuesta está limitada a \rule{2.2cm}{0.4pt}~MB.
 
-\textbf{Q21.} \textit{(Sección 4.1)} En la prueba de concepto del grupo, cada petición se clasifica como fría o caliente según \rule{2.2cm}{0.4pt}, y no según su \rule{2.2cm}{0.4pt}.
+\textbf{Q21.} \textit{(Sección 4.1 · Básica)} En la prueba de concepto del grupo, cada petición se clasifica como fría o caliente según \rule{2.2cm}{0.4pt}, y no según su \rule{2.2cm}{0.4pt}.
 
-\textbf{Q22.} \textit{(Sección 4.2)} Al comparar AWS Lambda (512~MB y 200~ms por solicitud) con dos instancias t3.medium reservadas a un año, Lambda es más barata hasta \rule{2.2cm}{0.4pt} millones de solicitudes al mes, volumen en el que iguala los USD \rule{2.2cm}{0.4pt} mensuales del par de instancias.
+\textbf{Q22.} \textit{(Sección 4.2 · Intermedia)} Al comparar AWS Lambda (512~MB y 200~ms por solicitud) con dos instancias t3.medium reservadas a un año, Lambda es más barata hasta \rule{2.2cm}{0.4pt} millones de solicitudes al mes, volumen en el que iguala los USD \rule{2.2cm}{0.4pt} mensuales del par de instancias.
 
 \subsubsection*{Respuesta corta (Q23--Q30)}
 
-\textbf{Q23.} \textit{(Sección 2.1)} Google reconoce que el entorno de Cloud Run basado en microVM rinde más bajo carga sostenida, pero arranca más lento que el basado en gVisor en algunos servicios. ¿Qué implica esto para elegir un mecanismo de aislamiento según el patrón de carga, y por qué se dice que ningún \emph{runtime} gana en todo?
+\textbf{Q23.} \textit{(Sección 2.1 · Avanzada)} Google reconoce que el entorno de Cloud Run basado en microVM rinde más bajo carga sostenida, pero arranca más lento que el basado en gVisor en algunos servicios. ¿Qué implica esto para elegir un mecanismo de aislamiento según el patrón de carga, y por qué se dice que ningún \emph{runtime} gana en todo?
 
-\textbf{Q24.} \textit{(Sección 2.2)} ¿Por qué se afirma que la concurrencia aprovisionada acerca una función al modelo siempre encendido? Menciona además un caso de arranque en frío que esta mitigación no resuelve.
+\textbf{Q24.} \textit{(Sección 2.2 · Avanzada)} ¿Por qué se afirma que la concurrencia aprovisionada acerca una función al modelo siempre encendido? Menciona además un caso de arranque en frío que esta mitigación no resuelve.
 
-\textbf{Q25.} \textit{(Sección 2.3)} Una función pasa 180~ms esperando la respuesta de una base de datos y usa 20~ms de CPU. ¿Por qué el cobro por tiempo de reloj la encarece, qué ocurre si esa función se encadena con otra y cómo cambiaría el costo con un cobro por tiempo de CPU como el de Cloudflare Workers?
+\textbf{Q25.} \textit{(Sección 2.3 · Avanzada)} Una función pasa 180~ms esperando la respuesta de una base de datos y usa 20~ms de CPU. ¿Por qué el cobro por tiempo de reloj la encarece, qué ocurre si esa función se encadena con otra y cómo cambiaría el costo con un cobro por tiempo de CPU como el de Cloudflare Workers?
 
-\textbf{Q26.} \textit{(Sección 2.4)} Un sistema portuario procesa, por un lado, lecturas de sensores de temperatura ambiente y, por otro, cobros de servicios a las navieras. ¿Qué garantía de entrega usarías en cada flujo y qué criterio justifica la diferencia?
+\textbf{Q26.} \textit{(Sección 2.4 · Intermedia)} Un sistema portuario procesa, por un lado, lecturas de sensores de temperatura ambiente y, por otro, cobros de servicios a las navieras. ¿Qué garantía de entrega usarías en cada flujo y qué criterio justifica la diferencia?
 
-\textbf{Q27.} \textit{(Sección 2.6)} ¿Dónde se concentra principalmente la dependencia del proveedor en una arquitectura sin servidor, y cuándo conviene pagar el costo de una capa de abstracción multinube?
+\textbf{Q27.} \textit{(Sección 2.6 · Avanzada)} ¿Dónde se concentra principalmente la dependencia del proveedor en una arquitectura sin servidor, y cuándo conviene pagar el costo de una capa de abstracción multinube?
 
-\textbf{Q28.} \textit{(Sección 3.2)} El análisis del cuadro sostiene que la promesa de «escala a cero y pago estricto por uso» se tensiona en la práctica. Da dos ejemplos concretos del cuadro que lo muestren y explica qué implican para una carga sostenida.
+\textbf{Q28.} \textit{(Sección 3.2 · Avanzada)} El análisis del cuadro sostiene que la promesa de «escala a cero y pago estricto por uso» se tensiona en la práctica. Da dos ejemplos concretos del cuadro que lo muestren y explica qué implican para una carga sostenida.
 
-\textbf{Q29.} \textit{(Sección 4.2)} El volumen de equilibrio de 24,0 millones baja a 5,3 millones con 1~GB y 500~ms por solicitud, y con instancias bajo demanda Lambda ni siquiera llega a cruzar. ¿Qué explica esta sensibilidad y por qué el informe pide leer el resultado como un orden de magnitud?
+\textbf{Q29.} \textit{(Sección 4.2 · Avanzada)} El volumen de equilibrio de 24,0 millones baja a 5,3 millones con 1~GB y 500~ms por solicitud, y con instancias bajo demanda Lambda ni siquiera llega a cruzar. ¿Qué explica esta sensibilidad y por qué el informe pide leer el resultado como un orden de magnitud?
 
-\textbf{Q30.} \textit{(Sección 5)} Un modelo de costos sitúa el equilibrio entre AWS Lambda y una flota fija en 24,0 millones de solicitudes al mes. ¿Por qué en una arquitectura muy descompuesta en funciones, como la del monitoreo de Prime Video, el cruce real llega antes, y qué dato acota esa conclusión?
+\textbf{Q30.} \textit{(Sección 5 · Intermedia)} Un modelo de costos sitúa el equilibrio entre AWS Lambda y una flota fija en 24,0 millones de solicitudes al mes. ¿Por qué en una arquitectura muy descompuesta en funciones, como la del monitoreo de Prime Video, el cruce real llega antes, y qué dato acota esa conclusión?
 
 \subsection*{Pauta de respuestas}
 
@@ -1618,7 +1660,7 @@ d) No puede estimarse con los datos del terminal.
     Q5 & 2.5 & c & Arranca rápido y escala a cero; en cómputo largo es más lento que nativo, la portabilidad entre proveedores no está garantizada y solo ejecuta bytecode Wasm. \\ \hline
     Q6 & 3.1 & a & Azion aporta presencia en Latinoamérica; euros y UE es Scaleway, motor gestionado y autoalojado es OCI Functions / Fn Project, y cobro por comando es Upstash. \\ \hline
     Q7 & 3.2 & b & Cloud Run admite hasta 60~min (subiendo el límite por defecto de 300~s); Azure topa en 230~s y las otras en ms de CPU. \\ \hline
-    Q8 & 4.1 & a & 922 $-$ 203 $\approx$ 719~ms (la resta cancela la red). \\ \hline
+    Q8 & 4.1 & a & 922 $-$ 203 $\approx$ 720~ms con las medianas sin redondear (la resta cancela la red). \\ \hline
     Q9 & 4.3 & b & El terminal ronda un par de millones al mes, lejos de 24,0~M. \\ \hline
     Q10 & 1 & Falso & Los servidores siguen existiendo; su gestión pasa al proveedor. \\ \hline
     Q11 & 2.1 & Falso & Los isolates solo corren JavaScript y WebAssembly, no binarios nativos. \\ \hline
