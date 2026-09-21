@@ -45,3 +45,5 @@ informe/*.pdf
 informe/pdfa.xmpi
 informe/*.minted
 informe/*-SAVE-ERROR
+informe/vigilar.bat
+vigilar.bat

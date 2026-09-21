@@ -1,3 +1,4 @@
+% !TeX root = main.tex
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%% ------------------------------ %%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%% | Formato escuela - INF PUCV | %%%%%%%%%%%%%%%%%%%%%%%%
@@ -494,13 +495,19 @@ Las que entran abren ejes que las plataformas de la ficha no cubren: facturació
 \subsection{Criterios y cuadro comparativo de plataformas}
 \label{sec:cuadro}
 
-Para evaluar las alternativas tecnológicas frente al modelo de referencia de instancias siempre encendidas, se establecen tres criterios estructurados que capturan las dimensiones técnica, económica y operativa requeridas por el caso de licitación:
+%Para evaluar las alternativas tecnológicas frente al modelo de referencia de instancias siempre encendidas, se establecen tres criterios estructurados que capturan las dimensiones técnica, económica y operativa requeridas por el caso de licitación:
+Los criterios son los tres que definen el alcance de la ficha (costo, latencia y complejidad operacional) y no hay más: cada columna del cuadro sirve para medir uno de ellos. Ahora bien, no los tres se comparan de la misma manera, y el cuadro lo refleja así. El costo sí puede compararse entre funciones, contenedores sin servidor e instancias siempre encendidas, ya que los tres se cobran por recurso asignado y tiempo consumido; lo que cambia es si el tiempo ocioso también se factura. Bajo esa misma unidad, el precio por duración de una función llega a ser entre 3,5 y 5,6 veces más alto que el de una máquina virtual \parencite{liu2024demystifying}, por lo que ninguna cifra tiene sentido sin especificar su unidad de cobro.
+
+Con la latencia la cosa cambia: no existe una única forma de medirla. Las revisiones bibliográficas dan rangos según el mecanismo de aislamiento \parencite{li2022serverless}, mientras que las evaluaciones experimentales reportan percentiles de cola \parencite{aslanpour2024faashouse}, y estos dos tipos de datos no son convertibles entre sí. Por eso el cuadro se limita a las mediciones propias, hechas en la sección~\ref{sec:poc}, en vez de mezclar metodologías ajenas que no son comparables.
+
+La complejidad operacional, en cambio, ni siquiera cuenta con una métrica estandarizada: los \emph{surveys} la resuelven con etiquetas cualitativas que ni sus propias tablas logran respaldar con datos \parencite{castro2019rise}, y la única operacionalización empírica disponible pasa por indicadores indirectos medidos sobre aplicaciones reales \parencite{eismann2021}. Por eso, en el cuadro, este criterio queda sin puntaje.
+
 
 \tabla{Criterios de evaluación aplicados al cuadro comparativo}{criterios}{|p{2.8cm}|p{5.4cm}|p{5.6cm}|}{%
     \filaTabla{\textbf{Criterio} & \textbf{Por qué importa} & \textbf{Cómo se mide en el cuadro}}
-    \filaTabla{Costo y modelo de cobro & Determina la viabilidad económica en función del tráfico y el riesgo financiero de pisos mínimos o sobrecostos ocultos. & Unidad métrica de cómputo (vCPU-s, GB-s, tiempo de CPU), piso fijo mensual y precio de lista unitario fechado (\$) en región de referencia.}
-    \filaTabla{Latencia y aislamiento & Condiciona el tiempo de respuesta frente a ráfagas y la frontera de seguridad multi-inquilino entre cargas de trabajo. & Tecnología de sandbox declarada (microVM, contenedor, isolate V8, Wasm), mitigaciones de arranque en frío y su impacto en facturación.}
-    \filaTabla{Complejidad operacional & Cuantifica la carga administrativa y de mantenimiento transferida al equipo de desarrollo frente al proveedor. & Delimitación de responsabilidades sobre lista cerrada estandarizada, límites estrictos que fuerzan rediseño y necesidad de externalizar estado.}
+    \filaTabla{Costo y modelo de cobro & Determina la viabilidad económica en función del tráfico y el riesgo financiero de pisos mínimos o sobrecostos ocultos. & Unidad de cómputo (vCPU-s, GB-s, tiempo de CPU), piso fijo mensual y precio de lista con producto, moneda, región y fecha de consulta; «solo por cotización» cuando el proveedor no publica precio.}
+    \filaTabla{Latencia y aislamiento & Condiciona el tiempo de respuesta frente a ráfagas y la frontera de seguridad multi-inquilino entre cargas de trabajo. & Tecnología de aislamiento declarada (microVM, contenedor, isolate V8, Wasm); p50 y p95 de las mediciones propias de la sección~\ref{sec:poc}, o \emph{sin medición}; mitigación del arranque en frío y si se factura aparte.}
+    \filaTabla{Complejidad operacional & Cuantifica la carga administrativa y de mantenimiento que queda del lado del equipo en vez del proveedor. & Lista cerrada de responsabilidades, idéntica para todas las filas y elaborada por el grupo, sin escala numérica; límite que fuerza rediseño y necesidad de externalizar el estado.}
 }
 
 El análisis comparativo se estructura en doce plataformas representativas que cubren los cuatro modelos de ejecución analizados, complementadas por el panorama de código abierto. Todas las tarifas y cuotas corresponden a documentación oficial consultada el 20 de septiembre de 2026.
