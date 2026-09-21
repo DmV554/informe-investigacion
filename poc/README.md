@@ -57,6 +57,12 @@ nada**: solo se deja identificar. La latencia se mide desde el cliente.
   `POC_MARKER` del servicio de Cloud Run). Los tres son despliegues/actualizaciones
   reales, no un mecanismo artificial. Las plataformas no forzables (ninguna hoy) se
   medirían igual en cada ciclo para tener muestras en la misma ventana.
+  **Cloud Run:** la plataforma no enruta tráfico a la revisión nueva hasta validarla
+  con un health check, así que ese arranque ya ocurrió antes de la primera petición
+  del cliente; el forzado no expone un frío visible desde el cliente en Cloud Run
+  (0/8 ciclos en la verificación del 20-09-2026). Se clasifica con el criterio
+  `uptime_menor_que_latencia` y el arranque real se mide del lado del proveedor con
+  `scripts/startup_cloudrun.py` (ver `functions/cloudrun/README.md`).
 - **Validación con dato del proveedor:** `Init Duration` de la línea REPORT de CloudWatch
   (Lambda), cruzado por `RequestId`. Workers no expone dato de inicialización.
 - **Igualdad de condiciones:** misma lógica de función, JavaScript en ambas, memoria por
@@ -124,21 +130,38 @@ nunca se sobreescribe ni se mezcla una corrida con otra. Los archivos de pruebas
 que no deban entrar al análisis se nombran sin el prefijo `mediciones_` (p. ej.
 `prueba_piloto_*.csv`).
 
-## Estado y decisiones (19-09-2026)
+## Estado y decisiones (21-09-2026)
 
-- Medido: AWS Lambda y Cloudflare Workers. Cloud Run pendiente; si se despliega, se repite la corrida forzada
-  con las tres plataformas a la vez (`--forzado 25`) y esa pasa a ser la fuente del gráfico. Los datos del
-  19-09 quedan como corrida previa.
+- Medidas las tres plataformas en la misma ventana: `data/mediciones_20260921-0005_forzado.csv` (25 ciclos
+  forzados, 150 peticiones por plataforma, cliente en Chile, 00:05-00:24 hora local). Esa corrida es la fuente
+  del gráfico y de la tabla del informe. La del 19-09 (`mediciones_20260919-2148_forzado.csv`, solo Lambda y
+  Workers) queda como segunda ventana.
 - En el cuerpo del informe va **solo la corrida forzada** (un gráfico, una tabla), con el frío inducido por un
-  despliegue real en cada plataforma (`metodo_forzado`). Los fríos naturales se citan en una frase como validación.
-  Se reportan dos métricas: latencia total percibida desde el cliente y penalización de arranque
-  (p50 frío − p50 caliente por plataforma), que cancela la red.
-- Resultados actuales (`data/mediciones_20260919-2148_forzado.csv`, 25 ciclos, 150 peticiones por plataforma,
-  cliente en Chile): Lambda frío p50 754 / p95 826 ms, caliente p50 434 / p95 487 ms (n=25/125), penalización
-  +320 ms; Workers frío p50 231 / p95 244 ms, caliente p50 231 / p95 252 ms (n=82/68), penalización ≈0 ms
-  (el arranque se detecta con `first_request` pero el cliente no lo percibe). Cruce con CloudWatch 150/150,
-  Init Duration mediana 148 ms. La corrida de las 19:29 (Workers sin forzar, n=1 frío) queda como corrida previa.
-  Detalle en `results/resumen.csv`.
+  despliegue real en cada plataforma (`metodo_forzado`). Se reportan dos métricas: latencia total percibida desde
+  el cliente y penalización de arranque (p50 frío − p50 caliente por plataforma), que cancela la red.
+- Resultados (`results/resumen.csv`):
+  - **AWS Lambda**: frío p50 823 / p95 926 ms, caliente p50 444 / p95 503 ms (n=25/125), penalización **+379 ms**.
+    Los 25 fríos caen en la posición #0 de cada ciclo, como corresponde al forzado por variable de entorno.
+  - **Cloudflare Workers**: frío p50 572 / p95 597 ms, caliente p50 569 / p95 590 ms (n=88/62), penalización
+    **≈0 ms** (el arranque se detecta con `first_request` pero el cliente no lo percibe). Ojo con la ventana: el
+    19-09 el caliente fue 231 ms; el 21-09 el RTT hasta el borde de Cloudflare fue ~175 ms (TCP) contra ~70 ms
+    dos días antes, **con el mismo colo GIG**. Cambió la ruta del ISP, no el colo: la latencia "al borde"
+    depende de la ruta hasta el borde. Dentro de una misma ventana la comparación entre plataformas sí es válida.
+  - **Google Cloud Run** (256 MiB, gen1): caliente p50 203 / p95 361 ms (n=125). La primera petición tras cada
+    cambio de revisión (`post-despliegue`, n=24) da p50 214 / p95 366 ms: cae en un contenedor que la propia
+    plataforma ya arrancó para validar la revisión, así que **el forzado no expone el arranque en frío al
+    cliente**. Hubo 1 excepción (ciclo 15): 12.217 ms, petición encolada durante el cambio de revisión; Google
+    registra en esa misma revisión un arranque de contenedor de 11.568 ms (validación cruzada).
+    El arranque de contenedor medido por la plataforma (`scripts/startup_cloudrun.py`,
+    `run.googleapis.com/container/startup_latencies`, ventana de la corrida): n=35, media 2.068 ms
+    (1.788 ms sin el caso de 11,6 s), p50≈1.639 / p95≈2.903 ms (aproximados por buckets). Es otro instrumento
+    (arranque del contenedor visto por la plataforma, no latencia extremo a extremo): comparable con el
+    `Init Duration` de Lambda en CloudWatch (mediana 148 ms el 19-09) solo con esa salvedad.
+  - Red: Google termina TCP/TLS en un punto de presencia en Chile (TCP 16 ms, TLS 26 ms) y reenvía por su red
+    interna a us-east4; Lambda Function URL conecta directo a Virginia (TCP ~140 ms). La comparación de latencia
+    total incluye la arquitectura de front-end de cada proveedor, no solo el modelo de ejecución.
+  - Memoria: Cloud Run en 128 MiB no sostiene Node.js 24 (OOM, ver nota ¹ del registro de despliegue); Workers
+    es fijo en 128 MB; Lambda queda en 128 MB. Diferencia declarada.
 
 ## Registro de despliegue (completar)
 
@@ -146,7 +169,12 @@ que no deban entrar al análisis se nombran sin el prefijo `mediciones_` (p. ej.
 |---|---|---|---|---|---|
 | Cloudflare Workers | 19-09-2026 ~17:20 | global (colo observado desde Chile: GIG, Río de Janeiro) | 128 MB | V8 isolate | Free |
 | AWS Lambda | 19-09-2026 ~19:10 | us-east-1 | 128 MB (usa ~82 MB) | Node.js 24.x (verificado 19-09-2026 con `aws lambda get-function-configuration`) | Free tier |
-| Google Cloud Run | pendiente (ver `functions/cloudrun/README.md`) | us-east4 | 128 MiB | Node.js 24 (gen1/gVisor) | Free tier |
+| Google Cloud Run | 20-09-2026 (propia cuenta, ver `functions/cloudrun/README.md`) | us-east4 | 256 MiB¹ | Node.js 24 (gen1/gVisor) | Free tier |
+
+¹ Cloud Run gen1 en 128 MiB (el mínimo, igual que Lambda) no le alcanza a Node.js 24: el
+contenedor se quedaba sin memoria y moría entre peticiones (verificado 20-09-2026). Se sube
+a 256 MiB; Workers queda en 128 MB porque ese límite es fijo en el plan Free (no configurable)
+y Lambda se deja en 128 MB. Diferencia declarada como limitación y como hallazgo.
 
 ## Columnas de los CSV de mediciones
 

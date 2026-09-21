@@ -40,14 +40,14 @@ gcloud run deploy poc-ti05-terabyte \
   --region us-east4 \
   --allow-unauthenticated \
   --execution-environment gen1 \
-  --memory 128Mi \
+  --memory 256Mi \
   --cpu 1 \
   --no-cpu-boost \
   --cpu-throttling \
   --min-instances 0 \
   --max-instances 1 \
   --concurrency 1 \
-  --set-env-vars POC_MARKER=0,POC_MEMORY_MB=128
+  --set-env-vars POC_MARKER=0,POC_MEMORY_MB=256
 ```
 
 `--source .` construye la imagen con buildpacks de Google Cloud (no hay
@@ -56,8 +56,8 @@ Dockerfile); usa el Node.js indicado en `engines.node` de `package.json`
 
 | Flag | Por qué |
 |---|---|
-| `--execution-environment gen1` | gen1 es la única que permite 128 MiB y usa gVisor: es el modelo de contenedor que describe el informe. Por defecto Cloud Run elige el entorno según las funciones usadas, así que se fija explícitamente. |
-| `--memory 128Mi` | memoria mínima real de gen1, igual que Lambda (128 MB). |
+| `--execution-environment gen1` | gen1 usa gVisor: es el modelo de contenedor que describe el informe (Cloud Run también ofrece gen2, basado en microVM, que no corresponde a esta comparación). Es además la generación cuyo mínimo real es 128 MiB. Por defecto Cloud Run elige el entorno según las funciones usadas, así que se fija explícitamente. |
+| `--memory 256Mi` | 128 MiB (el mínimo de gen1, igual que Lambda) resultó insuficiente para Node.js 24: los logs del servicio reportaban `Memory limit of 128 MiB exceeded with 128-158 MiB used` y el contenedor moría entre peticiones, contaminando la clasificación de peticiones calientes (verificado 20-09-2026). Se sube a 256 MiB, la siguiente escala disponible; Cloudflare Workers queda en 128 MB porque ese límite es fijo y no configurable (developers.cloudflare.com/workers/platform/limits), y Lambda se deja en 128 MB. La diferencia se declara como limitación y como hallazgo (el modelo de contenedor arrastra más memoria base que el microVM de Lambda). |
 | `--cpu 1` | 1 vCPU, el valor por defecto; se deja explícito para que quede documentado. |
 | `--no-cpu-boost` | mide el arranque en frío sin mitigación; el CPU boost existe para reducir la latencia percibida del arranque, y esa mitigación es tema de la sección 2.2, no de esta línea base. |
 | `--cpu-throttling` | la CPU se limita cuando el contenedor no está sirviendo solicitudes, igual que el modelo de facturación por solicitud de las otras dos plataformas. |
@@ -65,6 +65,26 @@ Dockerfile); usa el Node.js indicado en `engines.node` de `package.json`
 | `--max-instances 1` y `--concurrency 1` | las 5 peticiones calientes de cada ciclo caen todas en la misma instancia, así el clasificador por `instance_id` queda limpio (sin ambigüedad de qué instancia respondió). |
 | `POC_MARKER` | la variable que el script de medición (`medir.py`) cambia para forzar una revisión (y una instancia) nueva. |
 | `POC_MEMORY_MB` | Cloud Run no expone la memoria asignada por variable de entorno propia; se pasa a mano para que la función pueda reportarla en el JSON. |
+
+### Si el despliegue falla con 403 (storage.objects.get)
+
+`gcloud run deploy --source .` puede fallar con un HTTP 403 del tipo
+`721441032849-compute@developer.gserviceaccount.com does not have
+storage.objects.get access` sobre el bucket `run-sources` del proyecto.
+Causa: en proyectos de Google Cloud nuevos, la cuenta de servicio de
+Compute por defecto ya no recibe el rol Editor automáticamente y puede
+quedar sin ningún rol asignado. Cloud Build usa esa cuenta para leer el
+código fuente que sube el despliegue, así que sin un rol que incluya
+`storage.objects.get` no puede completar el build. Solución (una vez por
+proyecto, reemplazando `PROJECT_ID` y `PROJECT_NUMBER`):
+
+```bash
+gcloud projects add-iam-policy-binding PROJECT_ID \
+  --member=serviceAccount:PROJECT_NUMBER-compute@developer.gserviceaccount.com \
+  --role=roles/cloudbuild.builds.builder
+```
+
+Y volver a correr el `gcloud run deploy` del punto d).
 
 ## e) Verificar
 
@@ -85,7 +105,7 @@ Completa esta tabla y entrégala junto con los datos del punto h):
 
 | Fecha/hora | Región | Memoria | Generación | node_version | URL | PROJECT_ID |
 |---|---|---|---|---|---|---|
-| | us-east4 | 128 MiB | gen1 | (del JSON de respuesta) | | |
+| | us-east4 | 256 MiB | gen1 | (del JSON de respuesta) | | |
 
 Para confirmar imagen y revisión activa:
 
@@ -94,7 +114,7 @@ gcloud run services describe poc-ti05-terabyte --region us-east4 \
   --format 'value(status.url,status.latestReadyRevisionName)'
 ```
 
-## g) Dar acceso a quien ejecuta las mediciones
+## g) Dar acceso a quien ejecuta las mediciones (solo si otra persona ejecuta las mediciones)
 
 Reemplaza `PROJECT_ID` por el id de tu proyecto y `CUENTA_MEDICIONES` por la
 cuenta de Google de quien ejecuta las mediciones (pídesela directamente; no
@@ -149,6 +169,31 @@ cambiando `add-iam-policy-binding` por `remove-iam-policy-binding`, una vez
 por rol).
 
 ---
+
+## Qué mide y qué no mide el forzado en Cloud Run
+
+Forzar una revisión nueva (`gcloud run services update --update-env-vars
+POC_MARKER=n`, lo que hace `medir.py`) NO produce un arranque en frío visible
+para el cliente en Cloud Run, a diferencia de Lambda. La causa es el ciclo de
+vida de Cloud Run: la plataforma no enruta tráfico a una revisión nueva hasta
+validarla, y para validarla ya arrancó un contenedor y le hizo un health
+check; cuando el comando `gcloud run services update` retorna, ese contenedor
+ya tiene entre 1,2 y 2,5 s de vida, así que la primera petición del cliente
+llega caliente (verificado el 20-09-2026: 0 de 8 ciclos forzados resultaron
+fríos desde el cliente). El arranque sí ocurrió; solo que el cliente nunca lo
+paga.
+
+`medir.py` clasifica esto con el criterio `uptime_menor_que_latencia` (frío
+solo si la edad del contenedor al responder es menor que la latencia
+medida de esa misma petición) y `analizar.py` separa esas primeras peticiones
+del ciclo forzado en el estado `post-despliegue` en vez de contarlas como
+"caliente" limpio.
+
+El arranque en sí queda registrado del lado del proveedor, en la métrica de
+Cloud Monitoring `run.googleapis.com/container/startup_latencies`. Se
+extrae con `scripts/startup_cloudrun.py`, que escribe
+`results/cloudrun_startup.csv` con la media exacta y percentiles
+aproximados por bucket para la ventana de la corrida.
 
 ## Para quien ejecuta las mediciones
 

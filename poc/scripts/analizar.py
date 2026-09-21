@@ -39,6 +39,9 @@ def _forzables():
 FORZABLES = _forzables()
 
 
+N_MIN_PERCENTIL = 5  # muestras mínimas para reportar p50/p95 de un estado
+
+
 def pct(vals, p):
     if not vals:
         return None
@@ -82,7 +85,17 @@ def main():
     grupos = defaultdict(list)
     grupos_todo = defaultdict(list)  # (plataforma, estado) juntando modos
     for r in filas:
-        estado = "frio" if r["es_frio"] == "True" else "caliente"
+        if (r["plataforma"] == "google-cloud-run" and r["modo"] == "forzado"
+                and r["n_en_ciclo"] == "0" and r["es_frio"] != "True"):
+            # Primera petición del ciclo tras el cambio de revisión en Cloud
+            # Run: el health check de la plataforma ya despertó el contenedor
+            # antes de que esta petición saliera del cliente (ver criterio
+            # uptime_menor_que_latencia), así que no es una muestra caliente
+            # "limpia" ni tampoco frío percibido por el cliente. Se separa en
+            # su propio estado para no inflar ni contaminar "caliente".
+            estado = "post-despliegue"
+        else:
+            estado = "frio" if r["es_frio"] == "True" else "caliente"
         lat = float(r["latencia_ms"])
         # El modo "forzado" solo se aplica a plataformas con "forzable": true en
         # config.json (Lambda vía POC_MARKER, Workers vía wrangler deploy). Las
@@ -120,20 +133,40 @@ def main():
     print("\nPenalización de arranque en frío (p50 frío - p50 caliente, todos los modos):")
     for plat in sorted({p for (p, _) in grupos_todo}):
         fr, ca = grupos_todo.get((plat, "frio"), []), grupos_todo.get((plat, "caliente"), [])
-        if fr and ca:
+        if ca and len(fr) < N_MIN_PERCENTIL:
+            # Plataforma con muestras calientes pero sin frío visible desde el
+            # cliente bajo el protocolo forzado (ver estado "post-despliegue").
+            print(f"  {NOMBRES.get(plat, plat):20s} sin frío visible desde el cliente "
+                  f"(n={len(fr)} < {N_MIN_PERCENTIL})")
+        elif fr and ca:
             print(f"  {NOMBRES.get(plat, plat):20s} {pct(fr,50) - pct(ca,50):8.1f} ms")
 
     # ---- filas LaTeX para la tabla poc-resumen de main.tex ----
     lineas = []
     for plat in sorted({p for (p, _) in grupos_todo}):
         fr, ca = grupos_todo.get((plat, "frio"), []), grupos_todo.get((plat, "caliente"), [])
-        if not fr or not ca:
+        if not ca:
+            # Sin muestras calientes no hay fila que mostrar (no ocurre hoy).
             continue
-        n_txt = f"n={len(fr)}/{len(ca)}"
-        lineas.append(
-            f"    \\filaTabla{{{NOMBRES.get(plat, plat)} & {pct(fr,50):.0f} & {pct(fr,95):.0f} & "
-            f"{pct(ca,50):.0f} & {pct(ca,95):.0f} & {n_txt} / REGION / FECHA}}"
-        )
+        # Un percentil sobre 1-4 observaciones no describe nada: si el frío
+        # visible desde el cliente no llega a N_MIN_PERCENTIL muestras, la fila
+        # deja las columnas de frío en blanco y anota cuántas hubo.
+        if len(fr) >= N_MIN_PERCENTIL:
+            n_txt = f"n={len(fr)}/{len(ca)}"
+            lineas.append(
+                f"    \\filaTabla{{{NOMBRES.get(plat, plat)} & {pct(fr,50):.0f} & {pct(fr,95):.0f} & "
+                f"{pct(ca,50):.0f} & {pct(ca,95):.0f} & {n_txt} / REGION / FECHA}}"
+            )
+        else:
+            # Frío no visible desde el cliente bajo el protocolo forzado (ver
+            # estado "post-despliegue" más arriba): se deja la fila con las
+            # columnas de frío en blanco en vez de omitir la plataforma.
+            n_txt = f"n={len(fr)}/{len(ca)}"
+            lineas.append(
+                f"    \\filaTabla{{{NOMBRES.get(plat, plat)} & -- & -- & "
+                f"{pct(ca,50):.0f} & {pct(ca,95):.0f} & {n_txt} / REGION / FECHA}} "
+                f"% frío no visible desde el cliente; ver results/cloudrun_startup.csv"
+            )
     with open(os.path.join(RAIZ, "results/resumen_latex.txt"), "w", encoding="utf-8") as f:
         f.write("% Pegar dentro de \\tabla{...}{poc-resumen}{...}{ en main.tex; completar REGION/FECHA\n")
         f.write("\n".join(lineas) + "\n")

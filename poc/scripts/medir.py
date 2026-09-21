@@ -23,7 +23,15 @@ Dos protocolos:
                                 isolates nuevos en el PoP).
               gcloud_env      : `gcloud run services update ... --update-env-vars
                                 POC_MARKER=<n>` (nueva configuración =>
-                                revisión nueva => instancia nueva).
+                                revisión nueva => instancia nueva). En Cloud
+                                Run la revisión nueva queda pre-calentada por
+                                el health check con el que la plataforma la
+                                valida antes de enrutarle tráfico, así que el
+                                cliente casi nunca paga ese arranque; se
+                                clasifica frío con el criterio
+                                `uptime_menor_que_latencia` y el arranque del
+                                lado del proveedor se lee aparte con
+                                scripts/startup_cloudrun.py.
             Los tres son despliegues/actualizaciones reales, no un mecanismo
             artificial. Las plataformas no forzables se miden igual en cada
             ciclo para tener muestras en la misma ventana. Todas reciben el
@@ -109,6 +117,13 @@ COLUMNAS = [
 
 UMBRAL_UPTIME_FRIO_MS = 3000  # uptime menor a esto => instancia recién creada
 
+# Segundos de espera entre forzar el arranque en frío y la primera petición
+# medida, para que el cambio termine de propagar en el proveedor. Cada
+# plataforma puede sobrescribirlo con "espera_tras_forzado_s" en config.json:
+# Cloud Run usa 0 porque ahí esperar regala el arranque al health check de la
+# revisión (ver forzar_frio_cloudrun).
+ESPERA_TRAS_FORZADO_S = 5
+
 
 def cargar_config():
     with open(CONFIG_PATH, encoding="utf-8") as f:
@@ -153,7 +168,7 @@ def invocar(url, timeout_s):
     return (t1 - t0) * 1000, status, datos, None
 
 
-def clasificar(datos, ultimo_id, criterio="instance_id"):
+def clasificar(datos, ultimo_id, criterio="instance_id", latencia_ms=None):
     """Devuelve (es_frio, criterios). El criterio depende de la plataforma:
 
     instance_id   : frío si la instancia es distinta a la última vista en la
@@ -164,6 +179,17 @@ def clasificar(datos, ultimo_id, criterio="instance_id"):
                     la inicializó (Workers). Ahí el cambio de instance_id NO
                     implica arranque: Cloudflare reparte peticiones consecutivas
                     entre varios isolates vivos del mismo PoP.
+    uptime_menor_que_latencia
+                  : frío solo si el contenedor nació dentro de la ventana de
+                    esta petición, es decir, si su edad al responder es menor
+                    que lo que la petición tardó de extremo a extremo. Se usa
+                    en Cloud Run, donde el cambio de instance_id NO basta: al
+                    crear una revisión la plataforma arranca un contenedor para
+                    validarla (health check), así que la petición siguiente
+                    puede caer en un contenedor ya despierto sin pagar ningún
+                    arranque. La comparación no necesita ningún umbral fijado a
+                    mano: si el contenedor es más joven que la petición, solo
+                    pudo nacer después de que la petición salió de este cliente.
     """
     if datos is None:
         return None, ""
@@ -181,6 +207,17 @@ def clasificar(datos, ultimo_id, criterio="instance_id"):
         if ultimo_id is not None and iid != ultimo_id:
             criterios.append("(otro_isolate)")  # informativo, no decide
         es_frio = fr
+    elif criterio == "uptime_menor_que_latencia":
+        nacio_en_la_peticion = (
+            isinstance(up, (int, float))
+            and isinstance(latencia_ms, (int, float))
+            and up < latencia_ms
+        )
+        if nacio_en_la_peticion:
+            criterios.append("uptime_menor_que_latencia")
+        if ultimo_id is not None and iid != ultimo_id:
+            criterios.append("(instancia_distinta)")  # informativo, no decide
+        es_frio = nacio_en_la_peticion
     else:  # instance_id
         if ultimo_id is None:
             if up_bajo:
@@ -245,9 +282,18 @@ def forzar_frio_workers(cfg_plat):
 
 def forzar_frio_cloudrun(cfg_plat, marcador):
     """Cambia POC_MARKER en el servicio de Cloud Run (--update-env-vars, no
-    destructivo: no borra otras variables) y espera a que la revisión más
-    reciente quede lista. Cualquier cambio de configuración crea una revisión
-    nueva => instancia nueva (documentado por Google Cloud)."""
+    destructivo: no borra otras variables). Cualquier cambio de configuración
+    crea una revisión nueva => instancia nueva (documentado por Google Cloud).
+
+    A diferencia de Lambda y Workers, aquí NO se espera nada después del
+    cambio, y el motivo es el ciclo de vida de Cloud Run: una revisión no
+    recibe tráfico hasta que la plataforma la valida, y para validarla arranca
+    un contenedor y le hace un health check. Si se espera a que la revisión
+    quede lista y además se duerme unos segundos, la primera petición medida
+    llega a ese contenedor ya arrancado y sale caliente (verificado el
+    20-09-2026: uptime de 8638 ms en la petición #0). `gcloud run services
+    update` sin --async ya retorna con la revisión sirviendo tráfico, así que
+    la petición inmediatamente posterior es la que paga el arranque."""
     name = cfg_plat["gcloud_service_name"]
     region = cfg_plat["region"]
     project = cfg_plat["gcloud_project"]
@@ -257,19 +303,6 @@ def forzar_frio_cloudrun(cfg_plat, marcador):
     r = subprocess.run(cmd, capture_output=True, text=True, timeout=300, shell=(os.name == "nt"))
     if r.returncode != 0:
         raise RuntimeError(f"gcloud run services update falló: {r.stderr.strip()[-400:]}")
-    # esperar a que la revisión lista (Ready) alcance a la recién creada
-    for _ in range(60):
-        q = subprocess.run(
-            [GCLOUD_CLI, "run", "services", "describe", name,
-             "--region", region, "--project", project,
-             "--format", "value(status.latestReadyRevisionName,status.latestCreatedRevisionName)"],
-            capture_output=True, text=True, timeout=300, shell=(os.name == "nt"))
-        if q.returncode == 0:
-            partes = q.stdout.strip().split()
-            if len(partes) == 2 and partes[0] == partes[1]:
-                return
-        time.sleep(1)
-    raise RuntimeError("La revisión de Cloud Run no quedó lista (latestReadyRevisionName) en 60 s")
 
 
 def forzar_frio(cfg_plat, marcador):
@@ -291,7 +324,9 @@ def ciclo(plat, cfg_plat, cfg, modo, n_ciclo, writer, f, estado, quiet=False):
     pausa = cfg["pausa_entre_calientes_s"]
     for k in range(1 + n_cal):
         lat, status, datos, err = invocar(cfg_plat["url"], cfg["timeout_http_s"])
-        es_frio, crit = clasificar(datos, estado.get(plat), cfg_plat.get("criterio_frio", "instance_id"))
+        es_frio, crit = clasificar(datos, estado.get(plat),
+                                   cfg_plat.get("criterio_frio", "instance_id"),
+                                   latencia_ms=lat)
         if datos is not None and datos.get("instance_id"):
             estado[plat] = datos["instance_id"]
         fila = {
@@ -397,7 +432,14 @@ def main():
                 if cp.get("forzable"):
                     try:
                         forzar_frio(cp, marcador_base + c)
-                        time.sleep(2)
+                        # Margen de propagación: en Lambda y Workers el forzado
+                        # devuelve cuando el proveedor acepta el cambio, no
+                        # cuando ya está activo en el punto que atiende la
+                        # petición. En la corrida del 19-09-2026, con 2 s, 1 de
+                        # 25 ciclos de Workers midió todavía contra un isolate
+                        # de la versión anterior. Cloud Run declara 0: allí la
+                        # revisión ya está sirviendo cuando el comando retorna.
+                        time.sleep(cp.get("espera_tras_forzado_s", ESPERA_TRAS_FORZADO_S))
                     except Exception as e:
                         print(f"  !! no se pudo forzar frío en {plat}: {e}")
                 ciclo(plat, cp, cfg, "forzado", c, writer, f, estado)

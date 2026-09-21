@@ -1,3 +1,4 @@
 % Pegar dentro de \tabla{...}{poc-resumen}{...}{ en main.tex; completar REGION/FECHA
-    \filaTabla{AWS Lambda & 754 & 826 & 434 & 487 & n=25/125 / REGION / FECHA}
-    \filaTabla{Cloudflare Workers & 231 & 244 & 231 & 252 & n=82/68 / REGION / FECHA}
+    \filaTabla{AWS Lambda & 823 & 926 & 444 & 503 & n=25/125 / REGION / FECHA}
+    \filaTabla{Cloudflare Workers & 572 & 597 & 569 & 590 & n=88/62 / REGION / FECHA}
+    \filaTabla{Google Cloud Run & -- & -- & 203 & 361 & n=1/125 / REGION / FECHA} % frío no visible desde el cliente; ver results/cloudrun_startup.csv
