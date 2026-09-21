@@ -1,0 +1,182 @@
+%% ===========================================================================
+%% 4.1 Prueba de concepto: arranque en frío y latencia          (Vicente)
+%% Reemplaza el bloque entre "\subsection{Prueba de concepto..." y el
+%% comentario de 4.2 en main.tex. Requiere en assets/images/poc-coldstart.pdf
+%% la figura generada por poc/scripts/analizar.py (ya copiada).
+%%
+%% Presupuesto: ~350 palabras. Metodología ~110, interpretación ~140,
+%% limitaciones ~80. La tabla y la figura no cuentan.
+%%
+%% Autoría (Anexo A): metodología, tabla y figura provienen del código y de
+%% los datos (nivel 2, código auxiliar asistido). Los bloques marcados
+%% [REDACTAR] son interpretación y limitaciones: se escriben a mano (6.1).
+%% Los hechos disponibles van en comentarios; la prosa la pone el autor.
+%% ===========================================================================
+
+\subsection{Prueba de concepto: arranque en frío y latencia}
+\label{sec:poc}
+
+Se desplegó una función trivial idéntica, que devuelve el identificador de la
+instancia que responde y su tiempo de vida, en tres plataformas de la
+Tabla~\ref{tab:cuadro-comparativo}: AWS Lambda (microVM, us-east-1, 128~MB), Google
+Cloud Run (contenedor, us-east4, 256~MiB) y Cloudflare Workers (V8 isolate, borde,
+128~MB). Desde un cliente en Chile se corrieron 25 ciclos por plataforma en la misma
+ventana (21-09-2026): una petición tras inducir el arranque en frío y cinco
+calientes, cada una con conexión TCP/TLS nueva. El frío se induce con el evento del
+ciclo de vida propio de cada modelo (cambio de configuración, publicación de versión,
+terminación del proceso), de modo que la petición medida llega sin instancia caliente
+disponible; la clasificación frío/caliente usa lo que devuelve la función, no la
+latencia. Se reportan la latencia total percibida y la penalización de arranque (p50
+frío menos p50 caliente), que cancela la red. Código, datos y notas en el Anexo~B.
+
+\imagen{assets/images/poc-coldstart.pdf}{Latencia total desde el cliente en arranque en frío y en caliente, por plataforma (25 ciclos forzados, 150 peticiones por plataforma, 21-09-2026). La caja cubre el rango intercuartílico, la línea es la mediana y los puntos son valores atípicos.}{poc}
+
+\tabla{Resumen de mediciones de la prueba de concepto (latencia total desde el cliente, ms)}{poc-resumen}{|p{3cm}|p{2cm}|p{2cm}|p{2.1cm}|p{2.1cm}|p{3.2cm}|}{%
+    \filaTabla{\textbf{Plataforma} & \textbf{Frío p50} & \textbf{Frío p95} & \textbf{Caliente p50} & \textbf{Caliente p95} & \textbf{n frío/caliente, región, fecha}}
+    \filaTabla{AWS Lambda & 838 & 890 & 442 & 507 & 25/125, us-east-1, 21-09-2026}
+    \filaTabla{Cloudflare Workers & 569 & 591 & 567 & 574 & 107/43, borde (colo GIG), 21-09-2026}
+    \filaTabla{Google Cloud Run & 922 & 1\,656 & 203 & 358 & 24/125, us-east4, 21-09-2026}
+}
+
+%% ---------------------------------------------------------------------------
+%% [REDACTAR] Interpretación (~140 palabras, autoría propia).
+%% Hechos disponibles, en el orden sugerido:
+%%  1. Penalización p50: Lambda +395 ms, Workers +1 ms, Cloud Run +720 ms
+%%     (results/resumen.csv). El orden sigue al tipo de aislamiento:
+%%     isolate < microVM < contenedor. Es hallazgo propio.
+%%  2. En Workers el arranque existe (107 isolates recién creados declararon
+%%     first_request) pero el cliente no lo percibe: la latencia es la del
+%%     viaje al borde. En Lambda los 25 fríos cayeron exactamente en la primera
+%%     petición de cada ciclo.
+%%  3. En caliente el orden se invierte y lo manda la red, no el modelo:
+%%     Google termina la conexión TCP/TLS en un punto de presencia en Chile
+%%     (TCP 16 ms) y reenvía por red interna a us-east4; Lambda conecta directo
+%%     a Virginia (TCP ~140 ms). La latencia total incluye la arquitectura de
+%%     front-end de cada proveedor.
+%%  4. Cloud Run es la más dispersa (306-1682 ms): al terminar el proceso la
+%%     plataforma empieza a reponer el contenedor por su cuenta y la petición
+%%     paga la parte del arranque que falta cuando llega. El arranque del
+%%     contenedor que registra la propia plataforma es parejo (~1,0 s).
+%%  5. Cierre posible: la sección 2.2 desarrolla causas y mitigaciones; estas
+%%     mediciones son la línea base sin mitigación (sin concurrencia
+%%     aprovisionada, sin CPU boost, sin instancias mínimas).
+%% ---------------------------------------------------------------------------
+\textbf{[REDACTAR: interpretación]}
+
+%% ---------------------------------------------------------------------------
+%% [REDACTAR] Limitaciones (~80 palabras, autoría propia). Cuatro hechos:
+%%  a. Cloud Run corre con 256 MiB porque Node.js 24 no cabe en 128 MiB en esa
+%%     plataforma (el contenedor moría por memoria entre peticiones); Workers
+%%     tiene 128 MB fijos y Lambda queda en 128 MB. En Lambda la CPU es
+%%     proporcional a la memoria; en Cloud Run se fija aparte (1 vCPU).
+%%  b. Los tres mecanismos para inducir el frío son distintos porque los tres
+%%     ciclos de vida lo son; el de Cloud Run (terminar el proceso) es
+%%     instrumentación de la prueba, no comportamiento de producción. Crear
+%%     una revisión nueva no sirve: la plataforma la valida arrancando un
+%%     contenedor antes de enrutar tráfico (24/25 primeras peticiones llegaron
+%%     a un contenedor ya despierto en una corrida previa de la misma noche).
+%%  c. La latencia al borde depende de la ruta del ISP: el 19-09 Workers
+%%     caliente dio 231 ms y el 21-09, 567 ms, con el mismo colo (GIG). Dentro
+%%     de una misma ventana la comparación entre plataformas sí es válida.
+%%  d. Función trivial y un solo cliente: no representa cargas reales ni
+%%     concurrencia.
+%% ---------------------------------------------------------------------------
+\textbf{[REDACTAR: limitaciones]}
+
+
+%% ===========================================================================
+%% ANEXO B: Código y mediciones de la prueba de concepto           (Vicente)
+%% Reemplaza el bloque "\anexo{B}{...}" ... "\clearpage" de main.tex.
+%% Los archivos de assets/code/ son copia de poc/ (rama PoC del repositorio).
+%% Overleaf debe compilar con -shell-escape (minted).
+%% ===========================================================================
+
+\anexo{B}{Anexo B: Código y mediciones de la prueba de concepto}
+
+\subsection*{B.1 Repositorio y trazabilidad}
+
+El código, la configuración y los datos crudos están en el repositorio del grupo,
+carpeta \texttt{poc/}, rama \texttt{PoC}. Corrida fuente de la sección~\ref{sec:poc}:
+\texttt{data/mediciones\_20260921-0041\_forzado.csv} (450 filas, una por petición).
+Corridas complementarias: \texttt{mediciones\_20260921-0005\_forzado.csv} (misma
+noche, Cloud Run forzado por revisión nueva) y
+\texttt{mediciones\_20260919-2148\_forzado.csv} (19-09, solo Lambda y Workers).
+El resumen estadístico es \texttt{results/resumen.csv} y la latencia de arranque de
+contenedor registrada por Google Cloud es \texttt{results/cloudrun\_startup.csv}.
+El código auxiliar (funciones y scripts) se generó con asistencia de IA y fue
+revisado y ejecutado por el autor; se declara en el Anexo~A.
+
+\subsection*{B.2 Configuración de las plataformas}
+
+\tabla{Configuración desplegada}{poc-config}{|p{2.6cm}|p{3.4cm}|p{3.4cm}|p{5cm}|}{%
+    \filaTabla{\textbf{Plataforma} & \textbf{Región y aislamiento} & \textbf{Recursos} & \textbf{Evento que induce el frío}}
+    \filaTabla{AWS Lambda & us-east-1; microVM & 128~MB (CPU proporcional), Node.js 24.x, Function URL & Cambio de la variable de entorno \texttt{POC\_MARKER}: el entorno de ejecución queda inválido y la invocación siguiente crea uno nuevo}
+    \filaTabla{Cloudflare Workers & Borde (colo observado: GIG); V8 isolate & 128~MB fijos, plan Free & Publicación de una versión con \texttt{wrangler deploy}: las peticiones siguientes llegan a isolates nuevos (\texttt{first\_request})}
+    \filaTabla{Google Cloud Run & us-east4; contenedor gen1 (gVisor) & 256~MiB, 1 vCPU, sin CPU boost, CPU solo durante solicitudes, min 0 / máx 1 instancia, concurrencia 1, Node.js 24 & \texttt{GET /salir}: el proceso responde y termina; con 0 instancias, la petición siguiente crea el contenedor}
+}
+
+\subsection*{B.3 Criterio de clasificación frío/caliente}
+
+Cada petición se clasifica con lo que devuelve la función, nunca con su latencia:
+en Lambda, frío si el \texttt{instance\_id} es distinto al de la petición anterior
+(las peticiones secuenciales reutilizan el mismo entorno); en Workers, frío solo si
+la instancia declara \texttt{first\_request}, porque Cloudflare reparte peticiones
+consecutivas entre varios isolates vivos del mismo punto de presencia y el cambio
+de identificador no implica arranque; en Cloud Run, frío si la edad del contenedor al
+responder (\texttt{uptime\_ms}) es menor que la latencia medida de extremo a
+extremo, es decir, si el contenedor nació dentro de la ventana de la petición. Este
+último criterio no usa umbral: si el contenedor es más joven que la petición, solo
+pudo nacer después de que ella salió del cliente.
+
+\subsection*{B.4 Notas metodológicas sobre Cloud Run}
+
+Con 128~MiB el contenedor excedía el límite de memoria (los registros del servicio
+reportan entre 128 y 158~MiB usados) y era terminado entre peticiones, lo que
+invalidaba la medición caliente; se subió a 256~MiB y la diferencia se declara.
+Inducir el frío creando una revisión nueva no expone el arranque al cliente: la
+plataforma valida la revisión arrancando un contenedor antes de enrutarle tráfico,
+y en 24 de 25 ciclos la primera petición llegó a un contenedor ya despierto
+(corrida de las 00:05). Por eso se induce con la terminación del proceso
+(\texttt{GET /salir}, activo solo con la variable \texttt{POC\_SALIR\_HABILITADO=1}).
+Tras la terminación se esperan 2~s: sin esa espera la petición llega a la instancia
+que está muriendo (HTTP 503). La latencia de arranque de contenedor que registra la
+propia plataforma (métrica \texttt{container/startup\_latencies}, ventana de la
+corrida) fue de 26 arranques con media 1\,014~ms y p95 aproximado 1\,119~ms;
+es otro instrumento (arranque visto por la plataforma, no latencia extremo a
+extremo) y se reporta solo como contraste.
+
+\subsection*{B.5 Código de las funciones}
+
+\subsubsection*{AWS Lambda (\texttt{functions/lambda/index.mjs})}
+\inputminted[fontsize=\scriptsize, breaklines]{javascript}{assets/code/lambda-index.mjs}
+
+\subsubsection*{Cloudflare Workers (\texttt{functions/cloudflare/worker.js})}
+\inputminted[fontsize=\scriptsize, breaklines]{javascript}{assets/code/cloudflare-worker.js}
+
+\subsubsection*{Google Cloud Run (\texttt{functions/cloudrun/index.js})}
+\inputminted[fontsize=\scriptsize, breaklines]{javascript}{assets/code/cloudrun-index.js}
+
+\subsection*{B.6 Configuración y scripts de medición}
+
+\subsubsection*{\texttt{config.json}}
+\inputminted[fontsize=\scriptsize, breaklines]{json}{assets/code/config.json}
+
+%% medir.py y analizar.py tienen varios cientos de líneas. Opción A: incluirlos
+%% completos (descomentar; agrega ~12 páginas al anexo). Opción B: dejar solo la
+%% referencia al repositorio (B.1) y este párrafo. Se recomienda B.
+% \subsubsection*{\texttt{scripts/medir.py}}
+% \inputminted[fontsize=\scriptsize, breaklines]{python}{assets/code/medir.py}
+% \subsubsection*{\texttt{scripts/analizar.py}}
+% \inputminted[fontsize=\scriptsize, breaklines]{python}{assets/code/analizar.py}
+% \subsubsection*{\texttt{scripts/startup\_cloudrun.py}}
+% \inputminted[fontsize=\scriptsize, breaklines]{python}{assets/code/startup_cloudrun.py}
+
+El script de medición \texttt{scripts/medir.py} invoca cada URL por HTTP, mide la
+latencia total, clasifica con el criterio de B.3 y escribe una fila por petición
+con volcado inmediato; \texttt{scripts/analizar.py} produce
+\texttt{results/resumen.csv}, las filas de la Tabla~\ref{tab:poc-resumen} y la
+Figura~\ref{fig:poc}; \texttt{scripts/startup\_cloudrun.py} consulta la métrica de
+arranque de contenedor de Cloud Monitoring para la ventana de la corrida. Ambos
+scripts, con sus comentarios, están en el repositorio (B.1).
+
+\clearpage
