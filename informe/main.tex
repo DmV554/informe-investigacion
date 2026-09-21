@@ -504,17 +504,56 @@ El punto de equilibrio es la carga desde la cual pagar por consumo cuesta más q
 
 % TODO (Francisca)
 
-\tabla{Supuestos del modelo de costos}{supuestos-costos}{|p{5cm}|p{3.5cm}|p{5.5cm}|}{%
-    \filaTabla{\textbf{Variable} & \textbf{Valor} & \textbf{Fuente / justificación}}
-    \filaTabla{Duración media por solicitud (ms) & & }
-    \filaTabla{Memoria asignada (MB) & & }
-    \filaTabla{Tamaño medio de respuesta (KB) & & }
-    \filaTabla{Plataforma serverless cotizada & & Tabla \ref{tab:cuadro-comparativo}}
-    \filaTabla{Configuración always-on cotizada & & }
-    \filaTabla{Región y fecha de precios & & }
-}
+\subsection{Modelo de costos y volumen de equilibrio}
+\label{sec:modelo-costos}
 
-% \imagen{assets/images/punto-equilibrio.png}{Costo mensual en función del volumen de solicitudes: serverless frente a contenedores siempre encendidos}{fig:equilibrio}
+El modelo compara AWS Lambda con contenedores siempre encendidos (ECS sobre instancias EC2 t3.medium), el comparador fijo del cuadro de la sección 3.2. Usa solo los precios de las Tablas 3.2a y 3.2b (us-east-1, USD, precio de lista consultado el 20/09/2026). Con $N$ solicitudes al mes, memoria $m$ (GB) y duración $d$ (s), Lambda cuesta $C_L=\max(0,N-10^{6})\,c_r+\max(0,\,N\,m\,d-4\cdot10^{5})\,c_g$, con $c_r=0{,}20$ USD por millón de solicitudes y $c_g=0{,}0000166667$ USD por GB-s. La flota fija cuesta $C_F=k\,p\cdot730$, con $p=0{,}026$ USD por hora y $k=\max(2,\lceil q_{\mathrm{pico}}/20\rceil)$ instancias. La Tabla~\ref{tab:supuestos-42} declara los supuestos.
+
+\begin{table}[htbp]
+\centering
+\caption{Supuestos del modelo de costos}
+\label{tab:supuestos-42}
+{\scriptsize
+\begin{tabular}{|p{0.17\linewidth}|p{0.56\linewidth}|p{0.17\linewidth}|}
+\hline
+\textbf{Supuesto} & \textbf{Valor} & \textbf{Origen} \\ \hline
+Carga & Solicitudes HTTP tipo API, 730 h al mes; pico igual a 4 veces el promedio & Supuesto \\ \hline
+Sin servidor & AWS Lambda x86, 512 MB y 200 ms por solicitud; 0,20 USD por millón de solicitudes y 0,0000166667 USD/GB-s; capa gratuita de 1 M de solicitudes y 400.000 GB-s & Tabla 3.2a \\ \hline
+Siempre encendido & ECS sobre EC2 \texttt{t3.medium} (2 vCPU, 4 GiB), mínimo 2 instancias, reserva de 1 año a 0,026 USD/h (18,98 USD al mes cada una) & Tabla 3.2a \\ \hline
+Capacidad & 20 solicitudes/s sostenidas por instancia (20 ms de CPU por solicitud) & Supuesto \\ \hline
+Excluido & Egreso de datos (misma tarifa en ambos lados, Tabla~3.2b), balanceador, API Gateway, NAT, registros y costo de operar la flota & Declarado \\ \hline
+\end{tabular}
+}
+\end{table}
+
+Con esos supuestos, Lambda es más barata hasta $N^{*} = 24{,}0$ millones de solicitudes al mes (unas 9 por segundo en promedio), donde iguala los 37,96 USD mensuales del par de instancias (Figura~\ref{fig:equilibrio}). Sobre ese volumen la ventaja cambia de signo cada vez que el pico exige otra instancia, y desde unos 54,5 millones la flota fija es siempre más barata. La causa es la distinción de la sección 2.3 entre tiempo de reloj y de CPU \cite{lin_demystifying_2026}. Lambda factura los 200 ms completos de cada solicitud. La instancia, con 20 ms de CPU por solicitud (supuesto), reparte la espera entre solicitudes concurrentes.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    width=\linewidth, height=6.2cm,
+    xlabel={Solicitudes por mes (millones)},
+    ylabel={Costo mensual (USD)},
+    xmin=0, xmax=60, ymin=0, ymax=115,
+    xtick distance=10, ytick distance=20,
+    grid=both, minor tick num=1,
+    legend pos=north west, legend style={font=\scriptsize},
+    tick label style={font=\scriptsize}, label style={font=\small}]
+\addplot[thick, blue!70!black] coordinates {(0,0) (1,0) (4,0.6) (60,105.13)};
+\addlegendentry{AWS Lambda (512 MB, 200 ms)}
+\addplot[thick, dashed, red!75!black] coordinates {(0,37.96) (26.28,37.96) (26.28,56.94) (39.42,56.94) (39.42,75.92) (52.56,75.92) (52.56,94.90) (60,94.90)};
+\addlegendentry{2 instancias \texttt{t3.medium} (1 año); cada escalón suma una}
+\addplot[only marks, mark=*, mark size=2pt, black] coordinates {(24.01,37.96) (54.52,94.90)};
+\node[anchor=south east, font=\scriptsize] at (axis cs:24,41) {$N^{*}\approx24{,}0$ M};
+\node[anchor=north west, font=\scriptsize] at (axis cs:55,91) {$54{,}5$ M};
+\end{axis}
+\end{tikzpicture}
+\caption{Costo mensual en función del volumen de solicitudes: serverless frente a contenedores siempre encendidos (escenario base). Elaboración propia con precios de la Tabla 3.2a.}
+\label{fig:equilibrio}
+\end{figure}
+
+El resultado es sensible al escenario (Anexo~\ref{anx:planilla}). Con 1 GB y 500 ms el equilibrio baja a 5,3 millones; con reserva a tres años, a 17,0 millones; y con 256 MB y hasta 200 ms, instancias bajo demanda o picos de ocho veces el promedio, Lambda no llega a cruzar. El modelo excluye balanceador, API Gateway, NAT y el costo de operar la flota, cuyos efectos van en ambos sentidos \cite{hamza2024costdynamics}. Por eso el volumen de equilibrio debe leerse como un orden de magnitud, condicionado a los supuestos declarados.
 
 %% ---------------------------------------------------------------------------
 %% 4.3                                                    Responsable: Fabián
