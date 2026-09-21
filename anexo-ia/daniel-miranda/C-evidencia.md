@@ -9,9 +9,9 @@
 | # | Herramienta | Fechas | Enlace | Exportación en `registros/` | Secciones |
 |---|---|---|---|---|---|
 | 1 | Claude (Cowork), `claude-fable-5-1` | 19-09 a 21-09-2026 | https://claude.ai/code/session_01GKFjHaKv49e4JnUS1XjGv4 (accesible con la cuenta del usuario) | *[pendiente: exportación de datos de la cuenta, Configuración → Privacidad → Exportar datos]* | 3.1, Anexo D, plantilla, repositorio, estructura 3.2, Anexo A |
-| 2 | Grok (xAI), agente de investigación | 19-09 a 20-09-2026 | sin enlace estable | *[TODO Daniel: exportar o copiar a `registros/grok-*.md`]* | búsqueda y verificación de fuentes para 3.1 y 3.2; guía de elección; estructuración de decisiones; corrección de estilo del borrador de 3.1 |
+| 2 | Grok (xAI), agente de investigación, cuenta de prueba de 3 días | 19-09 a 20-09-2026 | no accesible: la cuenta de prueba expiró y las conversaciones no se exportaron | **no disponible** (ver nota) | búsqueda y verificación de fuentes para 3.1 y 3.2; guía de elección; estructuración de decisiones; corrección de estilo del borrador de 3.1 |
 
-Los prompts de sistema entregados al agente externo están versionados en `trabajo/fuentes/guia-agentes-busqueda-fuentes.md` y `trabajo/3.1-alternativas/prompt-verificacion-candidatos.md`; sus salidas, en `archivosTemporal/fuentes_agent/`, `trabajo/fuentes/` y `trabajo/3.1-alternativas/`.
+**Nota sobre la sesión 2.** Las conversaciones con el agente externo no pueden adjuntarse: se realizaron bajo una cuenta de prueba de tres días que expiró antes de la entrega y no se exportaron a tiempo. Lo que se conserva y sí es trazable es lo que se le entregó y lo que devolvió: los prompts de sistema entregados al agente externo están versionados en `trabajo/fuentes/guia-agentes-busqueda-fuentes.md` y `trabajo/3.1-alternativas/prompt-verificacion-candidatos.md`; sus salidas, en `archivosTemporal/fuentes_agent/`, `trabajo/fuentes/` y `trabajo/3.1-alternativas/`.
 
 ## 2. Historial de versiones (commits del integrante)
 
@@ -23,7 +23,10 @@ Rama `daniel/3.1-alternativas-anexo-d`, integrada en `main` el 21-09-2026, más 
 - `f550ffa` 20-09-2026 — Anexo D completo: criterios D.1 (I3 seis dimensiones, X2 retiro/archivo, desempate paso 5), registro D.2-D.6 con 32 candidatos y D.7
 - `cf50cd5` 20-09-2026 — 3.1 Alternativas adicionales: texto y tabla; D.1 fuentes de descubrimiento; ref a anexos por letra
 - `45e07f6` 21-09-2026 — referencias.bib: reparar entradas rotas por el merge (wen2023, ribeiro2026skyler), texto suelto y claves duplicadas
-- *(este commit)* 21-09-2026 — anexo-ia: estándar del grupo, carpetas por integrante y Anexo A en main.tex
+- `79e138e` 21-09-2026 — anexo-ia: estándar del grupo, carpetas por integrante y Anexo A en main.tex
+- `b812809`, `ed5e9ab` 21-09-2026 — merges de las ramas 5.0 y 3.2-Cloud-Fastly-Deno en main
+- `34d2bf3` 21-09-2026 — referencias cruzadas rotas y 13 entradas bib duplicadas unificadas
+- *(este commit)* 21-09-2026 — borradores IA marcados de resumen, introducción y conclusiones (a reescribir por el autor/grupo); índice del cuestionario propuesto; anchos de tablas
 
 Los commits de la rama llevan la coautoría declarada (`Co-Authored-By: Claude …`) y el enlace a la sesión en el mensaje, de modo que cada cambio remite a la conversación que lo produjo.
 

@@ -177,7 +177,17 @@
 \addcontentsline{toc}{section}{Resumen ejecutivo}
 \section*{Resumen ejecutivo}
 
-% TODO (Daniel)
+%% [BORRADOR IA — Daniel reescribe con sus palabras antes de la entrega.]
+%% Las cifras vienen de las secciones citadas; al reescribir, volver a
+%% cotejarlas con 4.1, 4.2 y 4.3 por si cambian.
+
+Este informe compara cuatro modelos de ejecución en la nube, funciones como servicio, contenedores sin servidor, cómputo sin servidor en el borde e instancias siempre encendidas, en las tres dimensiones que fija la ficha del tema TI-05: costo, latencia y complejidad operacional. La pregunta que responde es para qué tipo de carga conviene cada modelo y qué implica esa elección para la propuesta técnica del grupo en la licitación del terminal portuario TERABYTE.
+
+El desarrollo (sección~\ref{sec:modelos} a~\ref{sec:limites_dependencias}) muestra que los cuatro modelos se diferencian menos por lo que ejecutan que por cómo aíslan, cómo cobran y qué límites imponen: el mecanismo de aislamiento fija el arranque en frío, la unidad de cobro decide si el tiempo ocioso se paga, y los topes de tiempo, memoria y estado determinan qué aplicaciones deben rediseñarse. El cuadro comparativo (sección~\ref{sec:cuadro}) reúne doce plataformas con precio de lista fechado y límites publicados, sin puntuar la complejidad operacional porque la literatura no ofrece una métrica que lo respalde; a las plataformas de la ficha se suman diez alternativas seleccionadas con criterios explícitos entre treinta y tres candidatos (sección~\ref{sec:alternativas} y Anexo~\ref{anexo:busqueda}).
+
+Las mediciones propias (sección~\ref{sec:poc}) cuantifican el arranque en frío desde un cliente en Chile: la penalización mediana fue de 395~ms en AWS Lambda, 720~ms en Google Cloud Run y 1~ms en Cloudflare Workers, orden que sigue al mecanismo de aislamiento. El modelo de costos (sección~\ref{sec:costos}) sitúa el volumen de equilibrio entre AWS Lambda y un par de instancias reservadas en 24,0 millones de solicitudes mensuales en el escenario base, con un rango que va de 5,3 millones a nunca cruzar según memoria, duración y tipo de reserva. Aplicado al caso (sección~\ref{sec:caso}), el tráfico del terminal queda muy por debajo de ese cruce, pero la exigencia de respuesta bajo un segundo en la cabina de grúa y de 72~horas de autonomía sin enlace descarta un núcleo dependiente de invocaciones remotas.
+
+La recomendación es reservar el modelo sin servidor para las cargas intermitentes, orientadas a eventos y tolerantes al arranque en frío, como el portal público y las notificaciones, y mantener el núcleo operacional sobre capacidad siempre encendida y contenedores gestionados, auditando en la etapa de diseño los caminos de facturación que crecen con el tráfico (sección~\ref{sec:riesgos}).
 
 \clearpage
 
@@ -201,13 +211,19 @@
 \addcontentsline{toc}{section}{Introducción y contexto}
 \section*{Introducción y contexto}
 
-% TODO (Daniel): cuerpo de la introducción.
-% TODO (Daniel): definir aquí, la primera vez que aparezcan, los términos
-% "ficha" (ficha del tema TI-05 en \parencite{moya2026indicaciones}) y
-% "lista"/"categoría" (cada una de sus cinco categorías de tecnologías),
-% porque 3.1 y el Anexo D los usan.
+%% [BORRADOR IA — Daniel reescribe con sus palabras antes de la entrega.]
+%% El último párrafo (identificación del aporte) está en la lista del
+%% punto 6.1: el texto final debe ser del autor; este borrador solo ordena
+%% qué enumerar. Declarar en Anexo A lo que corresponda.
 
-% TODO (Daniel): párrafo de identificación del aporte (va aquí, al cierre).
+Una aplicación en la nube puede ejecutarse sobre capacidad reservada, que se paga encendida esté o no en uso, o sobre plataformas sin servidor que asignan, escalan y facturan recursos por cada solicitud. La segunda opción promete pagar solo lo que se consume y delegar la operación al proveedor, pero introduce un retardo al crear cada entorno nuevo, límites de tiempo, memoria y estado que no existen en una máquina propia, y una dependencia de las interfaces de cada proveedor. Decidir entre ambas exige comparar, con datos verificables, cuánto cuesta cada modelo según el volumen de tráfico, cuánta latencia agrega y cuánto trabajo de operación queda del lado del equipo.
+
+Este informe realiza esa comparación para cuatro modelos de ejecución: funciones como servicio, contenedores sin servidor, cómputo sin servidor en el borde de la red e instancias siempre encendidas, este último como línea base. El marco lo da la \emph{ficha} del tema TI-05 del documento de indicaciones del curso \parencite{moya2026indicaciones}, que fija las tres dimensiones de comparación (costo, latencia y complejidad operacional) y nombra las plataformas de partida en cinco \emph{listas} o categorías de tecnologías: funciones, contenedores, borde, plataformas de código abierto y datos sin servidor. En adelante, «ficha» y «lista» se usan con ese sentido. El caso de aplicación es la propuesta técnica del grupo para la licitación del sistema operativo del terminal portuario TERABYTE, cuyo tráfico transaccional, exigencias de latencia en la cabina de grúa y autonomía sin enlace ponen a prueba los cuatro modelos a la vez.
+
+El documento se organiza así. La sección~\ref{sec:marco} define los términos mínimos. La sección~\ref{sec:modelos} y las que siguen analizan los mecanismos de aislamiento, el arranque en frío, la facturación por consumo y el punto de equilibrio, el diseño orientado a eventos, WebAssembly como entorno de borde y los límites y la dependencia del proveedor. La sección~\ref{sec:alternativas} amplía el conjunto de plataformas y la sección~\ref{sec:cuadro} las compara en un cuadro con precios fechados y límites publicados. La sección~\ref{sec:poc} mide el arranque en frío en tres plataformas, la sección~\ref{sec:costos} construye el modelo de costos y su volumen de equilibrio y la sección~\ref{sec:caso} aplica los resultados al caso. La sección~\ref{sec:riesgos} reúne tendencias, riesgos y evidencia en contra, y el informe cierra con una recomendación.
+
+%% Párrafo de identificación del aporte (punto 4 de las Indicaciones).
+De la ficha TI-05 provienen el tema, las tres dimensiones de comparación, las plataformas de partida y los tres entregables mínimos: el cuadro comparativo, la prueba de concepto y el modelo de costos. Es aporte del grupo lo que va más allá de ese encargo: las diez alternativas adicionales seleccionadas con criterios explícitos y trazables (sección~\ref{sec:alternativas}, Anexo~\ref{anexo:busqueda}); las mediciones propias de arranque en frío en tres plataformas desde un cliente en Chile, con código y datos adjuntos (sección~\ref{sec:poc}, Anexo~\ref{anexo:poc}); la decisión de no puntuar la complejidad operacional y su justificación bibliográfica (sección~\ref{sec:cuadro}); el análisis de sensibilidad del volumen de equilibrio (sección~\ref{sec:costos}, Anexo~\ref{anexo:costos}); la aplicación al caso TERABYTE con sus cotas de latencia y autonomía (sección~\ref{sec:caso}); la evidencia contradictoria recogida en la sección~\ref{sec:riesgos}; y la recomendación final, con la que el grupo se compromete.
 
 \clearpage
 
@@ -329,6 +345,7 @@ Ningún mecanismo aventaja a los demás en todos los frentes a la vez, ya que se
 %% "las mediciones del grupo (sección 4.1) ..." -> \ref{sec:poc}.
 %% ---------------------------------------------------------------------------
 \subsection{Arranque en frío: causas, medición y mitigaciones}
+\label{sec:coldstart}
 \label{subsec:arranque_en_frio}
 
 El escalado a cero libera los entornos inactivos; según mediciones de 2021, AWS desaloja la mitad de sus contenedores cada 380~s~\cite{copik2021sebs}. Sin instancias disponibles, la plataforma debe reservar recursos, crear el entorno aislado (ver~2.1), cargar runtime y dependencias y ejecutar la inicialización~\cite{golec2025coldstart}: esa latencia es el arranque en frío; reutilizar una instancia preparada es un arranque en caliente. Crece con dependencias grandes y runtimes pesados como la JVM o .NET, frente a Python o Node.js~\cite{golec2025coldstart}, y aparece también al escalar de $N$ a $N+1$ instancias en ráfagas~\cite{giannini2022cpuboost}.
@@ -361,6 +378,7 @@ El punto de equilibrio es la carga desde la cual pagar por consumo cuesta más q
 %% de datos serverless -> pasar a Claudio y Daniel (3.1).
 %% ---------------------------------------------------------------------------
 \subsection{Diseño orientado a eventos}
+\label{sec:eventos}
 
 Una arquitectura orientada a eventos construye sistemas débilmente acoplados que
 colaboran emitiendo y respondiendo a eventos en lugar de invocarse entre sí
@@ -517,7 +535,8 @@ El análisis comparativo se estructura en doce plataformas representativas que c
 \label{tab:cuadro-3-2a}
 
 {\scriptsize
-\begin{longtable}{|p{2.4cm}|p{1.8cm}|p{2.8cm}|p{3.2cm}|p{3.6cm}|p{1.2cm}|p{2.4cm}|p{3.0cm}|p{3.2cm}|}
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{|p{2.1cm}|p{1.6cm}|p{2.4cm}|p{2.8cm}|p{3.1cm}|p{1.0cm}|p{2.1cm}|p{2.6cm}|p{2.8cm}|}
 \hline
 \textbf{Plataforma} & \textbf{Modelo} & \textbf{Aislamiento} & \textbf{Unidad de cobro y piso} & \textbf{Precio de lista fechado} & \textbf{Cold start} & \textbf{Mitigación (factura)} & \textbf{Qué opera el equipo} & \textbf{Estado / Límite rediseño} \\ \hline
 \endhead
@@ -554,6 +573,7 @@ Azion Edge Functions (3.1) & Borde & Isolates V8 sobre Edge Runtime distribuido 
 \label{tab:cuadro-3-2b}
 
 {\scriptsize
+\setlength{\tabcolsep}{3pt}
 \begin{longtable}{|p{2.6cm}|p{3.2cm}|p{3.4cm}|p{3.2cm}|p{3.6cm}|p{4.2cm}|}
 \hline
 \textbf{Plataforma} & \textbf{Tiempo máx. ejecución} & \textbf{Memoria / vCPU} & \textbf{Payload in / out} & \textbf{Concurrencia / escalado} & \textbf{Egreso de datos (precio fechado)} \\ \hline
@@ -590,7 +610,8 @@ Azion Edge Functions (3.1) & CPU: \textbf{2~s máx por req}. Reloj wall-clock: m
 \label{tab:cuadro-3-2c}
 
 {\scriptsize
-\begin{longtable}{|p{2.6cm}|p{2.8cm}|p{2.6cm}|p{1.6cm}|p{4.2cm}|p{3.2cm}|}
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{|p{2.3cm}|p{2.4cm}|p{2.2cm}|p{1.3cm}|p{3.6cm}|p{2.7cm}|}
 \hline
 \textbf{Proyecto} & \textbf{Modelo} & \textbf{Aislamiento} & \textbf{Escala 0 default} & \textbf{Defaults configurables (timeout / concurrencia)} & \textbf{Acreditación CNCF u otra} \\ \hline
 \endhead
@@ -818,6 +839,7 @@ El terminal ya opera 972.000 movimientos de grúa y 1.290.000 de patio al año, 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Tendencias y riesgos}
+\label{sec:riesgos}
 
 Las plataformas sin servidor absorben cargas que antes exigían instancias siempre encendidas. El kernel distribuido que Huawei opera en producción sobre casi 20 regiones, sostiene microservicios, analítica y servicio de modelos, y migrarlos desde Spring a esa plataforma redujo el costo de recursos en un 90\,\%~\parencite{chen2024yuanrong}. La contraevidencia es doble. El sistema es propietario y reproduce el encierro de la sección~\ref{sec:limites_dependencias}, y el catálogo de Taibi, Kehoe y Poccia, sobre 91 entrevistas, ubica el problema dominante en la composición, la depuración y las pruebas, no en la falta de un entorno unificado~\parencite{taibi2022badpractices}. En el borde tropieza con el arranque en frío. Las funciones de inferencia cargan bibliotecas de aprendizaje automático, quedan limitadas por entrada y salida y pagan latencias de inicio largas, y esa es la penalización que cuantifica la sección~\ref{sec:poc}~\parencite{xie2021}.
 
@@ -843,7 +865,19 @@ El borde suma un riesgo que la ficha no lista. Sus nodos carecen de la protecci�
 \addcontentsline{toc}{section}{Conclusiones y recomendación}
 \section*{Conclusiones y recomendación}
 
-% TODO (grupo)
+%% [BORRADOR IA — sección del punto 6.1: el grupo la reescribe con sus
+%% palabras y todos deben poder defenderla oralmente. Este texto solo ordena
+%% los hechos ya establecidos en el informe; no agrega ninguno.]
+
+Las funciones como servicio convienen a cargas cortas, intermitentes y sin estado local, activadas por eventos o solicitudes, cuyo volumen queda por debajo del punto de equilibrio: en el escenario base, 24,0 millones de solicitudes mensuales frente a dos instancias reservadas, y tan bajo como 5,3 millones con funciones de más memoria y duración (sección~\ref{sec:costos}). Pagan esa conveniencia con un arranque en frío de cientos de milisegundos (395~ms medianos en Lambda, sección~\ref{sec:poc}) y con topes de tiempo y carga útil que obligan a externalizar el estado (sección~\ref{sec:limites_dependencias}).
+
+Los contenedores sin servidor extienden ese modelo a procesos más largos y a imágenes propias, con techos de una hora y decenas de gigabytes, pero no siempre escalan a cero y su arranque en frío fue el mayor medido (720~ms en Cloud Run). Son la opción para cargas variables que ya están empaquetadas como contenedor y toleran ese retardo o lo mitigan con instancias mínimas, acercándose entonces al costo de la capacidad reservada (sección~\ref{sec:coldstart}).
+
+El cómputo sin servidor en el borde elimina el arranque en frío perceptible (1~ms en Workers) y acerca la respuesta al cliente, a cambio de aceptar solo JavaScript y WebAssembly, memoria de 128~MB por aislado y APIs propias que limitan la portabilidad (secciones~\ref{sec:modelos} y~\ref{sec:wasm_wasi}). Conviene a lógica ligera en la ruta del usuario: portales, notificaciones, validación y enrutamiento.
+
+Las instancias siempre encendidas siguen siendo la opción para el núcleo de un sistema con tráfico sostenido, estado voluminoso, latencia acotada bajo el segundo y continuidad sin enlace, porque no imponen límites de plataforma y su costo es previsible; su precio es la operación completa del lado del equipo (sección~\ref{sec:cuadro}) y la capacidad ociosa cuando la carga cae.
+
+Para la licitación de TERABYTE el grupo recomienda una arquitectura mixta: el núcleo operacional, el \emph{gate} y el patio sobre cómputo local siempre encendido y contenedores gestionados, y el borde sin servidor para el portal público y las notificaciones (sección~\ref{sec:caso}). El volumen del terminal no justifica por sí solo esa decisión, la justifican la cota de latencia de la cabina de grúa, la autonomía de 72~horas y el riesgo de una factura que crezca con cada movimiento (sección~\ref{sec:riesgos}). Antes del primer despliegue, cada camino de facturación por evento debe auditarse y acotarse en la etapa de diseño.
 
 \clearpage
 
@@ -882,6 +916,7 @@ El borde suma un riesgo que la ficha no lista. Sus nodos carecen de la protecci�
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \anexo{A}{Anexo A: Declaración de uso de inteligencia artificial}
+\label{anexo:ia}
 
 \textoPortadaFont{\textbf{Empresa:} N.\textordmasculine\ 6 --- TERABYTE\\}
 \textoPortadaFont{\textbf{Tema:} TI-05 --- Serverless y computación en el borde (edge computing)\\}
@@ -897,13 +932,13 @@ El borde suma un riesgo que la ficha no lista. Sus nodos carecen de la protecci�
 %% "Evidencia": ruta en anexo-ia/ del repositorio (ver parte B).
 
 {\scriptsize
-\begin{longtable}{|p{4.6cm}|p{2.6cm}|p{1.0cm}|p{3.2cm}|p{3.5cm}|}
+\begin{longtable}{|p{4.2cm}|p{2.4cm}|p{0.9cm}|p{3.0cm}|p{3.4cm}|}
     \hline
     \textbf{Sección del informe} & \textbf{Integrante} & \textbf{Nivel} & \textbf{Herramienta y versión} & \textbf{Evidencia (niveles 2 y 3)} \\
     \hline
     \endhead
-    Resumen ejecutivo & Daniel Miranda & \textit{[TODO]} & & \\ \hline
-    Introducción y contexto (incl. párrafo de aporte) & Daniel Miranda & \textit{[TODO]} & & \\ \hline
+    Resumen ejecutivo & Daniel Miranda & \textit{[TODO: 1 si se reescribe; 2 si se conserva el borrador]} & Claude (Cowork, \texttt{claude-fable-5-1}) & \texttt{anexo-ia/daniel-miranda/} \\ \hline
+    Introducción y contexto (incl. párrafo de aporte) & Daniel Miranda & \textit{[TODO: párrafo de aporte 0 o 1 obligatorio (6.1)]} & Claude (Cowork, \texttt{claude-fable-5-1}) & \texttt{anexo-ia/daniel-miranda/} \\ \hline
     1. Marco teórico y conceptual & Matías Reyes & & & \\ \hline
     2.1 Modelos de ejecución y aislamiento & Matías Reyes & & & \\ \hline
     2.2 Arranque en frío & Isidora Cisternas & & & \\ \hline
@@ -921,7 +956,7 @@ El borde suma un riesgo que la ficha no lista. Sus nodos carecen de la protecci�
     4.2 Modelo de costos y Anexo C & Francisca Abarca & & & \\ \hline
     4.3 Aplicación al caso TERABYTE & Fabián Solís & & & \\ \hline
     5. Tendencias y riesgos & Fabián Solís & & & \\ \hline
-    Conclusiones y recomendación & todo el grupo & & & \\ \hline
+    Conclusiones y recomendación & todo el grupo & \textit{[TODO: 0 o 1 obligatorio (6.1); existe un borrador IA que se reescribe]} & Claude (Cowork, \texttt{claude-fable-5-1}) & \texttt{anexo-ia/daniel-miranda/} \\ \hline
     Anexo D: búsqueda documentada de alternativas & Daniel Miranda & 2 & Claude (Cowork, \texttt{claude-fable-5-1}); Grok (xAI) & \texttt{anexo-ia/daniel-miranda/} \\ \hline
     Plantilla LaTeX, bibliografía y organización del repositorio & Daniel Miranda & 2 & Claude (Cowork, \texttt{claude-fable-5-1}) & \texttt{anexo-ia/daniel-miranda/} \\ \hline
     Bibliografía (verificación de cada referencia) & cada autor de sección & & & \\ \hline
@@ -937,7 +972,7 @@ Los prompts efectivamente empleados se entregan íntegros y en orden cronológic
 %% TODO (Daniel, al cierre): reemplazar esta tabla por el índice final de
 %% anexo-ia/README.md, una fila por integrante.
 {\scriptsize
-\begin{longtable}{|p{0.6cm}|p{3.0cm}|p{4.6cm}|p{1.4cm}|p{5.2cm}|}
+\begin{longtable}{|p{0.6cm}|p{2.8cm}|p{4.3cm}|p{1.3cm}|p{4.9cm}|}
     \hline
     \textbf{\#} & \textbf{Integrante} & \textbf{Sección(es)} & \textbf{Nivel} & \textbf{Archivos en \texttt{anexo-ia/}} \\
     \hline
@@ -969,7 +1004,7 @@ La evidencia se entrega por tres medios, todos accesibles al profesor:
 Declaro que la información consignada en este formulario es completa y veraz, que las secciones señaladas en el punto 6.1 de las indicaciones son de autoría humana y que puedo explicar oralmente cualquier parte del trabajo entregado.
 
 {\scriptsize
-\begin{longtable}{|p{0.8cm}|p{6.2cm}|p{3.8cm}|p{4.1cm}|}
+\begin{longtable}{|p{0.8cm}|p{5.9cm}|p{3.6cm}|p{4.0cm}|}
     \hline
     \textbf{N.\textordmasculine} & \textbf{Nombre completo} & \textbf{Nivel máximo declarado} & \textbf{Firma} \\
     \hline
@@ -997,6 +1032,7 @@ Declaro que la información consignada en este formulario es completa y veraz, q
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \anexo{B}{Anexo B: Metodología y mediciones de la prueba de concepto}
+\label{anexo:poc}
 
 \subsection*{B.1 Configuración de las plataformas}
 
@@ -1087,8 +1123,7 @@ Figura~\ref{fig:poc} son exactamente los siguientes:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \anexo{C}{Anexo C: Planilla del modelo de costos}
-
-\label{anx:planilla}
+\label{anexo:costos}\label{anx:planilla}
 
 \subsection*{Parámetros y fórmulas}
 
@@ -1322,7 +1357,7 @@ print("% no cruza si f/cap >=", c(lam * SEC / 1e6 / (P_H["1a"] * H), 4))
 
 En este anexo, \emph{ficha} designa la ficha del tema TI-05 del documento de indicaciones del curso \parencite{moya2026indicaciones}, y \emph{lista} cada una de las cinco categorías de tecnologías que esa ficha pide comparar (funciones como servicio, contenedores sin servidor, cómputo en el borde, código abierto y datos sin servidor). \emph{Plataformas de la ficha} son las que la ficha nombra explícitamente en cada lista.
 
-Los candidatos se identificaron en tres fuentes de descubrimiento: las tablas de plataformas de los surveys citados en el informe, la categoría \emph{serverless} del CNCF Landscape \parencite{cncf2026landscapeserverless} y la documentación oficial de los proveedores. La búsqueda se realizó entre el \textit{[TODO Daniel: fecha de inicio]} y el 20 de septiembre de 2026, fecha en que se verificaron todas las fuentes citadas en las tablas D.2 a D.6.
+Los candidatos se identificaron en tres fuentes de descubrimiento: las tablas de plataformas de los surveys citados en el informe, la categoría \emph{serverless} del CNCF Landscape \parencite{cncf2026landscapeserverless} y la documentación oficial de los proveedores. La búsqueda se realizó entre el 19 y el 20 de septiembre de 2026, fecha en que se verificaron todas las fuentes citadas en las tablas D.2 a D.6.
 
 
 Los criterios de la Tabla~\ref{tab:criterios-busqueda} se fijaron antes de evaluar el primer candidato y se aplicaron a todos por igual, en este orden: primero las puertas de descarte X1 y X2 a toda la pool de candidatos; luego los criterios de inclusión I1, I2 e I3 a los que quedaron; la regla de desempate se usó solo en las listas donde quedaron más de dos candidatos. Cuando quedaron exactamente dos, no se aplicó. Cuando quedó uno o ninguno, se declara en D.7.
@@ -1364,7 +1399,7 @@ Los criterios de la Tabla~\ref{tab:criterios-busqueda} se fijaron antes de evalu
 Ya nombra la ficha: AWS Lambda, Google Cloud Run functions, Azure Functions. Cada dato de precio se etiquetó como precio de lista, solo por cotización o no publicado; cada límite como publicado o no publicado; la URL y la fecha de consulta de cada fuente están en la entrada bibliográfica citada.
 
 {\scriptsize
-\begin{longtable}{|p{2.6cm}|p{2.5cm}|p{1.4cm}|p{2.4cm}|p{5.3cm}|}
+\begin{longtable}{|p{2.5cm}|p{2.4cm}|p{1.4cm}|p{2.3cm}|p{5.2cm}|}
     \hline
     \textbf{Candidato} & \textbf{Fuente oficial} & \textbf{Fecha} & \textbf{Resultado (criterio)} & \textbf{Motivo / qué aporta} \\
     \hline
@@ -1383,7 +1418,7 @@ Ya nombra la ficha: AWS Lambda, Google Cloud Run functions, Azure Functions. Cad
 Ya nombra la ficha: Google Cloud Run, AWS Fargate, Azure Container Apps, AWS App Runner. Cada dato de precio se etiquetó como precio de lista, solo por cotización o no publicado; cada límite como publicado o no publicado; la URL y la fecha de consulta de cada fuente están en la entrada bibliográfica citada.
 
 {\scriptsize
-\begin{longtable}{|p{2.6cm}|p{2.5cm}|p{1.4cm}|p{2.4cm}|p{5.3cm}|}
+\begin{longtable}{|p{2.5cm}|p{2.4cm}|p{1.4cm}|p{2.3cm}|p{5.2cm}|}
     \hline
     \textbf{Candidato} & \textbf{Fuente oficial} & \textbf{Fecha} & \textbf{Resultado (criterio)} & \textbf{Motivo / qué aporta} \\
     \hline
@@ -1402,7 +1437,7 @@ Ya nombra la ficha: Google Cloud Run, AWS Fargate, Azure Container Apps, AWS App
 Ya nombra la ficha: Cloudflare Workers (Durable Objects, D1, R2), Fastly Compute, AWS Lambda@Edge y CloudFront Functions, Vercel, Netlify, Deno Deploy. Cada dato de precio se etiquetó como precio de lista, solo por cotización o no publicado; cada límite como publicado o no publicado; la URL y la fecha de consulta de cada fuente están en la entrada bibliográfica citada.
 
 {\scriptsize
-\begin{longtable}{|p{2.6cm}|p{2.5cm}|p{1.4cm}|p{2.4cm}|p{5.3cm}|}
+\begin{longtable}{|p{2.5cm}|p{2.4cm}|p{1.4cm}|p{2.3cm}|p{5.2cm}|}
     \hline
     \textbf{Candidato} & \textbf{Fuente oficial} & \textbf{Fecha} & \textbf{Resultado (criterio)} & \textbf{Motivo / qué aporta} \\
     \hline
@@ -1421,7 +1456,7 @@ Ya nombra la ficha: Cloudflare Workers (Durable Objects, D1, R2), Fastly Compute
 Ya nombra la ficha: Knative, OpenFaaS, KEDA, Fermyon Spin / SpinKube, wasmCloud, Wasmtime. Cada dato de precio se etiquetó como precio de lista, solo por cotización o no publicado; cada límite como publicado o no publicado; la URL y la fecha de consulta de cada fuente están en la entrada bibliográfica citada. En esta lista, \emph{vigente} (I1) equivale a proyecto mantenido con documentación oficial, y el precio es no aplicable por tratarse de software autoalojado.
 
 {\scriptsize
-\begin{longtable}{|p{2.6cm}|p{2.5cm}|p{1.4cm}|p{2.4cm}|p{5.3cm}|}
+\begin{longtable}{|p{2.5cm}|p{2.4cm}|p{1.4cm}|p{2.3cm}|p{5.2cm}|}
     \hline
     \textbf{Candidato} & \textbf{Fuente oficial} & \textbf{Fecha} & \textbf{Resultado (criterio)} & \textbf{Motivo / qué aporta} \\
     \hline
@@ -1432,7 +1467,7 @@ Ya nombra la ficha: Knative, OpenFaaS, KEDA, Fermyon Spin / SpinKube, wasmCloud,
     Fn Project & \parencite{fnproject2026product,oracle2026fnoverview} & 2026-09-20 & Entra (I1, I2, I3) & I3-6: motor de funciones de código abierto sobre el que la documentación oficial de Oracle declara construido OCI Functions, lo que permite comparar el mismo motor autoalojado y gestionado (par con D.2, declarado en 3.1). Proyecto mantenido. Sin precio: autoalojado. \\ \hline
     WasmEdge & \parencite{wasmedge2026site,cncf2026wasmedge} & 2026-09-20 & Descartado (I3) & Cumple I1 e I2 (runtime WebAssembly, proyecto sandbox del CNCF). La ficha ya incluye Wasmtime, otro runtime WebAssembly; ser un segundo runtime no es ninguna de las seis dimensiones. \\ \hline
     Direktiv & \parencite{direktiv2026docs,direktiv2026github,direktiv2026landscape} & 2026-09-20 & Descartado (I2) & Motor de flujos dirigidos por eventos sobre Kubernetes y Knative, definidos en YAML. Su propósito principal es la orquestación de flujos, no una plataforma, runtime o autoescalador de cargas serverless; no cumple I2. \\ \hline
-    Kubeless & \parencite{vmware2026kubeless} & 2026-09-20 & Descartado (X2) & Repositorio archivado por VMware; el README declara que ya no se mantiene. Fecha de archivo: \textit{[TODO Daniel: banner de GitHub]}. \\ \hline
+    Kubeless & \parencite{vmware2026kubeless} & 2026-09-20 & Descartado (X2) & Repositorio archivado por VMware; el README declara que ya no se mantiene. Archivado en GitHub el 15-12-2021 según el aviso del repositorio. \\ \hline
     riff & \parencite{projectriff2021final} & 2026-09-20 & Descartado (X2) & Proyecto declarado terminado el 13 de marzo de 2021. \\ \hline
     IronFunctions & \parencite{oracle2019fnproject} & 2026-09-20 & Descartado (X1) & Bifurcado en Fn Project por el mismo equipo al incorporarse a Oracle; Fn es su continuación y se evalúa en su lugar. \\ \hline
 \end{longtable}
@@ -1443,7 +1478,7 @@ Ya nombra la ficha: Knative, OpenFaaS, KEDA, Fermyon Spin / SpinKube, wasmCloud,
 Ya nombra la ficha: Aurora Serverless, DynamoDB bajo demanda, Neon, Cloudflare D1. Cada dato de precio se etiquetó como precio de lista, solo por cotización o no publicado; cada límite como publicado o no publicado; la URL y la fecha de consulta de cada fuente están en la entrada bibliográfica citada.
 
 {\scriptsize
-\begin{longtable}{|p{2.6cm}|p{2.5cm}|p{1.4cm}|p{2.4cm}|p{5.3cm}|}
+\begin{longtable}{|p{2.5cm}|p{2.4cm}|p{1.4cm}|p{2.3cm}|p{5.2cm}|}
     \hline
     \textbf{Candidato} & \textbf{Fuente oficial} & \textbf{Fecha} & \textbf{Resultado (criterio)} & \textbf{Motivo / qué aporta} \\
     \hline
@@ -1483,27 +1518,29 @@ Tras aplicar los criterios de la Tabla~\ref{tab:criterios-busqueda}, las cinco l
 
 \subsection*{Índice temático}
 
-% TODO (Daniel): completar cantidades y rangos; deben sumar 30 y cumplir
-% 12 / 12 / 6 por dificultad.
+% Distribución PROPUESTA (borrador IA, formato): reparte 12/12/6 = 30 de
+% modo que cada sección tenga al menos dos preguntas y las avanzadas caigan
+% en las secciones con cifras propias o razonamiento (2.1–2.3, 3, 4.2, 4.3).
+% Ajustar cuando existan las preguntas; los rangos se recalculan a mano.
 
 {\scriptsize
-\begin{longtable}{|p{6.5cm}|p{1.6cm}|p{1.6cm}|p{1.6cm}|p{1.6cm}|p{1.6cm}|}
+\begin{longtable}{|p{5.6cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|}
     \hline
     \textbf{Sección del informe} & \textbf{Básicas} & \textbf{Interm.} & \textbf{Avanz.} & \textbf{Total} & \textbf{Rango} \\
     \hline
     \endhead
-    1. Marco teórico y conceptual & & & & & \\ \hline
-    2.1 Modelos de ejecución y aislamiento & & & & & \\ \hline
-    2.2 Arranque en frío & & & & & \\ \hline
-    2.3 Facturación por consumo y punto de equilibrio & & & & & \\ \hline
-    2.4 Diseño orientado a eventos & & & & & \\ \hline
-    2.5 WebAssembly y WASI & & & & & \\ \hline
-    2.6 Límites técnicos y dependencia del proveedor & & & & & \\ \hline
-    3. Análisis comparativo & & & & & \\ \hline
-    4.1 Prueba de concepto & & & & & \\ \hline
-    4.2 Modelo de costos & & & & & \\ \hline
-    4.3 Caso TERABYTE & & & & & \\ \hline
-    5. Tendencias y riesgos & & & & & \\ \hline
+    1. Marco teórico y conceptual & 2 & 1 & 0 & 3 & 1--3 \\ \hline
+    2.1 Modelos de ejecución y aislamiento & 1 & 1 & 1 & 3 & 4--6 \\ \hline
+    2.2 Arranque en frío & 1 & 1 & 1 & 3 & 7--9 \\ \hline
+    2.3 Facturación por consumo y punto de equilibrio & 1 & 1 & 1 & 3 & 10--12 \\ \hline
+    2.4 Diseño orientado a eventos & 1 & 1 & 0 & 2 & 13--14 \\ \hline
+    2.5 WebAssembly y WASI & 1 & 1 & 0 & 2 & 15--16 \\ \hline
+    2.6 Límites técnicos y dependencia del proveedor & 1 & 1 & 0 & 2 & 17--18 \\ \hline
+    3. Análisis comparativo (3.1 y 3.2) & 1 & 1 & 1 & 3 & 19--21 \\ \hline
+    4.1 Prueba de concepto & 1 & 1 & 0 & 2 & 22--23 \\ \hline
+    4.2 Modelo de costos & 1 & 1 & 1 & 3 & 24--26 \\ \hline
+    4.3 Caso TERABYTE & 0 & 1 & 1 & 2 & 27--28 \\ \hline
+    5. Tendencias y riesgos & 1 & 1 & 0 & 2 & 29--30 \\ \hline
     \textbf{Total} & \textbf{12} & \textbf{12} & \textbf{6} & \textbf{30} & 1--30 \\ \hline
 \end{longtable}
 }
