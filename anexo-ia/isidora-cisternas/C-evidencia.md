@@ -6,10 +6,10 @@
 
 ## 1. Conversaciones
 
-| # | Herramienta | Fechas | Enlace | Exportación en `registros/` | Secciones |
-|---|---|---|---|---|---|
-| 1 | Claude (chat web claude.ai, en proyecto), Claude Opus 5 (`claude-opus-5`) | 19-09 a 21-09-2026 | https://claude.ai/share/e5d8ed7b-e5fc-414d-9d3d-319346092fbb | *[pendiente: exportación de datos de la cuenta, Configuración → Privacidad → Exportar datos]* | 2.2; registro del Anexo A |
-| 2 | Claude (chat web claude.ai, en proyecto), Claude Opus 5 (`claude-opus-5`) | 20-09 a 21-09-2026 | https://claude.ai/share/f462e3cd-7dad-4570-b408-93ceccf9802f | *[pendiente: exportación de datos de la cuenta, Configuración → Privacidad → Exportar datos]* | 2.5; ampliación del registro del Anexo A |
+| # | Herramienta | Fechas | Enlace | Secciones |
+|---|---|---|---|---|
+| 1 | Claude (chat web claude.ai, en proyecto), Claude Opus 5 (`claude-opus-5`) | 19-09 a 21-09-2026 | https://claude.ai/share/e5d8ed7b-e5fc-414d-9d3d-319346092fbb | 2.2; registro del Anexo A |
+| 2 | Claude (chat web claude.ai, en proyecto), Claude Opus 5 (`claude-opus-5`) | 20-09 a 21-09-2026 | https://claude.ai/share/f462e3cd-7dad-4570-b408-93ceccf9802f | 2.5; ampliación del registro del Anexo A |
 
 ## 2. Historial de versiones
 

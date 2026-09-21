@@ -15,7 +15,7 @@ Los prompts se transcriben literalmente, en orden cronológico, agrupados por se
 
 ## Sesión 1 — <herramienta>, <fechas>
 
-**Enlace o exportación:** <URL de la sesión o `registros/<archivo>`>.
+**Enlace:** <URL de la sesión o de "compartir", o "sin enlace estable" con una frase de por qué>.
 **Secciones a las que sirvió:** <…>.
 
 1. <prompt literal>

@@ -17,7 +17,7 @@ Los prompts se transcriben literalmente, tal como fueron escritos (incluidos err
 
 ## Sesión 1 — Claude (Cowork), 19-09 a 21-09-2026
 
-**Enlace:** https://claude.ai/code/session_01GKFjHaKv49e4JnUS1XjGv4 (registro literal completo, accesible con la cuenta del usuario; exportación en `registros/` cuando llegue la exportación de datos de la cuenta).
+**Enlace:** https://claude.ai/code/session_01GKFjHaKv49e4JnUS1XjGv4 (registro literal completo, accesible con la cuenta del autor).
 **Secciones a las que sirvió:** 3.1, Anexo D, plantilla LaTeX, organización del repositorio, estructura de 3.2, estándar del Anexo A.
 
 1. Hola, este es un Trabajo de un ramo universitario de administración de proyectos informáticos. Debemos investigar sobre "Serverless y Edge computing" siguiendo unas pautas. Creé un repo con el objetivo de ello, informe-investigación dentro puedes encontrar "indicaciones" con las indicaciones oficiales del profe para el trabajo en md "informe" plantilla overleaf q creamos para empezar a rellenar Y TERABYTE_TI-05_guia-del-equipo .md q es una organización del equipo q creamos para empezar. Yo soy daniel miranda claramente y la empresa/grupo es "TERABYTE" nuestro tema es TI-05 serverless y edge computing. Lee y analiza todo y me cuentas, tenemos fuentes q estamos leyendo y analizando en un drive aparte q aun no tienes acceso, pero para empezar lee lo q tienes a mano
@@ -100,4 +100,8 @@ Operadas por el autor. Los prompts de sistema que se le entregaron están versio
 63. borra propuesta-seleccion-anexo-D-2026-09-20.md de trabajo. Además acorta las pags para q sean de 10 a 15 pags de contenido sin contar portada, anexos, indice, referencias. Hazlo nomás q tengo poco time
 
 **Nota sobre el prompt 63 (formato, nivel 2).** Para reducir la extensión del cuerpo la IA hizo solo cambios de estructura y formato, sin alterar el texto de las secciones ajenas ni de las protegidas por el 6.1: eliminó saltos de página entre secciones; movió las Tablas 3.2a, 3.2b y 3.2c completas (con sus notas) y la tabla de criterios a un nuevo Anexo E, dejando en 3.2 una tabla de síntesis derivada de ellas (sin datos nuevos); movió la Tabla 3.1 al Anexo D y la tabla de supuestos de 4.2 al Anexo C, con referencias cruzadas; redujo el tamaño de las dos figuras; acortó el resumen, la introducción y las conclusiones (borradores propios) y el tercer párrafo de 2.1 (repetía el segundo; se conservaron todas las citas). Cuerpo: de 25 a 16 páginas.
+
+64. Hay q borrar lo de "registros" en evidencia de anexo ia, nadie exportará su data ni nada asi [...] no tiene q quedar nada del estilo. ya estan en main los anexos ia de todos, traelos acá, consolida con el cambio q hiciste de reducir el tamaño del content, y llena todo el anexo a y todo lo q falte listo para enviar
+
+**Nota sobre el prompt 64 (formato, nivel 2).** La IA consolidó el Anexo A (partes A a D) a partir de las cabeceras de declaración que cada integrante escribió en su `B-prompts.md`, sin cambiar los niveles que cada uno declaró; completó las tablas de commits de Valentina y Francisca desde `git log`; retiró del estándar la exigencia de exportar conversaciones (quedan los enlaces cuando existen y los prompts literales versionados); y renombró la carpeta de Valentina al estándar. Los niveles de las secciones de Fabián Solís (2.6, 4.3, 5) se consignaron como 0 porque no hay declaración de uso; él confirma con su firma.
 

@@ -14,11 +14,14 @@
 
 ## 2. Historial de versiones (commits)
 
-*Pendiente: completar con `git log --oneline` de la rama o los archivos que tocaste en el repositorio del grupo, una vez estén subidas las secciones 2.4, la apertura de criterios de 3.2, el Anexo D (fila "Datos sin servidor") y este mismo Anexo A. Este documento se generó en un entorno sin acceso al repositorio del grupo, así que esta tabla no pudo completarse aquí — hazlo tú desde tu máquina antes de la entrega, igual que hicieron Daniel y Vicente en sus propios `C-evidencia.md`.*
+Commits de la integrante en el repositorio del grupo (`git log --author=Valentina`), integrados en `main` el 21-09-2026:
 
 | Commit | Fecha | Descripción |
 |---|---|---|
-| `<pendiente>` | | |
+| `b944e27` | 21-09-2026 | Nueva rama. Se añade punto 2.4 |
+| `dc1d458` | 21-09-2026 | Se cambia el primer párrafo (criterios de 3.2) y se agregan referencias al .bib |
+| `f1efb97` | 21-09-2026 | anexo IA |
+| `698198e` | 21-09-2026 | anexo IA valentina final |
 
 ## 3. Qué produjo la IA y qué produjo la persona
 

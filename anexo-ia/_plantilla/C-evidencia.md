@@ -6,9 +6,9 @@
 
 ## 1. Conversaciones
 
-| # | Herramienta | Fechas | Enlace | Exportación en `registros/` | Secciones |
-|---|---|---|---|---|---|
-| 1 | <…> | <…> | <URL o "sin enlace estable"> | `registros/<archivo>` | <…> |
+| # | Herramienta | Fechas | Enlace | Secciones |
+|---|---|---|---|---|
+| 1 | <…> | <…> | <URL o "sin enlace estable"> | <…> |
 
 ## 2. Historial de versiones (commits del integrante)
 

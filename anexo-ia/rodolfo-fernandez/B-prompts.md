@@ -45,7 +45,7 @@ Los prompts se presentan en orden cronológico, agrupados por sesión. Hay dos t
 
 ## Sesión 3 — Claude Sonnet 5 (chat, Proyecto "FEP Investigación Rodo"), 19-09 a 21-09-2026
 
-**Enlace o exportación:** *[POR COMPLETAR]*. Registro: `claude/Consolidado_Uso_IA_Seccion_3.2.md` (§2 y §3), escrito por esta misma sesión.
+**Enlace:** sin enlace conservado. Registro: `claude/Consolidado_Uso_IA_Seccion_3.2.md` (§2 y §3), escrito por esta misma sesión.
 **Tipo de registro:** transcripción hecha por la IA.
 **Secciones a las que sirvió:** apoyo de estudio para 3.2 (validación cruzada con papers, segunda opinión sobre la revisión de Claudio); registro para este anexo.
 
@@ -58,7 +58,7 @@ Los prompts se presentan en orden cronológico, agrupados por sesión. Hay dos t
 
 ## Sesión 5 — Claude Sonnet 5 (chat, Proyecto "FEP Investigación Rodo"), 20-09-2026, 01:43 a ~04:20
 
-**Enlace o exportación:** *[POR COMPLETAR]*. Registro indirecto: `claude/estado_criterios_3.2_2026-09-20.md`.
+**Enlace:** sin enlace conservado. Registro indirecto: `claude/estado_criterios_3.2_2026-09-20.md`.
 **Secciones a las que sirvió:** 3.2 (datos de las filas AWS y Azure en la estructura 3.2a/3.2b; resolución de discrepancias).
 
 *Reconstrucción, sin texto literal.* Pedidos del autor, en orden:
