@@ -761,7 +761,150 @@ Declaro que la información consignada en este formulario es completa y veraz, q
 
 \anexo{C}{Anexo C: Planilla del modelo de costos}
 
-% TODO (Francisca)
+\label{anx:planilla}
+
+\subsection*{Parámetros y fórmulas}
+
+Precios de lista de las Tablas~3.2a y~3.2b (us-east-1, USD, consultados el 20-09-2026). Un mes equivale a 730 horas (2.628.000 s). Con $N$ solicitudes al mes:
+\[
+C_L(N)=\max(0,N-10^{6})\,c_r+\max(0,\,N\,m\,d-4\cdot10^{5})\,c_g,\qquad
+C_F(N)=k(N)\cdot p\cdot730,
+\]
+\[
+q_{\mathrm{pico}}=f\cdot\frac{N}{2{,}628\cdot10^{6}},\qquad
+k(N)=\max\!\left(2,\left\lceil \frac{q_{\mathrm{pico}}}{q}\right\rceil\right).
+\]
+El volumen de equilibrio es el menor $N$ tal que $C_L(N)\ge C_F(N)$. Mientras $k=2$ y $N>4\cdot10^{6}$ (sobre la capa gratuita), la solución cerrada es
+$N^{*}=\frac{2\,p\cdot730+10^{6}\,c_r+4\cdot10^{5}\,c_g}{c_r+m\,d\,c_g}\approx24{,}0\cdot10^{6}$.
+
+{\small
+\begin{center}
+\begin{tabular}{|l|p{6.0cm}|p{2.6cm}|}
+\hline
+\textbf{Símbolo} & \textbf{Descripción y valor} & \textbf{Origen} \\ \hline
+$c_r$ & Precio por solicitud de Lambda: 0,20 USD por millón & Tabla 3.2a \\ \hline
+$c_g$ & Cómputo de Lambda x86: 0,0000166667 USD/GB-s & Tabla 3.2a \\ \hline
+--- & Capa gratuita mensual: 1 M de solicitudes y 400.000 GB-s & Tabla 3.2a \\ \hline
+$p$ & \texttt{t3.medium} reservada 1 año: 0,026 USD/h (18,98 USD/mes); 3 años: 0,017 USD/h; bajo demanda: 0,0416 USD/h & Tabla 3.2a \\ \hline
+$m,\ d$ & Memoria 0,5 GB y duración 0,2 s por solicitud & Supuesto \\ \hline
+$f$ & Pico igual a 4 veces el promedio & Supuesto \\ \hline
+$q$ & 20 solicitudes/s sostenidas por instancia (20 ms de CPU por solicitud) & Supuesto \\ \hline
+\end{tabular}
+\end{center}
+}
+\clearpage
+
+\subsection*{Costo mensual por volumen (escenario base)}
+
+{\small\setlength{\tabcolsep}{3.5pt}
+\begin{center}
+\begin{tabular}{|r|r|r|r|r|r|l|}
+\hline
+\textbf{$N$ (M/mes)} & \textbf{Prom. (req/s)} & \textbf{Pico (req/s)} & \textbf{$k$} & \textbf{Lambda (USD)} & \textbf{Flota (USD)} & \textbf{Menor costo} \\ \hline
+2 & 0,76 & 3,04 & 2 & 0,20 & 37,96 & Lambda \\ \hline
+5 & 1,90 & 7,61 & 2 & 2,47 & 37,96 & Lambda \\ \hline
+10 & 3,81 & 15,22 & 2 & 11,80 & 37,96 & Lambda \\ \hline
+15 & 5,71 & 22,83 & 2 & 21,13 & 37,96 & Lambda \\ \hline
+20 & 7,61 & 30,44 & 2 & 30,47 & 37,96 & Lambda \\ \hline
+24 & 9,13 & 36,53 & 2 & 37,93 & 37,96 & Lambda \\ \hline
+26 & 9,89 & 39,57 & 2 & 41,67 & 37,96 & Flota fija \\ \hline
+28 & 10,65 & 42,62 & 3 & 45,40 & 56,94 & Lambda \\ \hline
+30 & 11,42 & 45,66 & 3 & 49,13 & 56,94 & Lambda \\ \hline
+35 & 13,32 & 53,27 & 3 & 58,47 & 56,94 & Flota fija \\ \hline
+40 & 15,22 & 60,88 & 4 & 67,80 & 75,92 & Lambda \\ \hline
+45 & 17,12 & 68,49 & 4 & 77,13 & 75,92 & Flota fija \\ \hline
+50 & 19,03 & 76,10 & 4 & 86,47 & 75,92 & Flota fija \\ \hline
+55 & 20,93 & 83,71 & 5 & 95,80 & 94,90 & Flota fija \\ \hline
+60 & 22,83 & 91,32 & 5 & 105,13 & 94,90 & Flota fija \\ \hline
+\end{tabular}
+\end{center}
+}
+
+Lambda es más barata hasta 24,0~M. Luego la ventaja cambia de signo con cada instancia adicional: Lambda vuelve a ser más barata entre 26,3 y 34,2~M, entre 39,4 y 44,4~M y entre 52,6 y 54,5~M, y desde 54,5~M la flota fija es siempre más barata. El costo marginal de la flota a plena carga (18,98 USD por 13,14~M de solicitudes) es 1,44 USD por millón, menor que el de Lambda (1,87 USD por millón).
+
+\subsection*{Sensibilidad: memoria y duración}
+
+Primer cruce, en millones de solicitudes al mes; ``no cruza'' indica que Lambda cuesta menos por solicitud que la flota a plena carga.
+
+{\small
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Memoria (MB) $\backslash$ duración} & \textbf{100 ms} & \textbf{200 ms} & \textbf{500 ms} \\ \hline
+256 & no cruza & no cruza & 19,6 \\ \hline
+512 & no cruza & 24,0 & 10,3 \\ \hline
+1024 & 24,0 & 12,7 & 5,3 \\ \hline
+\end{tabular}
+\end{center}
+}
+
+\subsection*{Variantes del comparador y de los supuestos}
+
+{\small
+\begin{center}
+\begin{tabular}{|p{4.6cm}|p{5.4cm}|c|}
+\hline
+\textbf{Variante} & \textbf{Cambio} & \textbf{Cruce (M/mes)} \\ \hline
+Base: 2 instancias, reserva 1 año & 0,026 USD/h por instancia & 24,0 \\ \hline
+Reserva 3 años & 0,017 USD/h por instancia & 17,0 \\ \hline
+Bajo demanda & 0,0416 USD/h por instancia & no cruza \\ \hline
+Sin capa gratuita de Lambda & Base, sin descuentos de Lambda & 20,3 \\ \hline
+Pico = 2 veces el promedio & Capacidad mensual por instancia se duplica & 24,0 \\ \hline
+Pico = 8 veces el promedio & Capacidad mensual por instancia se reduce a la mitad & no cruza \\ \hline
+Capacidad de 10 solicitudes/s por instancia & 40 ms de CPU por solicitud & no cruza \\ \hline
+Base + NAT (solo cargo por hora) & 0,045 USD/h = 32,85 USD/mes & 102,6 \\ \hline
+2 tareas Fargate 0,5 vCPU y 1 GB & Capacidad 25 solicitudes/s por tarea & 23,0 \\ \hline
+\end{tabular}
+\end{center}
+}
+\newpage
+
+\subsection*{Código auxiliar (Python)}
+
+El siguiente script reproduce el escenario base, la sensibilidad y las variantes de comparador (el cálculo de las tablas de esta planilla usa las mismas funciones).
+
+{\scriptsize
+\begin{verbatim}
+# Modelo de costos 4.2 - precios de las Tablas 3.2a y 3.2b (us-east-1, USD, 20-09-2026)
+import math
+
+H = 730; SEC = H * 3600                          # horas y segundos por mes
+C_REQ, C_GBS = 0.20 / 1e6, 0.0000166667          # Lambda x86: USD/solicitud y USD/GB-s
+FREE_REQ, FREE_GBS = 1_000_000, 400_000          # capa gratuita mensual de Lambda
+P_H = {"1a": 0.026, "3a": 0.017, "od": 0.0416}   # EC2 t3.medium, USD por hora
+P_FARGATE = 0.5 * 0.04048 + 1.0 * 0.004445       # tarea Fargate 0,5 vCPU y 1 GB, USD/h
+
+def lambda_cost(N, m=0.5, d=0.2):
+    """Costo mensual de Lambda: N solicitudes, m GB, d segundos."""
+    return (max(0, N - FREE_REQ) * C_REQ
+            + max(0, N * m * d - FREE_GBS) * C_GBS)
+
+def fleet_cost(N, p=P_H["1a"], cap=20, f=4, kmin=2, extra=0.0):
+    """Costo mensual de la flota fija: k unidades a p USD/h, cap req/s c/u."""
+    k = max(kmin, math.ceil(f * (N / SEC) / cap - 1e-12))
+    return k * p * H + extra
+
+def first_cross(fleet, m=0.5, d=0.2, hi=400e6, step=1e4):
+    """Menor N con costo Lambda >= costo flota; None si nunca ocurre."""
+    N = step
+    while N <= hi:
+        if lambda_cost(N, m, d) >= fleet(N):
+            return N
+        N += step
+    return None
+
+if __name__ == "__main__":
+    base = lambda N: fleet_cost(N)
+    print("Equilibrio base (M/mes):", first_cross(base) / 1e6)
+    for m in (0.25, 0.5, 1.0):                   # sensibilidad memoria x duracion
+        print(m, [first_cross(base, m, d) for d in (0.1, 0.2, 0.5)])
+    print("Reserva 3 anos:", first_cross(lambda N: fleet_cost(N, p=P_H["3a"])))
+    print("Bajo demanda:", first_cross(lambda N: fleet_cost(N, p=P_H["od"])))
+    print("Con NAT:", first_cross(lambda N: fleet_cost(N, extra=0.045 * H)))
+    print("Fargate:", first_cross(lambda N: fleet_cost(N, p=P_FARGATE, cap=25)))
+\end{verbatim}
+}
+
 
 \clearpage
 
