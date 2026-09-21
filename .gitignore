@@ -17,3 +17,9 @@ informe/_minted*/
 
 # Papers descargados para lectura (derechos de ACM): no se redistribuyen
 /*.pdf
+informe/*.bcf
+informe/*.run.xml
+informe/*.pdf
+informe/pdfa.xmpi
+informe/*.minted
+informe/*-SAVE-ERROR
