@@ -5,16 +5,7 @@
 % region (punto 5 de las indicaciones del curso). Ver el bloque
 % ">>> BIBLIOGRAFIA" de main.tex para el detalle completo.
 
-% ============================================================================
-% Referencias del Marco teórico (sección 1)
-% Todas abiertas y verificadas en su fuente el 19-09-2026.
-% Académicas (revisadas por pares): schleiersmith2021, golec2024, leitner2019,
-%   shi2016, aslanpour2021, ustiugov2021, eismann2021, ghorbian2026,
-%   adzic2017  -> 9
-% Técnicas / estándares: cncf2018, awsfargate, awsfargatepricing, gcprun
-% ============================================================================
-
-% ---------- Especificaciones y estándares ----------
+%
 
 @report{cncf2018,
   author      = {{CNCF Serverless Working Group}},
@@ -26,7 +17,7 @@
   urldate     = {2026-09-19}
 }
 
-% ---------- Artículos revisados por pares ----------
+% --------------
 
 @article{schleiersmith2021,
   author  = {Schleier-Smith, Johann and Sreekanti, Vikram and Khandelwal, Anurag and Carreira, Joao and Yadwadkar, Neeraja J. and Popa, Raluca Ada and Gonzalez, Joseph E. and Stoica, Ion and Patterson, David A.},
@@ -123,7 +114,7 @@
   doi       = {10.1145/3106237.3117767}
 }
 
-% ---------- Documentación oficial de proveedores ----------
+%----------
 
 @online{awsfargate,
   author  = {{Amazon Web Services}},
@@ -132,8 +123,6 @@
   urldate = {2026-09-19}
 }
 
-% Se cita solo el mecanismo de cobro (por segundo, desde la descarga de la
-% imagen hasta el término de la tarea); ningún precio sale de esta fuente.
 @online{awsfargatepricing,
   author  = {{Amazon Web Services}},
   title   = {{AWS} {Fargate} Pricing},
@@ -158,3 +147,69 @@
   urldate   = {2026-09-20}
 }
 
+@article{liu2023demystifying,
+  author  = {Liu, Fangming and Niu, Yipei},
+  title   = {Demystifying the Cost of Serverless Computing: Towards a Win-Win Deal},
+  journal = {IEEE Transactions on Parallel and Distributed Systems},
+  year    = {2023},
+  doi     = {10.1109/TPDS.2023.3330849}
+}
+
+@article{li2022serverless,
+  author    = {Li, Zijun and Guo, Linsong and Cheng, Jiagan and Chen, Quan and He, Bingsheng and Guo, Minyi},
+  title     = {The Serverless Computing Survey: A Technical Primer for Design Architecture},
+  journal   = {ACM Computing Surveys},
+  volume    = {54},
+  number    = {10s},
+  articleno = {220},
+  month     = sep,
+  year      = {2022},
+  doi       = {10.1145/3508360}
+}
+ 
+@article{aslanpour2024faashouse,
+  author  = {Aslanpour, Mohammad Sadegh and Toosi, Adel N. and Cheema, Muhammad Aamir and Chhetri, Mohan Baruwal},
+  title   = {Faashouse: Sustainable Serverless Edge Computing Through Energy-Aware Resource Scheduling},
+  journal = {IEEE Transactions on Services Computing},
+  year    = {2024},
+  doi     = {10.1109/TSC.2024.3354296}
+}
+
+ 
+@article{castro2019rise,
+  author  = {Castro, Paul and Ishakian, Vatche and Muthusamy, Vinod and Slominski, Aleksander},
+  title   = {The Rise of Serverless Computing},
+  journal = {Communications of the ACM},
+  year    = {2019},
+  doi     = {10.1145/3368454}
+}
+
+
+@online{planetscale_postgres_pricing,
+  title        = {PlanetScale Postgres pricing},
+  organization = {PlanetScale, Inc.},
+  url          = {https://planetscale.com/docs/postgres/pricing},
+  urldate      = {2026-09-21}
+}
+
+@online{planetscale_hobby_deprecation,
+  title        = {Hobby tier deprecation --- FAQ},
+  organization = {PlanetScale, Inc.},
+  year         = {2024},
+  url          = {https://planetscale.com/docs/plans/hobby-plan-deprecation-faq},
+  urldate      = {2026-09-21}
+}
+
+@online{turso_what_is_turso,
+  title        = {What is Turso? --- The SQLite-compatible database for the agentic era},
+  organization = {Turso, Inc.},
+  url          = {https://turso.tech/},
+  urldate      = {2026-09-21}
+}
+ 
+@online{turso_database_pricing,
+  title        = {Turso Database Pricing},
+  organization = {Turso, Inc.},
+  url          = {https://turso.tech/pricing},
+  urldate      = {2026-09-21}
+}
