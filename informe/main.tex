@@ -878,55 +878,74 @@ El terminal ya opera 972.000 movimientos de grúa y 1.290.000 de patio al año, 
 
 \bigskip
 
-\subsection*{A. Declaración por sección}
+\subsection*{A. Declaración por sección e integrante}
 
-%% Niveles (punto 6.2): 0 sin IA · 1 corrección y estilo · 2 colaboración e
-%% ideación (esquemas, resumen de bibliografía, código de apoyo) · 3
-%% generación sustancial. Niveles 2 y 3 exigen prompts (B) y evidencia (C).
-%% Secciones donde NO se admite IA (punto 6.1): análisis comparativo y
-%% criterios (3.2), conclusiones, párrafo de aporte, discusión crítica (5),
-%% cuestionario, y cualquier cifra, cita o referencia.
-%% La tabla incluye el cuestionario y la presentación porque el formulario
-%% oficial los lista como filas.
+%% Una fila por par sección–integrante (el punto 6.3 exige nivel POR SECCIÓN y
+%% declaración INDIVIDUAL). Cada integrante agrega sus filas; nadie declara por
+%% otro. En las secciones del punto 6.1 el nivel solo puede ser 0 o 1.
+%% "Evidencia": ruta en anexo-ia/ del repositorio (ver parte B).
 
 {\scriptsize
-\begin{longtable}{|p{5.6cm}|p{1.6cm}|p{3.4cm}|p{4.3cm}|}
+\begin{longtable}{|p{4.6cm}|p{2.6cm}|p{1.0cm}|p{3.2cm}|p{3.5cm}|}
     \hline
-    \textbf{Sección del informe} & \textbf{Nivel (0-3)} & \textbf{Herramienta y versión} & \textbf{Evidencia adjunta (niveles 2 y 3)} \\
+    \textbf{Sección del informe} & \textbf{Integrante} & \textbf{Nivel} & \textbf{Herramienta y versión} & \textbf{Evidencia (niveles 2 y 3)} \\
     \hline
     \endhead
-    Resumen ejecutivo & & & \\ \hline
-    Introducción y contexto (incl. párrafo de aporte) & & & \\ \hline
-    1. Marco teórico y conceptual & & & \\ \hline
-    2.1 Modelos de ejecución y aislamiento & & & \\ \hline
-    2.2 Arranque en frío & & & \\ \hline
-    2.3 Facturación por consumo y punto de equilibrio & & & \\ \hline
-    2.4 Diseño orientado a eventos & & & \\ \hline
-    2.5 WebAssembly y WASI & & & \\ \hline
-    2.6 Límites técnicos y dependencia del proveedor & & & \\ \hline
-    3.1 Alternativas adicionales & & & \\ \hline
-    3.2 Criterios y cuadro comparativo & & & \\ \hline
-    4.1 Prueba de concepto (incl. código auxiliar) & & & \\ \hline
-    4.2 Modelo de costos & & & \\ \hline
-    4.3 Aplicación al caso TERABYTE & & & \\ \hline
-    5. Tendencias y riesgos & & & \\ \hline
-    Conclusiones y recomendación & & & \\ \hline
-    Bibliografía & & & \\ \hline
-    Cuestionario de 30 preguntas & & & \\ \hline
-    Presentación (diapositivas) & & & \\ \hline
+    Resumen ejecutivo & Daniel Miranda & \textit{[TODO]} & & \\ \hline
+    Introducción y contexto (incl. párrafo de aporte) & Daniel Miranda & \textit{[TODO]} & & \\ \hline
+    1. Marco teórico y conceptual & Matías Reyes & & & \\ \hline
+    2.1 Modelos de ejecución y aislamiento & Matías Reyes & & & \\ \hline
+    2.2 Arranque en frío & Isidora Cisternas & & & \\ \hline
+    2.3 Facturación por consumo y punto de equilibrio & Francisca Abarca & & & \\ \hline
+    2.4 Diseño orientado a eventos & Valentina Guzmán & & & \\ \hline
+    2.5 WebAssembly y WASI & Isidora Cisternas & & & \\ \hline
+    2.6 Límites técnicos y dependencia del proveedor & Fabián Solís & & & \\ \hline
+    3.1 Alternativas adicionales & Daniel Miranda & 2 & Claude (Cowork, \texttt{claude-fable-5-1}); Grok (xAI) & \texttt{anexo-ia/daniel-miranda/} \\ \hline
+    3.1 Alternativas adicionales & Claudio Toledo & & & \\ \hline
+    3.2 Criterios (párrafo de criterios) & Valentina Guzmán & & & \\ \hline
+    3.2 Cuadro comparativo y análisis & Rodolfo Fernández & & & \\ \hline
+    3.2 Cuadro comparativo (filas Google, borde y código abierto) & Claudio Toledo & & & \\ \hline
+    3.2 Cuadro comparativo (estructura de tablas y planilla) & Daniel Miranda & 2 & Claude (Cowork, \texttt{claude-fable-5-1}) & \texttt{anexo-ia/daniel-miranda/} \\ \hline
+    4.1 Prueba de concepto (incl. código auxiliar) y Anexo B & Vicente Arratia & 2 & Claude (Cowork, \texttt{claude-fable-5-1}); Claude Code 2.1.278 (\texttt{claude-opus-5}, \texttt{claude-fable-5-1}) & \texttt{anexo-ia/vicente-arratia/} \\ \hline
+    4.2 Modelo de costos y Anexo C & Francisca Abarca & & & \\ \hline
+    4.3 Aplicación al caso TERABYTE & Fabián Solís & & & \\ \hline
+    5. Tendencias y riesgos & Fabián Solís & & & \\ \hline
+    Conclusiones y recomendación & todo el grupo & & & \\ \hline
+    Anexo D: búsqueda documentada de alternativas & Daniel Miranda & 2 & Claude (Cowork, \texttt{claude-fable-5-1}); Grok (xAI) & \texttt{anexo-ia/daniel-miranda/} \\ \hline
+    Plantilla LaTeX, bibliografía y organización del repositorio & Daniel Miranda & 2 & Claude (Cowork, \texttt{claude-fable-5-1}) & \texttt{anexo-ia/daniel-miranda/} \\ \hline
+    Bibliografía (verificación de cada referencia) & cada autor de sección & & & \\ \hline
+    Cuestionario de 30 preguntas & cada autor de sección & & & \\ \hline
+    Presentación (diapositivas) & todo el grupo & & & \\ \hline
 \end{longtable}
 }
 
 \subsection*{B. Prompts utilizados (niveles 2 y 3)}
 
-% TODO: transcribir los prompts efectivamente empleados, indicando sección.
-% Si son muchos, hoja adjunta identificada o enlace.
+Los prompts efectivamente empleados se entregan íntegros y en orden cronológico en la carpeta \texttt{anexo-ia/} del repositorio del grupo, con una subcarpeta por integrante: \texttt{anexo-ia/<nombre-apellido>/B-prompts.md} contiene los prompts literales agrupados por sesión y herramienta, con el nivel declarado por sección; \texttt{C-evidencia.md} indexa las conversaciones y los commits del integrante; \texttt{registros/} guarda las exportaciones de cada conversación. El archivo \texttt{anexo-ia/README.md} describe el estándar aplicado y contiene el índice general, que se reproduce a continuación.
+
+%% TODO (Daniel, al cierre): reemplazar esta tabla por el índice final de
+%% anexo-ia/README.md, una fila por integrante.
+{\scriptsize
+\begin{longtable}{|p{0.6cm}|p{3.0cm}|p{4.6cm}|p{1.4cm}|p{5.2cm}|}
+    \hline
+    \textbf{\#} & \textbf{Integrante} & \textbf{Sección(es)} & \textbf{Nivel} & \textbf{Archivos en \texttt{anexo-ia/}} \\
+    \hline
+    \endhead
+    1 & Vicente Arratia & 4.1 Prueba de concepto; Anexo B & 2 & \texttt{vicente-arratia/B-prompts.md}, \texttt{C-evidencia.md}, \texttt{registros/}, \texttt{cowork/} \\ \hline
+    2 & Daniel Miranda & 3.1; Anexo D; plantilla y repositorio; Anexo A & 2 (búsqueda, verificación, formato); 1 (estilo en 3.1) & \texttt{daniel-miranda/B-prompts.md}, \texttt{C-evidencia.md}, \texttt{registros/} \\ \hline
+    3 & \textit{[TODO: cada integrante agrega su fila]} & & & \\ \hline
+\end{longtable}
+}
 
 \subsection*{C. Evidencia trazable adjunta (niveles 2 y 3)}
 
-% TODO: enlaces a conversaciones exportadas + historial de versiones
-% (Overleaf History / Google Docs / repositorio con commits). Verificar que
-% el profesor pueda acceder.
+La evidencia se entrega por tres medios, todos accesibles al profesor:
+
+\begin{enumerate}[nosep]
+    \item \textbf{Repositorio del grupo con su historial de commits:} \url{https://github.com/DmV554/informe-investigacion} (público). La versión entregada corresponde al commit \texttt{\textit{[TODO: hash del commit de entrega]}} de la rama \texttt{main}. El historial por rama muestra quién escribió cada sección y cuándo; los commits realizados con apoyo de IA llevan la coautoría declarada en el mensaje.
+    \item \textbf{Conversaciones:} enlaces a las sesiones cuando la herramienta los provee y exportaciones completas en \texttt{anexo-ia/<integrante>/registros/}, indexadas en cada \texttt{C-evidencia.md}.
+    \item \textbf{Historial del documento:} el propio historial de \texttt{informe/main.tex} y \texttt{informe/referencias.bib} en el repositorio (\texttt{git log -{}-follow}), que permite reconstruir cómo se escribió cada bloque.
+\end{enumerate}
 
 \subsection*{D. Firma de los integrantes}
 

@@ -12,7 +12,7 @@ Anexo B del informe) a partir de los registros exportados:
 
 Entradas (misma carpeta salvo que se indique otra):
   cowork/registro-conversacion-cowork.md   registro de la sesión Cowork
-  <exp>/prompts.md, <exp>/conversacion.md  salida de exportar_conversacion.py
+  <exp>/prompts.md, <exp>/conversacion.md  salida de ../_herramientas/exportar_conversacion.py
                                            por cada sesión de Claude Code
 
 Uso
