@@ -62,8 +62,31 @@ function extraerRequestId(headerTrace) {
   return trace || null;
 }
 
+// Instrumentación de la PoC, no comportamiento de producción: GET /salir hace
+// que el proceso termine después de responder. Cloud Run ve morir la instancia
+// y, con min-instances 0, no arranca otra hasta que llega una petición: la
+// siguiente petición medida es la que crea el contenedor y paga el arranque.
+// Es la única forma de dejar el servicio en cero instancias a voluntad, porque
+// crear una revisión nueva hace que la plataforma arranque un contenedor para
+// validarla (health check) antes de enrutar tráfico. Solo activo si el
+// despliegue define POC_SALIR_HABILITADO=1.
+const SALIR_HABILITADO = process.env.POC_SALIR_HABILITADO === "1";
+
 const server = createServer((req, res) => {
   const now = Date.now();
+  if (req.url.split("?")[0] === "/salir") {
+    if (!SALIR_HABILITADO) {
+      res.writeHead(404, { "content-type": "application/json" });
+      res.end(JSON.stringify({ error: "salir deshabilitado" }));
+      return;
+    }
+    res.writeHead(200, { "content-type": "application/json", "cache-control": "no-store" });
+    res.end(JSON.stringify({ platform: "google-cloud-run", instance_id: INSTANCE_ID, saliendo: true }), () => {
+      server.close();
+      setImmediate(() => process.exit(0));
+    });
+    return;
+  }
   const memoriaCfg = Number(process.env.POC_MEMORY_MB);
   const body = {
     platform: "google-cloud-run",

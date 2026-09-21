@@ -42,6 +42,12 @@ nada**: solo se deja identificar. La latencia se mide desde el cliente.
     la inicializó. Hallazgo de la prueba piloto: Cloudflare reparte peticiones consecutivas
     entre varios isolates vivos del mismo PoP (GIG), por lo que el `instance_id` cambia sin
     que haya arranque; el cambio de id se registra como informativo `(otro_isolate)`.
+  - *Cloud Run* (`uptime_menor_que_latencia`): frío solo si el contenedor nació dentro de la
+    ventana de la petición, es decir, si su edad al responder (`uptime_ms`) es menor que la
+    latencia medida de extremo a extremo. El cambio de `instance_id` no basta: la plataforma
+    puede tener un contenedor ya despierto (health check de una revisión nueva, o reemplazo
+    proactivo tras `/salir`) que responde sin que el cliente pague ningún arranque. Esas
+    primeras peticiones no frías se separan en el estado `forzado-sin-frio` del resumen.
   - El criterio aplicado queda en la columna `criterio_frio` de cada fila.
 - **Cliente:** cada petición abre conexión TCP/TLS nueva (sin keep-alive), como un cliente
   que llega por primera vez; la latencia caliente incluye por tanto el handshake
@@ -53,16 +59,24 @@ nada**: solo se deja identificar. La latencia se mide desde el cliente.
   calientes → repetir, sin esperas. Solo plataformas con `forzable: true`; el mecanismo
   exacto queda en `metodo_forzado` (`config.json`): `lambda_env` (cambia `POC_MARKER` de
   la Lambda), `wrangler_deploy` (`npx wrangler deploy` publica una versión nueva del
-  Worker) o `gcloud_env` (`gcloud run services update --update-env-vars` cambia
-  `POC_MARKER` del servicio de Cloud Run). Los tres son despliegues/actualizaciones
-  reales, no un mecanismo artificial. Las plataformas no forzables (ninguna hoy) se
-  medirían igual en cada ciclo para tener muestras en la misma ventana.
-  **Cloud Run:** la plataforma no enruta tráfico a la revisión nueva hasta validarla
-  con un health check, así que ese arranque ya ocurrió antes de la primera petición
-  del cliente; el forzado no expone un frío visible desde el cliente en Cloud Run
-  (0/8 ciclos en la verificación del 20-09-2026). Se clasifica con el criterio
-  `uptime_menor_que_latencia` y el arranque real se mide del lado del proveedor con
-  `scripts/startup_cloudrun.py` (ver `functions/cloudrun/README.md`).
+  Worker) o `cloudrun_salir` (Cloud Run, ver más abajo). Los mecanismos difieren
+  porque cada plataforma tiene un ciclo de vida distinto; lo que se busca en las
+  tres es el mismo estado de partida: ninguna instancia caliente cuando llega la
+  petición medida (escalado a cero).
+  **Cloud Run:** cambiar la configuración del servicio (`gcloud_env`, `gcloud run
+  services update --update-env-vars`) no sirve para eso, porque la plataforma no
+  enruta tráfico a la revisión nueva hasta validarla con un health check, y ese
+  health check ya arranca un contenedor; el forzado por revisión no expone un frío
+  visible desde el cliente (0/8 ciclos en la verificación del 20-09-2026). Por eso
+  se usa `cloudrun_salir` (`GET /salir` a la función): la función responde y termina
+  el proceso, y con `min-instances 0` la plataforma queda en cero instancias hasta
+  la próxima petición, que es la que paga el arranque (verificado el 21-09-2026:
+  3/3 ciclos fríos desde el cliente). `/salir` es instrumentación de la propia PoC,
+  no comportamiento de producción, y solo queda activa con la variable de entorno
+  `POC_SALIR_HABILITADO=1` del despliegue; se declara como limitación. Se clasifica
+  con el criterio `uptime_menor_que_latencia` y, como cruce, el arranque real se
+  mide también del lado del proveedor con `scripts/startup_cloudrun.py` (ver
+  `functions/cloudrun/README.md`).
 - **Validación con dato del proveedor:** `Init Duration` de la línea REPORT de CloudWatch
   (Lambda), cruzado por `RequestId`. Workers no expone dato de inicialización.
 - **Igualdad de condiciones:** misma lógica de función, JavaScript en ambas, memoria por
@@ -132,36 +146,44 @@ que no deban entrar al análisis se nombran sin el prefijo `mediciones_` (p. ej.
 
 ## Estado y decisiones (21-09-2026)
 
-- Medidas las tres plataformas en la misma ventana: `data/mediciones_20260921-0005_forzado.csv` (25 ciclos
-  forzados, 150 peticiones por plataforma, cliente en Chile, 00:05-00:24 hora local). Esa corrida es la fuente
-  del gráfico y de la tabla del informe. La del 19-09 (`mediciones_20260919-2148_forzado.csv`, solo Lambda y
-  Workers) queda como segunda ventana.
-- En el cuerpo del informe va **solo la corrida forzada** (un gráfico, una tabla), con el frío inducido por un
-  despliegue real en cada plataforma (`metodo_forzado`). Se reportan dos métricas: latencia total percibida desde
-  el cliente y penalización de arranque (p50 frío − p50 caliente por plataforma), que cancela la red.
-- Resultados (`results/resumen.csv`):
-  - **AWS Lambda**: frío p50 823 / p95 926 ms, caliente p50 444 / p95 503 ms (n=25/125), penalización **+379 ms**.
-    Los 25 fríos caen en la posición #0 de cada ciclo, como corresponde al forzado por variable de entorno.
-  - **Cloudflare Workers**: frío p50 572 / p95 597 ms, caliente p50 569 / p95 590 ms (n=88/62), penalización
-    **≈0 ms** (el arranque se detecta con `first_request` pero el cliente no lo percibe). Ojo con la ventana: el
-    19-09 el caliente fue 231 ms; el 21-09 el RTT hasta el borde de Cloudflare fue ~175 ms (TCP) contra ~70 ms
-    dos días antes, **con el mismo colo GIG**. Cambió la ruta del ISP, no el colo: la latencia "al borde"
-    depende de la ruta hasta el borde. Dentro de una misma ventana la comparación entre plataformas sí es válida.
-  - **Google Cloud Run** (256 MiB, gen1): caliente p50 203 / p95 361 ms (n=125). La primera petición tras cada
-    cambio de revisión (`post-despliegue`, n=24) da p50 214 / p95 366 ms: cae en un contenedor que la propia
-    plataforma ya arrancó para validar la revisión, así que **el forzado no expone el arranque en frío al
-    cliente**. Hubo 1 excepción (ciclo 15): 12.217 ms, petición encolada durante el cambio de revisión; Google
-    registra en esa misma revisión un arranque de contenedor de 11.568 ms (validación cruzada).
-    El arranque de contenedor medido por la plataforma (`scripts/startup_cloudrun.py`,
-    `run.googleapis.com/container/startup_latencies`, ventana de la corrida): n=35, media 2.068 ms
-    (1.788 ms sin el caso de 11,6 s), p50≈1.639 / p95≈2.903 ms (aproximados por buckets). Es otro instrumento
-    (arranque del contenedor visto por la plataforma, no latencia extremo a extremo): comparable con el
-    `Init Duration` de Lambda en CloudWatch (mediana 148 ms el 19-09) solo con esa salvedad.
+- Medidas las tres plataformas en la misma ventana: `data/mediciones_20260921-0041_forzado.csv` (25 ciclos
+  forzados, 150 peticiones por plataforma, cliente en Chile, 00:41-00:58 hora local, Cloud Run forzado con
+  `/salir`). Esa corrida es la fuente del gráfico y de la tabla del informe. Quedan como evidencia
+  complementaria: `mediciones_20260921-0005_forzado.csv` (misma noche, Cloud Run forzado por revisión: muestra
+  que ese método no expone el frío al cliente) y `mediciones_20260919-2148_forzado.csv` (19-09, solo Lambda y
+  Workers: segunda ventana de red).
+- En el cuerpo del informe va **solo la corrida forzada** (un gráfico, una tabla), con el frío inducido por el
+  evento del ciclo de vida propio de cada modelo (`metodo_forzado`): invalidación del entorno en Lambda,
+  publicación de versión en Workers, terminación del proceso en Cloud Run. En las tres, la petición medida
+  llega sin ninguna instancia caliente disponible. Se reportan dos métricas: latencia total percibida desde el
+  cliente y penalización de arranque (p50 frío − p50 caliente por plataforma), que cancela la red.
+- Resultados (`results/resumen.csv`, `results/resumen_latex.txt`):
+  - **AWS Lambda** (128 MB): frío p50 838 / p95 890 ms, caliente p50 442 / p95 507 ms (n=25/125), penalización
+    **+395 ms**. Los 25 fríos caen en la posición #0 de cada ciclo.
+  - **Cloudflare Workers** (128 MB): frío p50 569 / p95 591 ms, caliente p50 567 / p95 574 ms (n=107/43),
+    penalización **≈0 ms** (el arranque se detecta con `first_request` pero el cliente no lo percibe). Ventana:
+    el 19-09 el caliente fue 231 ms; el 21-09 el RTT hasta el borde de Cloudflare fue ~175 ms (TCP) contra
+    ~70 ms dos días antes, **con el mismo colo GIG**. Cambió la ruta del ISP, no el colo: la latencia "al
+    borde" depende de la ruta hasta el borde. Dentro de una misma ventana la comparación sí es válida.
+  - **Google Cloud Run** (256 MiB, gen1): frío p50 922 / p95 1.656 ms, caliente p50 203 / p95 358 ms
+    (n=24/125), penalización **+720 ms**. 24 de 25 ciclos dieron frío visible desde el cliente; en 1 la
+    plataforma ya había reemplazado el contenedor (`forzado-sin-frio`). El frío del cliente es disperso
+    (306-1.682 ms) mientras el arranque de contenedor que registra la propia plataforma es parejo
+    (`scripts/startup_cloudrun.py`, `container/startup_latencies`, ventana de la corrida: n=26, media 1.014 ms,
+    p50≈1.018 / p95≈1.119 ms). Lectura: tras la salida del proceso Cloud Run empieza a reemplazar el
+    contenedor por su cuenta; la petición paga la parte del arranque que falta cuando llega. Con espera 0 tras
+    `/salir` la petición cae en la instancia que muere (HTTP 503); por eso la espera es de 2 s. Forzar por
+    revisión nueva (`gcloud_env`, corrida de las 00:05) no expone el frío: 24/25 primeras peticiones llegaron a
+    un contenedor que la plataforma ya había arrancado para validar la revisión; el arranque de esas
+    revisiones medido por Google fue ~1,6-2,0 s (imagen nueva) frente a ~1,0 s al reponer la misma revisión.
   - Red: Google termina TCP/TLS en un punto de presencia en Chile (TCP 16 ms, TLS 26 ms) y reenvía por su red
     interna a us-east4; Lambda Function URL conecta directo a Virginia (TCP ~140 ms). La comparación de latencia
     total incluye la arquitectura de front-end de cada proveedor, no solo el modelo de ejecución.
   - Memoria: Cloud Run en 128 MiB no sostiene Node.js 24 (OOM, ver nota ¹ del registro de despliegue); Workers
     es fijo en 128 MB; Lambda queda en 128 MB. Diferencia declarada.
+  - Limitación: `/salir` es instrumentación de la PoC (activa solo con `POC_SALIR_HABILITADO=1`), no
+    comportamiento de producción; los tres mecanismos de forzado son distintos porque los tres ciclos de vida
+    lo son.
 
 ## Registro de despliegue (completar)
 

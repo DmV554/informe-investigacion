@@ -87,13 +87,14 @@ def main():
     for r in filas:
         if (r["plataforma"] == "google-cloud-run" and r["modo"] == "forzado"
                 and r["n_en_ciclo"] == "0" and r["es_frio"] != "True"):
-            # Primera petición del ciclo tras el cambio de revisión en Cloud
-            # Run: el health check de la plataforma ya despertó el contenedor
-            # antes de que esta petición saliera del cliente (ver criterio
-            # uptime_menor_que_latencia), así que no es una muestra caliente
-            # "limpia" ni tampoco frío percibido por el cliente. Se separa en
-            # su propio estado para no inflar ni contaminar "caliente".
-            estado = "post-despliegue"
+            # Primera petición del ciclo en Cloud Run que NO resultó fría: la
+            # plataforma ya tenía un contenedor despierto antes de que esta
+            # petición saliera del cliente (con gcloud_env, el health check de
+            # la revisión nueva; con cloudrun_salir, el reemplazo proactivo del
+            # contenedor caído; ver criterio uptime_menor_que_latencia). No es
+            # una muestra caliente "limpia" ni frío percibido por el cliente:
+            # se separa en su propio estado para no contaminar "caliente".
+            estado = "forzado-sin-frio"
         else:
             estado = "frio" if r["es_frio"] == "True" else "caliente"
         lat = float(r["latencia_ms"])
@@ -135,7 +136,7 @@ def main():
         fr, ca = grupos_todo.get((plat, "frio"), []), grupos_todo.get((plat, "caliente"), [])
         if ca and len(fr) < N_MIN_PERCENTIL:
             # Plataforma con muestras calientes pero sin frío visible desde el
-            # cliente bajo el protocolo forzado (ver estado "post-despliegue").
+            # cliente bajo el protocolo forzado (ver estado "forzado-sin-frio").
             print(f"  {NOMBRES.get(plat, plat):20s} sin frío visible desde el cliente "
                   f"(n={len(fr)} < {N_MIN_PERCENTIL})")
         elif fr and ca:
@@ -159,7 +160,7 @@ def main():
             )
         else:
             # Frío no visible desde el cliente bajo el protocolo forzado (ver
-            # estado "post-despliegue" más arriba): se deja la fila con las
+            # estado "forzado-sin-frio" más arriba): se deja la fila con las
             # columnas de frío en blanco en vez de omitir la plataforma.
             n_txt = f"n={len(fr)}/{len(ca)}"
             lineas.append(

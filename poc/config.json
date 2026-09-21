@@ -27,15 +27,15 @@
       "_nota_memoria": "256 MiB, no 128 como Lambda y Workers: Node.js 24 sobre Cloud Run gen1 no cabe en 128 MiB. Con ese límite los logs del servicio reportan \"Memory limit of 128 MiB exceeded with 128-158 MiB used\" y el contenedor muere entre peticiones, lo que invalida la medición de las peticiones calientes (verificado el 20-09-2026). La diferencia queda declarada como limitación y como hallazgo: el modelo de contenedor arrastra más memoria base que el microVM.",
       "runtime": "Node.js 24 (buildpacks; confirmar con node_version de la respuesta)",
       "ejecucion": "gen1 (gVisor), sin startup CPU boost, CPU solo durante solicitudes, max-instances 1, concurrency 1",
-      "espera_tras_forzado_s": 0,
+      "espera_tras_forzado_s": 2,
       "forzable": true,
-      "metodo_forzado": "gcloud_env",
+      "metodo_forzado": "cloudrun_salir",
       "gcloud_service_name": "poc-ti05-terabyte",
       "gcloud_project": "ti05terabyte",
       "criterio_frio": "uptime_menor_que_latencia"
     }
   },
-  "_nota_metodo_forzado": "lambda_env: cambia la variable de entorno POC_MARKER (nueva configuración => nuevo entorno de ejecución). wrangler_deploy: publica una versión nueva del Worker con `npx wrangler deploy` (nueva versión => isolates nuevos en cada máquina del PoP; verificado el 19-09-2026: la siguiente petición devuelve first_request=true). gcloud_env: `gcloud run services update ... --update-env-vars POC_MARKER=<n>` (cualquier cambio de configuración crea una revisión nueva => instancia nueva). Los tres son eventos reales del ciclo de vida (un despliegue/actualización), no un mecanismo artificial. En gcloud_env la revisión nueva no recibe tráfico hasta que Cloud Run la valida con un health check, y ese health check ya arranca el contenedor, así que el cliente casi nunca percibe el arranque; se clasifica con el criterio uptime_menor_que_latencia y el arranque del lado del proveedor se lee aparte con scripts/startup_cloudrun.py.",
+  "_nota_metodo_forzado": "cloudrun_salir: GET /salir a la función (instrumentación de la PoC, activa solo con POC_SALIR_HABILITADO=1 en el despliegue): el proceso responde y termina; con min-instances 0 la plataforma queda en cero instancias y la petición siguiente es la que crea el contenedor. Deja el mismo estado de partida que lambda_env (ningún entorno caliente cuando llega la petición). lambda_env: cambia la variable de entorno POC_MARKER (nueva configuración => nuevo entorno de ejecución). wrangler_deploy: publica una versión nueva del Worker con `npx wrangler deploy` (nueva versión => isolates nuevos en cada máquina del PoP; verificado el 19-09-2026: la siguiente petición devuelve first_request=true). gcloud_env: `gcloud run services update ... --update-env-vars POC_MARKER=<n>` (cualquier cambio de configuración crea una revisión nueva => instancia nueva). Los tres son eventos reales del ciclo de vida (un despliegue/actualización), no un mecanismo artificial. En gcloud_env la revisión nueva no recibe tráfico hasta que Cloud Run la valida con un health check, y ese health check ya arranca el contenedor, así que el cliente casi nunca percibe el arranque; se clasifica con el criterio uptime_menor_que_latencia y el arranque del lado del proveedor se lee aparte con scripts/startup_cloudrun.py.",
   "calientes_por_ciclo": 5,
   "pausa_entre_calientes_s": 0.5,
   "timeout_http_s": 20,

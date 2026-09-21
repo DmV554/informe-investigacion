@@ -21,21 +21,33 @@ Dos protocolos:
               wrangler_deploy : publica una versión nueva del Worker con
                                 `npx wrangler deploy` (nueva versión =>
                                 isolates nuevos en el PoP).
-              gcloud_env      : `gcloud run services update ... --update-env-vars
-                                POC_MARKER=<n>` (nueva configuración =>
-                                revisión nueva => instancia nueva). En Cloud
-                                Run la revisión nueva queda pre-calentada por
-                                el health check con el que la plataforma la
+              cloudrun_salir  : pide GET /salir a la función de Cloud Run;
+                                el proceso responde y termina, y con
+                                min-instances 0 la plataforma no arranca
+                                otro contenedor hasta que llega una
+                                petición, así que la siguiente petición
+                                medida es la que crea la instancia y paga
+                                el arranque (verificado 21-09-2026: 3/3
+                                ciclos fríos desde el cliente). Es
+                                instrumentación de la PoC, no comportamiento
+                                de producción; solo activo si el despliegue
+                                define POC_SALIR_HABILITADO=1.
+              gcloud_env      : documentado, no usado: la revisión nueva
+                                llega pre-calentada. `gcloud run services
+                                update ... --update-env-vars POC_MARKER=<n>`
+                                crea una revisión nueva => instancia nueva,
+                                pero esa revisión queda pre-calentada por el
+                                health check con el que la plataforma la
                                 valida antes de enrutarle tráfico, así que el
-                                cliente casi nunca paga ese arranque; se
-                                clasifica frío con el criterio
-                                `uptime_menor_que_latencia` y el arranque del
-                                lado del proveedor se lee aparte con
-                                scripts/startup_cloudrun.py.
-            Los tres son despliegues/actualizaciones reales, no un mecanismo
-            artificial. Las plataformas no forzables se miden igual en cada
-            ciclo para tener muestras en la misma ventana. Todas reciben el
-            mismo número de peticiones por ciclo (1 + calientes_por_ciclo).
+                                cliente casi nunca paga ese arranque.
+            Los cuatro son eventos reales del ciclo de vida de cada plataforma
+            (despliegue, actualización o cierre del proceso), no un mecanismo
+            artificial; el resultado se clasifica frío con el criterio
+            `uptime_menor_que_latencia` en Cloud Run y el arranque del lado
+            del proveedor se lee aparte con scripts/startup_cloudrun.py. Las
+            plataformas no forzables se miden igual en cada ciclo para tener
+            muestras en la misma ventana. Todas reciben el mismo número de
+            peticiones por ciclo (1 + calientes_por_ciclo).
 
 Plataformas con url "PENDIENTE..." en config.json se omiten automáticamente
 (por ejemplo, Cloud Run mientras no exista la URL real).
@@ -305,6 +317,26 @@ def forzar_frio_cloudrun(cfg_plat, marcador):
         raise RuntimeError(f"gcloud run services update falló: {r.stderr.strip()[-400:]}")
 
 
+def forzar_frio_cloudrun_salir(cfg_plat):
+    """Pide GET /salir a la función de Cloud Run: el proceso responde y termina.
+    Con min-instances 0 la plataforma no arranca otro contenedor hasta que
+    llega una petición, así que la siguiente petición medida es la que crea la
+    instancia y paga el arranque. Se usa en lugar de crear una revisión porque
+    al crearla Cloud Run arranca un contenedor para validarla (health check) y
+    la petición siguiente lo encuentra ya despierto (ver forzar_frio_cloudrun).
+    Si no había instancia viva, /salir la crea y la mata: el resultado es el
+    mismo (cero instancias)."""
+    url = cfg_plat["url"].rstrip("/") + "/salir"
+    req = urllib.request.Request(url, headers={"User-Agent": "poc-ti05-terabyte/salir"})
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            cuerpo = json.loads(r.read().decode("utf-8"))
+        if not cuerpo.get("saliendo"):
+            raise RuntimeError(f"/salir no confirmó la salida: {cuerpo}")
+    except urllib.error.HTTPError as e:
+        raise RuntimeError(f"/salir devolvió HTTP {e.code} (¿POC_SALIR_HABILITADO=1 en el despliegue?)")
+
+
 def forzar_frio(cfg_plat, marcador):
     """Despacha al mecanismo de forzado declarado en config.json."""
     metodo = cfg_plat.get("metodo_forzado", "lambda_env")
@@ -314,6 +346,8 @@ def forzar_frio(cfg_plat, marcador):
         forzar_frio_workers(cfg_plat)
     elif metodo == "gcloud_env":
         forzar_frio_cloudrun(cfg_plat, marcador)
+    elif metodo == "cloudrun_salir":
+        forzar_frio_cloudrun_salir(cfg_plat)
     else:
         raise RuntimeError(f"metodo_forzado desconocido: {metodo}")
 
