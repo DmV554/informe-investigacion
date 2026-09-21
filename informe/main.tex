@@ -309,13 +309,6 @@
 %% variables. Toda cifra que aparezca se toma de la Tabla 3.2 con su fecha.
 %% ---------------------------------------------------------------------------
 \subsection{Facturación por consumo y punto de equilibrio}
-\label{sec:facturacion}
-
-Según \textcite{lin_demystifying_2026}, la factura de una plataforma sin servidor combina cuatro factores: el tiempo de reloj facturable, los recursos asignados o consumidos durante ese tiempo, la granularidad o el mínimo de cobro y un cargo fijo por invocación. Las funciones cobran invocaciones y duración ponderada por la memoria asignada; AWS Lambda redondea al milisegundo y, desde agosto de 2025, factura también la fase de inicialización (\cite{Shubham_aws_2025}), mientras que Azure Functions ofrece un plan Premium con instancias precalentadas cobrado por núcleo-segundo y memoria (\cite{microsoft2026functionsscale}). Los contenedores sin servidor cobran vCPU y memoria por segundo: Fargate con un mínimo de un minuto por tarea (\cite{aws_precios2026}) y Cloud Run por solicitud o por instancia, a elección (\cite{google2026cloudrunpricing}). En el borde, Cloudflare Workers cobra solicitudes y tiempo de CPU consumido, no de reloj, y no cobra transferencia de datos (\cite{aws_cloudflare_2026}). Los valores numéricos se remiten a la Tabla~\ref{tab:cuadro-comparativo} (sección~\ref{sec:cuadro}).
-
-Como cada modelo mide una unidad distinta, la CPU facturada es entre 1,01 veces (Workers) y 3,63 veces (Google) la consumida en simulaciones sobre trazas de Huawei Cloud (\cite{lin_demystifying_2026}). El cobro por reloj incluye la espera por E/S (por ejemplo, esperar a que responda una base de datos), y encadenar funciones duplica esa facturación \cite{eismann2021}. En AWS Lambda, Google e IBM incluyen también la inicialización  (\cite{lin_demystifying_2026}). Workers cobra la CPU consumida sin contar la duración, con un tope de 128 megabytes por {\itshape Isolate} (\cite{cloudflare2026workerslimits}). Por eso las unidades solo se comparan normalizadas (Tablas~\ref{tab:criterios} y~\ref{tab:cuadro-comparativo}).
-
-El punto de equilibrio es la carga desde la cual pagar por consumo cuesta más que una instancia siempre encendida. Pagar por consumo conviene mientras la prima de precio sea menor que la razón entre tiempo contratado y tiempo usado (\cite{xiayue_charles_lin_serverless_2020}) (\cite{copik2021sebs}). El cruce llega antes con carga regular que en ráfagas, y todos los patrones cruzan el punto de equilibrio si el volumen crece (\cite{liu2024demystifying}). La capacidad fija solo conviene si se mantiene una alta utilización (\cite{copik2021sebs}). Sin variar el volumen, el cruce se desplaza con los descuentos por compromiso (hasta 50\% en Fargate (\cite{aws_precios2026}) y 17\% en Lambda, revisar la tabla~\ref{tab:criterios}), la concurrencia aprovisionada (\cite{lin_demystifying_2026}) y costos como mantenimiento y egreso (\cite{hamza2024costdynamics}) (\cite{ghorbian2026}). La evidencia es frágil: dos casos anecdóticos (\cite{gojko_adzic_serverless_2017}), precios de 2020 (\cite{xiayue_charles_lin_serverless_2020}) (\cite{copik2021sebs}) y trazas de un solo proveedor (\cite{lin_demystifying_2026}). El detalle de su cuantificación está en la sección~\ref{sec:costos}.
 
 %% ---------------------------------------------------------------------------
 %% 2.4                                                    Responsable: Valentina
@@ -502,11 +495,6 @@ El punto de equilibrio es la carga desde la cual pagar por consumo cuesta más q
 \subsection{Modelo de costos y volumen de equilibrio}
 \label{sec:costos}
 
-% TODO (Francisca)
-
-\subsection{Modelo de costos y volumen de equilibrio}
-\label{sec:modelo-costos}
-
 El modelo compara AWS Lambda con contenedores siempre encendidos (ECS sobre instancias EC2 t3.medium), el comparador fijo del cuadro de la sección 3.2. Usa solo los precios de las Tablas 3.2a y 3.2b (us-east-1, USD, precio de lista consultado el 20/09/2026). Con $N$ solicitudes al mes, memoria $m$ (GB) y duración $d$ (s), Lambda cuesta $C_L=\max(0,N-10^{6})\,c_r+\max(0,\,N\,m\,d-4\cdot10^{5})\,c_g$, con $c_r=0{,}20$ USD por millón de solicitudes y $c_g=0{,}0000166667$ USD por GB-s. La flota fija cuesta $C_F=k\,p\cdot730$, con $p=0{,}026$ USD por hora y $k=\max(2,\lceil q_{\mathrm{pico}}/20\rceil)$ instancias. La Tabla~\ref{tab:supuestos-42} declara los supuestos.
 
 \begin{table}[htbp]
@@ -553,7 +541,7 @@ Con esos supuestos, Lambda es más barata hasta $N^{*} = 24{,}0$ millones de sol
 \label{fig:equilibrio}
 \end{figure}
 
-El resultado es sensible al escenario (Anexo~\ref{anx:planilla}). Con 1 GB y 500 ms el equilibrio baja a 5,3 millones; con reserva a tres años, a 17,0 millones; y con 256 MB y hasta 200 ms, instancias bajo demanda o picos de ocho veces el promedio, Lambda no llega a cruzar. El modelo excluye balanceador, API Gateway, NAT y el costo de operar la flota, cuyos efectos van en ambos sentidos \cite{hamza2024costdynamics}. Por eso el volumen de equilibrio debe leerse como un orden de magnitud, condicionado a los supuestos declarados.
+El resultado es sensible al escenario (Anexo C). Con 1 GB y 500 ms el equilibrio baja a 5,3 millones; con reserva a tres años, a 17,0 millones; y con 256 MB y hasta 200 ms, instancias bajo demanda o picos de ocho veces el promedio, Lambda no llega a cruzar. El modelo excluye balanceador, API Gateway, NAT y el costo de operar la flota, cuyos efectos van en ambos sentidos \cite{hamza2024costdynamics}. Por eso el volumen de equilibrio debe leerse como un orden de magnitud, condicionado a los supuestos declarados.
 
 %% ---------------------------------------------------------------------------
 %% 4.3                                                    Responsable: Fabián
@@ -865,43 +853,100 @@ El siguiente script reproduce el escenario base, la sensibilidad y las variantes
 
 {\scriptsize
 \begin{verbatim}
-# Modelo de costos 4.2 - precios de las Tablas 3.2a y 3.2b (us-east-1, USD, 20-09-2026)
+# Modelo de costos 4.2, precios Tablas 3.2a y 3.2b (us-east-1, USD, 20-09-2026)
+# Salida: filas LaTeX con coma decimal, listas para pegar en el Anexo C.
+
 import math
 
 H = 730; SEC = H * 3600                          # horas y segundos por mes
-C_REQ, C_GBS = 0.20 / 1e6, 0.0000166667          # Lambda x86: USD/solicitud y USD/GB-s
+C_REQ, C_GBS = 0.20 / 1e6, 0.0000166667          # Lambda x86: USD/solic. y USD/GB-s
 FREE_REQ, FREE_GBS = 1_000_000, 400_000          # capa gratuita mensual de Lambda
 P_H = {"1a": 0.026, "3a": 0.017, "od": 0.0416}   # EC2 t3.medium, USD por hora
-P_FARGATE = 0.5 * 0.04048 + 1.0 * 0.004445       # tarea Fargate 0,5 vCPU y 1 GB, USD/h
+P_FARGATE = 0.5 * 0.04048 + 1.0 * 0.004445       # tarea Fargate 0,5 vCPU + 1 GB, USD/h
+NAT_H = 0.045                                    # NAT Gateway, USD por hora
 
-def lambda_cost(N, m=0.5, d=0.2):
+def lambda_cost(N, m=0.5, d=0.2, free=True):
     """Costo mensual de Lambda: N solicitudes, m GB, d segundos."""
-    return (max(0, N - FREE_REQ) * C_REQ
-            + max(0, N * m * d - FREE_GBS) * C_GBS)
+    fr, fg = (FREE_REQ, FREE_GBS) if free else (0, 0)
+    return max(0, N - fr) * C_REQ + max(0, N * m * d - fg) * C_GBS
 
 def fleet_cost(N, p=P_H["1a"], cap=20, f=4, kmin=2, extra=0.0):
-    """Costo mensual de la flota fija: k unidades a p USD/h, cap req/s c/u."""
+    """Flota: k unidades a p USD/h, cap req/s c/u; pico = f x promedio."""
     k = max(kmin, math.ceil(f * (N / SEC) / cap - 1e-12))
     return k * p * H + extra
 
-def first_cross(fleet, m=0.5, d=0.2, hi=400e6, step=1e4):
-    """Menor N con costo Lambda >= costo flota; None si nunca ocurre."""
+def first_cross(fleet, m=0.5, d=0.2, free=True, hi=400e6, step=1e4):
+    """Menor N con costo Lambda >= costo flota; None si no ocurre hasta hi."""
     N = step
     while N <= hi:
-        if lambda_cost(N, m, d) >= fleet(N):
+        if lambda_cost(N, m, d, free) >= fleet(N):
             return N
         N += step
     return None
 
-if __name__ == "__main__":
-    base = lambda N: fleet_cost(N)
-    print("Equilibrio base (M/mes):", first_cross(base) / 1e6)
-    for m in (0.25, 0.5, 1.0):                   # sensibilidad memoria x duracion
-        print(m, [first_cross(base, m, d) for d in (0.1, 0.2, 0.5)])
-    print("Reserva 3 anos:", first_cross(lambda N: fleet_cost(N, p=P_H["3a"])))
-    print("Bajo demanda:", first_cross(lambda N: fleet_cost(N, p=P_H["od"])))
-    print("Con NAT:", first_cross(lambda N: fleet_cost(N, extra=0.045 * H)))
-    print("Fargate:", first_cross(lambda N: fleet_cost(N, p=P_FARGATE, cap=25)))
+def c(x, nd=2):                                  # numero con coma decimal
+    return "no cruza" if x is None else f"{x:.{nd}f}".replace(".", ",")
+
+def fila(*cols):                                 # fila de tabla LaTeX
+    print(" & ".join(str(x) for x in cols) + r" \\ \hline")
+
+def M(x):                                        # N en millones, o None
+    return None if x is None else x / 1e6
+
+base = lambda N: fleet_cost(N)
+
+print("% Equilibrio base (M/mes):", c(M(first_cross(base)), 1))
+print("% Solucion cerrada (M/mes):", c((2*P_H["1a"]*H + FREE_REQ*C_REQ
+      + FREE_GBS*C_GBS) / (C_REQ + 0.5*0.2*C_GBS) / 1e6, 1))
+
+print("\n% Costo mensual por volumen (N, prom, pico, k, Lambda, flota, menor)")
+for n in (0.01, 0.1, 1, 2, 5, 10, 15, 20, 24, 26, 28, 30, 35, 40, 45, 50, 55, 60):
+    N = n * 1e6; avg = N / SEC
+    k = max(2, math.ceil(4 * avg / 20 - 1e-12))
+    l, fl = lambda_cost(N), fleet_cost(N)
+    fila(c(n, 2) if n < 1 else c(n, 0), c(avg), c(4 * avg), k, c(l), c(fl),
+         "Lambda" if l < fl else "Flota fija")
+
+print("\n% Intervalos donde Lambda es mas barata (M/mes)")
+ivs, ini, N = [], None, 1e4
+while N <= 80e6:
+    barata = lambda_cost(N) < fleet_cost(N)
+    if barata and ini is None: ini = N
+    if not barata and ini is not None: ivs.append((ini, N)); ini = None
+    N += 1e4
+print("%", [(c(M(a), 1), c(M(b), 1)) for a, b in ivs])
+
+print("\n% Sensibilidad: filas 256/512/1024 MB; columnas 100/200/500 ms")
+for mb in (256, 512, 1024):
+    fila(mb, *[c(M(first_cross(base, mb / 1024, d)), 1) for d in (0.1, 0.2, 0.5)])
+
+print("\n% Variantes del comparador y de los supuestos (primer cruce, M/mes)")
+V = {
+ "Base: 2 instancias, reserva 1 anio": (base, {}),
+ "Reserva 3 anios": (lambda N: fleet_cost(N, p=P_H["3a"]), {}),
+ "Bajo demanda": (lambda N: fleet_cost(N, p=P_H["od"]), {}),
+ "Sin capa gratuita de Lambda": (base, {"free": False}),
+ "Pico = 2 veces el promedio": (lambda N: fleet_cost(N, f=2), {}),
+ "Pico = 8 veces el promedio": (lambda N: fleet_cost(N, f=8), {}),
+ "Capacidad de 10 req/s por instancia": (lambda N: fleet_cost(N, cap=10), {}),
+ "Base + NAT (solo cargo por hora)": (lambda N: fleet_cost(N, extra=NAT_H*H), {}),
+ "2 tareas Fargate 0,5 vCPU y 1 GB":
+     (lambda N: fleet_cost(N, p=P_FARGATE, cap=25), {}),
+}
+for nombre, (fl, kw) in V.items():
+    fila(nombre, c(M(first_cross(fl, **kw)), 1))
+
+print("\n% Barrido: primer cruce segun pico f y capacidad (razon r = f / cap)")
+for f, cap in ((2, 20), (4, 20), (4.4, 20), (5, 20), (6, 20), (8, 20),
+               (4, 25), (4, 18), (4, 16), (4, 15), (4, 10)):
+    fila(f"f={c(f, 1)}", f"cap={cap}", c(f / cap, 3),
+         c(M(first_cross(lambda N: fleet_cost(N, f=f, cap=cap))), 1))
+
+# Umbral de "no cruza": la flota a plena carga cuesta p*H USD por (cap*SEC/f) solic.
+lam = (C_REQ + 0.5 * 0.2 * C_GBS) * 1e6          # USD por millon de solicitudes
+print("\n% Lambda cuesta", c(lam, 3), "USD/M; la flota a plena carga cuesta",
+      "0,361*f*(20/cap) USD/M")
+print("% no cruza si f/cap >=", c(lam * SEC / 1e6 / (P_H["1a"] * H), 4))
 \end{verbatim}
 }
 
