@@ -1,8 +1,11 @@
 # Anexo A — Parte B: prompts utilizados (sección 4.1 y Anexo B)
 
 **Trabajo:** Informe TI-05 «Serverless y computación en el borde», grupo TERABYTE, PUCV ICI-5444.
-**Secciones cubiertas:** 4.1 Prueba de concepto: arranque en frío y latencia; Anexo B: código y mediciones de la prueba de concepto.
-**Nivel declarado:** 2 (colaboración e ideación). La IA generó el código auxiliar de la prueba (funciones, script de medición, análisis y guías de despliegue), identificado como tal en el Anexo B, y participó en la discusión metodológica. Las decisiones de método las tomó el autor en cada caso (constan en los prompts); las mediciones provienen de la ejecución real del código; la interpretación, las limitaciones y toda conclusión son de redacción humana.
+**Integrante:** Vicente André Arratia Caroca.
+**Secciones cubiertas:** 4.1 Prueba de concepto: arranque en frío y latencia; Anexo B: metodología y mediciones de la prueba de concepto.
+**Nivel declarado por sección:**
+- 4.1 Prueba de concepto: **nivel 2**. La IA generó el código auxiliar de la prueba (funciones, script de medición, análisis y guías de despliegue), declarado como tal en el Anexo A, y participó en la discusión metodológica. Las decisiones de método las tomó el autor en cada caso (constan en los prompts); las mediciones provienen de la ejecución real del código; la interpretación, las limitaciones y toda conclusión son de redacción humana.
+- Anexo B: **nivel 2**. Tablas de configuración y notas metodológicas redactadas a partir del código y de los datos, con apoyo de la IA en formato y transcripción a LaTeX; la redacción final es del autor.
 **Herramientas:** Claude (Anthropic), modo Cowork, modelo `claude-fable-5-1`; Claude Code 2.1.278 con los modelos `claude-opus-5` y `claude-fable-5-1`.
 **Período:** 17-09-2026 a 21-09-2026.
 
@@ -20,7 +23,7 @@ Los prompts se transcriben en orden cronológico, tal como fueron escritos, agru
 **Usuario:** Vicente Arratia.
 **Sesión:** https://claude.ai/code/session_01ApuJ5bsU5PtVWEjw8bg2ri (registro literal completo, accesible con la cuenta del usuario).
 **Período:** 17-09-2026 a 20-09-2026.
-**Nivel declarado:** 2 (código auxiliar identificado como tal; orientación metodológica). Las mediciones, la redacción de
+**Nivel declarado:** 2 (código auxiliar declarado en el Anexo A; orientación metodológica). Las mediciones, la redacción de
 metodología, interpretación, limitaciones, conclusiones y preguntas del cuestionario son de autoría humana.
 
 Este documento tiene dos partes. La **Parte A** es una reconstrucción cronológica de la primera parte de la sesión, cuyo
@@ -93,8 +96,8 @@ Prompts del usuario, en orden:
 26. "Hice todo, revisa todo lo guardado, ayúdame a separar bien lo de Cloudflare... quizá escalar los ms al formato
     que no lo muestre con el ×10, sino a los mismos ms."
 
-Producido por la IA en esta etapa (todo identificado con comentario de cabecera "generado con asistencia de IA y
-revisado por Vicente Arratia"):
+Producido por la IA en esta etapa (declarado en el Anexo A del informe; los archivos no llevan cabecera de
+atribución):
 - `poc/functions/cloudflare/worker.js` y `poc/functions/lambda/index.mjs` (funciones triviales que devuelven
   `instance_id`, `uptime_ms`, `first_request`/`request_id`).
 - `poc/scripts/medir.py` (medición, clasificación frío/caliente por plataforma, modos prueba/forzado/natural, CSV por
