@@ -330,15 +330,13 @@
 %% Candidatos "otros" de edge y open source -> pasar a Claudio y Daniel (3.1).
 %% ---------------------------------------------------------------------------
 \subsection{WebAssembly y WASI como entorno de borde}
+\label{sec:wasm_wasi}
 
-% TODO (Isidora)
+WebAssembly (Wasm) es una abstracción portable sobre el hardware, de ejecución eficiente, segura e independiente de la plataforma~\cite{haas2017bringing, w3c2026wasmcore}. Aísla cada módulo en una memoria lineal separada del código y de la pila, y en arquitecturas de 64~bits usa páginas de guarda que delegan la verificación de límites al hardware (MMU)~\cite{haas2017bringing}. Además, carece de acceso ambiental al host: toda interacción externa requiere importaciones explícitas~\cite{w3c2026wasmcore}. Fuera del navegador, el WASI Subgroup del WebAssembly Community Group del W3C estandariza esa interfaz de sistema sobre el Component Model y WIT, con seguridad por capacidades~\cite{wasi2026releases, gohman2024wasi, wasi2024p2}. WASI~0.3 añadió asincronismo nativo, y Wasmtime~46 fue la primera versión en implementar su especificación final~\cite{wasi2026releases, wasi2026p3}. El ecosistema incluye runtimes como Wasmtime, orquestadores como wasmCloud y frameworks como Spin~\cite{cncfwasmcloud, spinframework}.
 
-%% ---------------------------------------------------------------------------
-%% 2.6                                                    Responsable: Fabián
-%% Tiempos máximos de ejecución, tamaño de carga útil, manejo de estado,
-%% estrategias de portabilidad, lock-in. Se apoya en la Tabla 3.2 (límites)
-%% y en las alternativas open source de 3.1 (referencias cruzadas).
-%% ---------------------------------------------------------------------------
+A diferencia del contenedor, que comparte el kernel pero empaqueta el espacio de usuario, Wasm aísla a nivel de bytecode dentro del mismo proceso, con una huella mínima y un arranque rápido~\cite{haas2017bringing, kjorveziroski2021iot}. Mediciones revisadas por pares sitúan ese arranque bajo 10~ms con menos de 200~KB, y en cientos de microsegundos al restaurar instantáneas preinicializadas (sección~2.2)~\cite{shillaker2020faasm}. El costo es el rendimiento sostenido: sobre SPEC CPU, Wasm fue en promedio entre 1{,}45$\times$ (Firefox) y 1{,}55$\times$ (Chrome) más lento que el código nativo~\cite{jangda2019notsofast}. Como son mediciones de 2019 en navegadores y no en runtimes de servidor, deben leerse como orden de magnitud. En el borde, Fastly Compute ejecuta Wasm sobre Wasmtime~\cite{fastlycomputeintro} y Cloudflare Workers lo admite dentro de isolates de V8~\cite{cloudflarehowworkersworks}, pero ambos exigen APIs propias: hostcalls en Fastly~\cite{fastlycomputesdks} y un soporte de WASI parcial y experimental en Cloudflare~\cite{cloudflare2026wasm}. Así, la portabilidad del runtime no garantiza la de la aplicación (sección~2.6), y la mayoría de las toolchains aún apunta a WASI~0.2~\cite{wasi2026releases}.
+
+Wasm conviene en cargas intermitentes u orientadas a eventos en el borde, donde su arranque y su huella aumentan la densidad de instancias por servidor y reducen costos mediante un escalado a cero efectivo~\cite{kjorveziroski2021iot, shillaker2020faasm}. No conviene en cómputo intensivo de larga duración, donde los contenedores siempre encendidos mantienen superioridad en throughput~\cite{jangda2019notsofast}, ni en proyectos que exigen estricta portabilidad entre plataformas, por las hostcalls propietarias, el soporte parcial de WASI y la madurez desigual de las toolchains~\cite{wasi2026releases, fastlycomputesdks, cloudflare2026wasm}.
 \subsection{Límites técnicos y dependencia del proveedor}
 
 % TODO (Fabián)
