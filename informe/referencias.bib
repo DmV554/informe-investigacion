@@ -158,3 +158,160 @@
   urldate   = {2026-09-20}
 }
 
+%%%AÑADIDAS POR VALENTINA 
+% =============================================================================
+% Bibliografía de la sección 2.4 — Diseño orientado a eventos
+% TI-05 Serverless y computación en el borde · TERABYTE
+% Formato: biblatex / backend biber / estilo APA (mismo criterio de main.bib)
+%
+% Claves verificadas contra main.bib: NINGUNA colisiona con cncf2018,
+% schleiersmith2021, golec2024, leitner2019, shi2016, aslanpour2021,
+% ustiugov2021, eismann2021, ghorbian2026, adzic2017, awsfargate,
+% awsfargatepricing, gcprun ni schwarzl2022spectre.
+%
+% Todas las fuentes se abrieron y verificaron contra el texto completo
+% el 20-09-2026. Ninguna cifra de precio sale de esta sección (los precios
+% se levantan una sola vez en el cuadro 3.2, integrantes 6 y 7).
+%
+% Aporte académico de esta sección a la planilla común: eugster2003
+% (revisado por pares, ACM Computing Surveys). Verificar su indexación en el
+% Sistema de Bibliotecas PUCV y citar por DOI, no por la copia alojada en
+% repositorio de curso.
+% =============================================================================
+
+% ---------- Artículo revisado por pares ----------
+
+@article{eugster2003,
+  author  = {Eugster, Patrick Th. and Felber, Pascal A. and Guerraoui, Rachid and Kermarrec, Anne-Marie},
+  title   = {The Many Faces of Publish/Subscribe},
+  journal = {ACM Computing Surveys},
+  volume  = {35},
+  number  = {2},
+  pages   = {114--131},
+  year    = {2003},
+  doi     = {10.1145/857076.857078}
+}
+
+% ---------- Especificaciones y estándares ----------
+
+% URL congelada en el tag v1.0.2 (no en main), según exige la ficha.
+% El término "idempotencia" no aparece literalmente en la especificación:
+% se cita el objeto "evento" y, si se usara, el mecanismo id + source.
+@report{cloudevents102,
+  author      = {{CNCF Serverless Working Group}},
+  title       = {CloudEvents --- Version 1.0.2},
+  institution = {Cloud Native Computing Foundation},
+  type        = {Especificación},
+  year        = {2021},
+  url         = {https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md},
+  urldate     = {2026-09-20}
+}
+
+@report{rfc9110,
+  author      = {Fielding, Roy T. and Nottingham, Mark and Reschke, Julian},
+  title       = {{HTTP} Semantics},
+  institution = {Internet Engineering Task Force},
+  type        = {RFC},
+  number      = {9110},
+  note        = {STD 97},
+  year        = {2022},
+  doi         = {10.17487/RFC9110}
+}
+
+% OJO: la versión ratificada como ISO/IEC 20922:2016 es MQTT 3.1.1, NO la 5.0.
+% No atribuir el sello ISO a esta entrada.
+@report{mqttv5,
+  editor      = {Banks, Andrew and Briggs, Ed and Borgendale, Ken and Gupta, Rahul},
+  title       = {{MQTT} Version 5.0},
+  institution = {OASIS},
+  type        = {OASIS Standard},
+  year        = {2019},
+  url         = {https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html},
+  urldate     = {2026-09-20}
+}
+
+% URL versionada (v4.3), no /documentation/#design.
+% NO citar el pasaje de la sección Replication donde el proyecto opina sobre
+% otros sistemas de mensajería: es opinión declarada, no evidencia. Por el mismo
+% criterio se descartó la frase de "Message Delivery Semantics" sobre las
+% promesas de exactly-once de otros sistemas ("read the fine print"): es opinión
+% sobre la competencia. Lo que se cita es el mecanismo propio de Kafka
+% (productor idempotente + envío transaccional), que sí es descripción técnica.
+@online{kafkadesign,
+  author       = {{The Apache Software Foundation}},
+  title        = {Design},
+  organization = {Apache Kafka},
+  version      = {4.3},
+  url          = {https://kafka.apache.org/43/design/design/},
+  urldate      = {2026-09-20}
+}
+
+% ---------- Documentación oficial de proveedores ----------
+
+% El documento no declara fecha de publicación ni de actualización:
+% se registra solo la fecha de consulta (dato no declarado en la fuente).
+@online{awseventbridge,
+  author  = {{Amazon Web Services}},
+  title   = {What Is {Amazon} {EventBridge}?},
+  url     = {https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-what-is.html},
+  urldate = {2026-09-20}
+}
+
+% Sin fecha declarada en el documento; solo fecha de consulta.
+@online{awssqsqueuetypes,
+  author  = {{Amazon Web Services}},
+  title   = {{Amazon} {SQS} queue types},
+  url     = {https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html},
+  urldate = {2026-09-20}
+}
+
+@online{awsstepfunctions,
+  author  = {{Amazon Web Services}},
+  title   = {Choosing workflow type in {Step Functions}},
+  url     = {https://docs.aws.amazon.com/step-functions/latest/dg/choosing-workflow-type.html},
+  urldate = {2026-09-20}
+}
+
+% La garantía de exactly-once aplica SOLO dentro de una misma región cloud y
+% SOLO en suscripciones pull; tampoco elimina duplicados originados del lado de
+% la publicación. Esas tres restricciones son lo que la cita usa en 2.4.
+@online{gcppubsubexactlyonce,
+  author       = {{Google Cloud}},
+  title        = {Exactly-once delivery},
+  organization = {Pub/Sub documentation},
+  url          = {https://docs.cloud.google.com/pubsub/docs/exactly-once-delivery},
+  urldate      = {2026-09-20}
+}
+
+% ---------- Documentación técnica de terceros (admisible SOLO declarándola) ----------
+
+% Clasificada como documentación técnica de terceros pese al dominio
+% docs.aws.amazon.com: es guía prescriptiva y sus recomendaciones no traen
+% respaldo interno. Sirve para mostrar QUÉ recomienda un proveedor grande,
+% no POR QUÉ. La declaración expresa va en el cuerpo de 2.4.
+@online{awscoordination,
+  author       = {{Amazon Web Services}},
+  title        = {Choosing your coordination approach},
+  organization = {AWS Prescriptive Guidance},
+  note         = {Documentación técnica de terceros según la clasificación de fuentes del curso},
+  url          = {https://docs.aws.amazon.com/prescriptive-guidance/latest/modernization-integrating-microservices/choosing-approach.html},
+  urldate      = {2026-09-20}
+}
+
+% =============================================================================
+% NO CITADAS EN 2.4 (quedan aquí por si se amplía la sección; borrar si no se
+% usan: las referencias se listan solo para fuentes efectivamente citadas)
+% =============================================================================
+
+% ADVERTENCIA: Internet-Draft EXPIRADO el 18-04-2026. No citable como estándar
+% en vigor. Si se usa, hay que declarar explícitamente su condición de borrador
+% vencido en el cuerpo del texto.
+% @report{ietfidempotencykey,
+%   author      = {Jena, Jayadeba and Dalal, Sanjay},
+%   title       = {The {Idempotency-Key} {HTTP} Header Field},
+%   institution = {Internet Engineering Task Force},
+%   type        = {Internet-Draft draft-ietf-httpapi-idempotency-key-header-07 (expirado el 18-04-2026)},
+%   year        = {2025},
+%   url         = {https://www.ietf.org/archive/id/draft-ietf-httpapi-idempotency-key-header-07.html},
+%   urldate     = {2026-09-20}
+% }

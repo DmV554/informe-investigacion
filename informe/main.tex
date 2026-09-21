@@ -321,6 +321,43 @@
 %% ---------------------------------------------------------------------------
 \subsection{Diseño orientado a eventos}
 
+Una arquitectura orientada a eventos construye sistemas débilmente acoplados que
+colaboran emitiendo y respondiendo a eventos en lugar de invocarse entre sí
+\parencite{awseventbridge}. CloudEvents define el evento como un registro de
+datos que expresa una ocurrencia y su contexto, enrutado hacia los consumidores
+interesados sin identificar un destino \parencite{cloudevents102}. Para
+\textcite{eugster2003}, la fortaleza del estilo está en el desacoplamiento
+simultáneo en espacio, tiempo y sincronización entre publicador y consumidor.
+
+La cola punto a punto entrega cada mensaje a un único consumidor, con semántica
+\emph{uno-de-n}, y al extraerse de forma síncrona no desacopla en sincronización
+\parencite{eugster2003}. En publicación/suscripción, suscribirse a un tópico
+equivale a integrar un grupo y publicar, a difundirlo entre sus miembros
+\parencite{eugster2003}. El patrón fija quién recibe el evento; la semántica de
+entrega, cuántas veces llega y qué debe tolerar el consumidor. Las dos variantes
+de SQS lo muestran: la estándar entrega al menos una vez y obliga a manejar
+duplicados con operaciones idempotentes, la FIFO procesa exactamente una vez
+\parencite{awssqsqueuetypes}. El RFC 9110 llama idempotente al método cuyo efecto
+pretendido sobre el servidor no cambia al repetir la petición
+\parencite{rfc9110}. En las fuentes revisadas el exactamente-una-vez nunca
+aparece sin condiciones: Kafka lo alcanza sumando al productor idempotente el
+envío transaccional a varias particiones \parencite{kafkadesign}; Pub/Sub, solo
+dentro de una región y en suscripciones \emph{pull}
+\parencite{gcppubsubexactlyonce}.
+
+La coordinación admite dos formas opuestas: la orquestación centraliza el orden
+de los pasos y la coreografía deja que cada servicio reaccione por su cuenta a
+los eventos ajenos. La guía prescriptiva de AWS (documentación técnica de
+terceros, declarada como tal) recomienda coreografía dentro de un microservicio y
+orquestación al cruzar ese límite, con el patrón \emph{saga} para revertir
+transacciones distribuidas \parencite{awscoordination}. El criterio es el costo
+del error: MQTT reserva QoS~0 a sensores ambientales, donde perder una lectura no
+importa, y QoS~2 a facturación, donde un duplicado es un cobro incorrecto
+\parencite{mqttv5}; Step Functions limita el exactamente-una-vez a acciones no
+idempotentes de larga duración y deja los flujos Express, al menos una vez, para
+alto volumen ya idempotente \parencite{awsstepfunctions}. En esa última ruta la
+plataforma no gestiona la idempotencia por el consumidor: uno que no lo sea
+devuelve resultados incorrectos al primer reintento.
 % TODO (Valentina)
 
 %% ---------------------------------------------------------------------------
